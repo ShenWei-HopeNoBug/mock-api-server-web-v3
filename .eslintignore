@@ -1,0 +1,8 @@
+# declare files for eslint to ignore
+
+node_modules
+dist
+.eslintrc
+components.d.ts
+vite.config.ts
+public

@@ -1,0 +1,7 @@
+{
+  "toast": {
+    "sendError": "Request error.",
+    "retryError": "Request failed, please try again!",
+    "responseError": "Response error."
+  }
+}

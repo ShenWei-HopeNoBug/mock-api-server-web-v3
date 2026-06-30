@@ -1,0 +1,170 @@
+import { defineConfig, loadEnv } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import Components from 'unplugin-vue-components/vite';
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
+import { resolve } from 'path';
+import svgLoader from 'vite-svg-loader';
+import legacy from '@vitejs/plugin-legacy';
+import { getAppEntryConfig } from './scripts/package';
+import { createMultiAppHistoryFallback } from './scripts/createMultiAppHistoryFallback';
+
+const ROOT: string = resolve(__dirname);
+const TYPES: string = `${ROOT}/types`;
+const APPS: string = `${ROOT}/apps`;
+const SRC: string = `${ROOT}/src`;
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+
+  return {
+    base: './',
+    plugins: [
+      vue(),
+      Components({
+        resolvers: [
+          AntDesignVueResolver({
+            importStyle: false,
+          }),
+        ],
+      }),
+      svgLoader({
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeViewBox: false,
+                },
+              },
+            },
+            'removeEditorsNSData',
+            'removeEmptyContainers',
+            'removeUnusedNS',
+            'mergePaths',
+            {
+              name: 'inlineStyles',
+              params: {
+                onlyMatchedOnce: false,
+                removeMatchedSelectors: true,
+              },
+            },
+            'mergeStyles',
+            'removeHiddenElems',
+            'removeEmptyText',
+            'removeEmptyAttrs',
+            'cleanupNumericValues',
+            'convertColors',
+            {
+              name: 'cleanupIds',
+              params: {
+                minify: true,
+              },
+            },
+            'sortAttrs',
+          ],
+        },
+      }),
+      legacy({
+        targets: [
+          'Chrome >= 64',
+          'Edge >= 79',
+          'Firefox >= 67',
+          'Safari >= 12',
+          'iOS >= 12',
+          'Android >= 8',
+        ],
+        modernPolyfills: true,
+      }),
+      // 多子项目 History 路由回退插件
+      createMultiAppHistoryFallback(env.VITE_PATHNAME || ''),
+    ],
+    resolve: {
+      alias: [
+        {
+          find: '@/',
+          replacement: `${SRC}/`,
+        },
+        {
+          find: '#/',
+          replacement: `${TYPES}/`,
+        },
+        {
+          find: '@apps/',
+          replacement: `${APPS}/`,
+        },
+      ],
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          preprocessorOptions: {
+            scss: {
+              // 使用现代编译器 API
+              api: 'modern-compiler',
+              // 抑制来自第三方库（NutUI）的 @import 弃用警告
+              silenceDeprecations: ['import'],
+              javascriptEnabled: true,
+              additionalData: `@use "@/styles/variables.scss" as *;`,
+            },
+          },
+        },
+      },
+    },
+    server: {
+      host: '0.0.0.0',
+      port: 3000,
+      hmr: true,
+      proxy: {},
+    },
+    build: {
+      sourcemap: mode === 'test',
+      outDir: 'dist',
+      assetsDir: 'assets',
+      // 小于此阈值的资源将内联为 base64
+      assetsInlineLimit: 4096,
+      cssCodeSplit: true,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          // 生产环境移除 console
+          drop_console: false,
+          drop_debugger: false,
+        },
+      },
+      rollupOptions: {
+        input: getAppEntryConfig(),
+        output: {
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames: assetInfo => {
+            // 图片文件放到 images 目录下
+            if (
+              /\.(png|jpe?g|svg|gif|webp|avif|bmp|ico|tiff?|svgz?)$/i.test(assetInfo.name || '')
+            ) {
+              return 'images/[name]-[hash].[ext]';
+            }
+
+            // 字体文件放到 fonts 目录下
+            if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name || '')) {
+              return 'fonts/[name]-[hash].[ext]';
+            }
+
+            // 其他资源保持原样
+            return '[ext]/[name]-[hash].[ext]';
+          },
+          // 代码拆分
+          manualChunks: id => {
+            if (id.includes('node_modules')) {
+              const moduleName = id.toString().split('node_modules/')[1].split('/')[0];
+              // 将核心框架库单独打包
+              if (['vue', 'vue-router', 'pinia'].includes(moduleName)) {
+                return 'vue-vendor';
+              }
+            }
+          },
+        },
+      },
+    },
+  };
+});

@@ -1,0 +1,13 @@
+# declare files for prettier to ignore
+
+.idea
+.vscode
+node_modules
+dist
+nginx
+public
+
+package.json
+package-lock.json
+components.d.ts
+index.html

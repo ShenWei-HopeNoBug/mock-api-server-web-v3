@@ -1,0 +1,46 @@
+<template>
+  <Spin :spinning="loadingRef" class="app" tip="Qt 桥接资源加载中...">
+    <router-view />
+  </Spin>
+</template>
+
+<script setup lang="ts">
+import { ref, onBeforeMount } from 'vue';
+import Spin from '@/components/Spin/index.vue';
+import QtBridge from '@/utils/bridge/QtBridge';
+import { message } from 'ant-design-vue';
+import { useQtBridgeStore } from '@apps/dataManager/store/useQtBridge';
+
+const qtBridgeStore = useQtBridgeStore();
+
+const loadingRef = ref<boolean>(false);
+
+const init = () => {
+  loadingRef.value = true;
+  QtBridge.getQtBridgeData()
+    .then(result => {
+      const { error, message: msg = '', channelObj = null } = result;
+      if (error) {
+        msg && message.error(msg);
+      }
+
+      qtBridgeStore.setRegister(!error);
+      qtBridgeStore.setChannelObj(channelObj);
+    })
+    .finally(() => {
+      loadingRef.value = false;
+    });
+};
+
+onBeforeMount(() => {
+  init();
+});
+</script>
+
+<style scoped lang="scss">
+.app {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+</style>

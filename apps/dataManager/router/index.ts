@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import routes from './staticRoute';
 
 const BASE_URL: string = import.meta.env.VITE_BASE_URL || '';
-const historyBaseUrl: string = `${BASE_URL}/apps/example`;
+const historyBaseUrl: string = `${BASE_URL}/apps/dataManager`;
 
 const router = createRouter({
-  history: createWebHistory(historyBaseUrl),
+  history: createWebHashHistory(historyBaseUrl),
   routes,
 });
 

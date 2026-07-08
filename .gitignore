@@ -10,6 +10,8 @@ lerna-debug.log*
 # Dependencies
 node_modules
 dist
+web
+web-v3
 dist-ssr
 *.local
 

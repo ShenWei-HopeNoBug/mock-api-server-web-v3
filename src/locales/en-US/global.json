@@ -1,7 +1,40 @@
 {
+  "loading": "loading...",
   "toast": {
     "sendError": "Request error.",
     "retryError": "Request failed, please try again!",
     "responseError": "Response error."
+  },
+  "form": {
+    "action": {
+      "save": "Save",
+      "reset": "Reset",
+      "search": "Search"
+    },
+    "validation": {
+      "enter": "Please enter ",
+      "select": "Please select ",
+      "complete": "Please complete the form!"
+    },
+    "placeholder": {
+      "enter": "Please enter",
+      "select": "Please select",
+      "startDate": "Start date",
+      "endDate": "End date"
+    },
+    "preset": {
+      "today": "Today",
+      "lastDay": "Last day",
+      "lastWeek": "Last week",
+      "lastTwoWeeks": "Last two weeks",
+      "lastMonth": "Last month",
+      "lastThreeMonths": "Last three months",
+      "lastSixMonths": "Last six months"
+    },
+    "modal": {
+      "defaultTitle": "Edit",
+      "confirmTitle": "Confirm",
+      "confirmReset": "Are you sure you want to reset the form?"
+    }
   }
 }

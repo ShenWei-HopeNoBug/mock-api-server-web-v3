@@ -4,14 +4,14 @@ const staticRoute: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'root',
-    redirect: '/hello',
+    redirect: '/outputManager',
     children: [
       {
-        path: '/hello',
-        name: 'hello',
-        component: () => import('@apps/example/views/Hello.vue'),
+        path: '/outputManager',
+        name: 'outputManager',
+        component: () => import('@apps/dataManager/views/outputManager/index.vue'),
         meta: {
-          title: 'hello',
+          title: 'outputManager',
         },
       },
     ],

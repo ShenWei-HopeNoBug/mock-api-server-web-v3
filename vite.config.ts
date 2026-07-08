@@ -7,6 +7,7 @@ import svgLoader from 'vite-svg-loader';
 import legacy from '@vitejs/plugin-legacy';
 import { getAppEntryConfig } from './scripts/package';
 import { createMultiAppHistoryFallback } from './scripts/createMultiAppHistoryFallback';
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 
 const ROOT: string = resolve(__dirname);
 const TYPES: string = `${ROOT}/types`;
@@ -17,9 +18,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: './',
+    base: env.VITE_PATHNAME || './',
     plugins: [
       vue(),
+      viteCommonjs(),
       Components({
         resolvers: [
           AntDesignVueResolver({
@@ -98,16 +100,12 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          preprocessorOptions: {
-            scss: {
-              // 使用现代编译器 API
-              api: 'modern-compiler',
-              // 抑制来自第三方库（NutUI）的 @import 弃用警告
-              silenceDeprecations: ['import'],
-              javascriptEnabled: true,
-              additionalData: `@use "@/styles/variables.scss" as *;`,
-            },
-          },
+          // 使用现代编译器 API
+          api: 'modern-compiler',
+          // 抑制来自第三方库（NutUI）的 @import 弃用警告
+          silenceDeprecations: ['import'],
+          javascriptEnabled: true,
+          additionalData: `@use "@/styles/variables.scss" as *;`,
         },
       },
     },
@@ -119,7 +117,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       sourcemap: mode === 'test',
-      outDir: 'dist',
+      outDir: 'web-v3',
       assetsDir: 'assets',
       // 小于此阈值的资源将内联为 base64
       assetsInlineLimit: 4096,

@@ -1,7 +1,6 @@
 export declare namespace OutputManagerType {
   type ActionName =
-    | 'get_mock_data'
-    | 'fix_mock_data'
+    | 'get_mock_data_page'
     | 'edit_mock_data'
     | 'add_mock_data'
     | 'delete_mock_data'
@@ -26,6 +25,8 @@ export declare namespace OutputManagerType {
     method?: string;
     params?: string;
     response?: string;
+    created_at?: string;
+    updated_at?: string;
     [key: string]: any;
   }
 
@@ -37,11 +38,10 @@ export declare namespace OutputManagerType {
     fixed?: 'left' | 'right';
   }
 
-  interface RequestEvent {
-    type?: string;
-    name?: ActionName;
-    data?: Record<string, any> | boolean;
-    action_id?: string;
-    extra?: Record<string, any>;
+  interface PageResult {
+    list: RowRecord[];
+    page_num: number;
+    page_size: number;
+    total: number;
   }
 }

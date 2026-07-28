@@ -24,6 +24,18 @@ export const isJsonString = (v: any): boolean => {
   }
 };
 
+export const safeJsonParse = <T = any>(v: any, fallback: T): T => {
+  try {
+    if (typeof v !== 'string') {
+      return fallback;
+    }
+
+    return JSON.parse(v) as T;
+  } catch (e) {
+    return fallback;
+  }
+};
+
 // 复制文本到剪贴板
 export const copyText = async (text: string) => {
   if (navigator.clipboard?.writeText) {

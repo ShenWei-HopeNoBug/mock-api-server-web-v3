@@ -46,7 +46,10 @@ export const getRangePickerPresets = () => {
   const current = dayjs();
 
   return [
-    { label: i18n.global.t('global.form.preset.today'), value: [current.clone().startOf('day'), current] },
+    {
+      label: i18n.global.t('global.form.preset.today'),
+      value: [current.clone().startOf('day'), current],
+    },
     {
       label: i18n.global.t('global.form.preset.lastDay'),
       value: [current.clone().subtract(1, 'day').startOf('day'), current],
@@ -72,4 +75,19 @@ export const getRangePickerPresets = () => {
       value: [current.clone().subtract(Number('6'), 'month').startOf('day'), current],
     },
   ];
+};
+
+// 获取日期选择预设配置
+export const getRangePickerRanges = () => {
+  const current = dayjs();
+
+  return {
+    [i18n.global.t('global.form.preset.today')]: [current.clone().startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastDay')]: [current.clone().subtract(1, 'day').startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastWeek')]: [current.clone().subtract(1, 'week').startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastTwoWeeks')]: [current.clone().subtract(Number('2'), 'week').startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastMonth')]: [current.clone().subtract(1, 'month').startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastThreeMonths')]: [current.clone().subtract(Number('3'), 'month').startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastSixMonths')]: [current.clone().subtract(Number('6'), 'month').startOf('day'), current],
+  };
 };

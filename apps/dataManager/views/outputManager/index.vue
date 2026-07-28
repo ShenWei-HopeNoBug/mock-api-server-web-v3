@@ -1,92 +1,96 @@
 <template>
-  <Spin :spinning="pageLoading" tip="修复异常接口数据中...">
-    <div class="output-manager">
-      <a-card class="header">
-        <div class="search-bar">
-          <SearchForm
-            :columns="searchFormColumns"
-            :init-form-values="initSearchForm"
-            @submit="onSearchSubmit"
+  <div class="output-manager">
+    <a-card class="header">
+      <div class="search-bar">
+        <SearchForm
+          :columns="searchFormColumns"
+          :init-form-values="initSearchForm"
+          :process-before-submit="processBeforeSearchFormSubmit"
+          :form-item-col="searchFormItemColRef"
+          @submit="onSearchSubmit"
+        />
+      </div>
+      <div class="tool-bar">
+        <div class="btn-group">
+          <a-button type="primary" @click="onAdd">新增 Mock 接口</a-button>
+        </div>
+      </div>
+    </a-card>
+    <a-card v-dom-resize="onResize" class="content">
+      <Spin>
+        <a-table
+          :columns="tableColumns"
+          :data-source="tableData"
+          :pagination="false"
+          :loading="tableLoading"
+          row-key="id"
+          :scroll="{ x: 1200, y: tableHeight }"
+        >
+          <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key === 'index'">
+              {{ getRowIndex(index) }}
+            </template>
+
+            <template v-else-if="column.key === 'params'">
+              <div class="params">{{ record.params }}</div>
+            </template>
+
+            <template v-else-if="column.key === 'operation'">
+              <div class="operation">
+                <a-button type="link" @click="onDetail(record)">查看详情</a-button>
+
+                <a-popconfirm title="确认复制？" @confirm="onCopy(record)">
+                  <a-button type="link">复制</a-button>
+                </a-popconfirm>
+
+                <template v-if="record.type === 'USER'">
+                  <a-button type="link" @click="onEdit(record)">编辑</a-button>
+
+                  <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
+                    <a-button danger type="link">删除</a-button>
+                  </a-popconfirm>
+                </template>
+              </div>
+            </template>
+          </template>
+        </a-table>
+
+        <div class="pagination">
+          <a-pagination
+            :total="total"
+            :current="pagination.currentPage"
+            :page-size="pagination.pageSize"
+            :page-size-options="pagination.pageSizes"
+            show-size-changer
+            show-quick-jumper
+            :show-total="(num: number) => `共 ${num} 条`"
+            @change="onPageChange"
+            @showSizeChange="onSizeChange"
           />
         </div>
-        <div class="tool-bar">
-          <div class="btn-group">
-            <a-button type="primary" @click="onAdd">新增 Mock 接口</a-button>
-          </div>
-        </div>
-      </a-card>
-      <a-card v-dom-resize="onResize" class="content">
-        <Spin :spinning="tableLoading" tip="接口数据加载中...">
-          <a-table
-            :columns="tableColumns"
-            :data-source="paginationTableData"
-            :pagination="false"
-            row-key="id"
-            :scroll="{ x: 1200, y: tableHeight }"
-          >
-            <template #bodyCell="{ column, record, index }">
-              <template v-if="column.key === 'index'">
-                {{ getRowIndex(index) }}
-              </template>
+      </Spin>
+    </a-card>
 
-              <template v-else-if="column.key === 'params'">
-                <div class="params">{{ record.params }}</div>
-              </template>
-
-              <template v-else-if="column.key === 'operation'">
-                <div class="operation">
-                  <a-button type="link" @click="onDetail(record)">查看详情</a-button>
-
-                  <a-popconfirm title="确认复制？" @confirm="onCopy(record)">
-                    <a-button type="link">复制</a-button>
-                  </a-popconfirm>
-
-                  <template v-if="record.type === 'USER'">
-                    <a-button type="link" @click="onEdit(record)">编辑</a-button>
-
-                    <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
-                      <a-button danger type="link">删除</a-button>
-                    </a-popconfirm>
-                  </template>
-                </div>
-              </template>
-            </template>
-          </a-table>
-
-          <div class="pagination">
-            <a-pagination
-              :total="total"
-              :current="pagination.currentPage"
-              :page-size="pagination.pageSize"
-              :page-size-options="pagination.pageSizes"
-              show-size-changer
-              show-quick-jumper
-              :show-total="(num: number) => `共 ${num} 条`"
-              @change="onPageChange"
-              @showSizeChange="onSizeChange"
-            />
-          </div>
-        </Spin>
-      </a-card>
-
-      <UserApiEditorDialog
-        ref="userApiEditorDialogRef"
-        :loading="editLoading"
-        @submit="onUserApiEditorSubmit"
-        @close="onUserApiEditorDialogClose"
-      />
-      <DetailDialog ref="detailDialogRef" :data-source="curRow" @close="onDetailDialogClose" />
-    </div>
-  </Spin>
+    <UserApiEditorDialog
+      ref="userApiEditorDialogRef"
+      :loading="editLoading"
+      @submit="onUserApiEditorSubmit"
+      @close="onUserApiEditorDialogClose"
+    />
+    <DetailDialog ref="detailDialogRef" :data-source="curRow" @close="onDetailDialogClose" />
+  </div>
 </template>
 
 <script lang="ts" setup name="outputManager">
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import { cloneDeep, isObject } from 'lodash-es';
-import { message, Modal } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import { useQtBridgeStore } from '@apps/dataManager/store/useQtBridge';
 import QtBridge from '@/utils/bridge/QtBridge';
+import QtRequestManager from '@/utils/bridge/QtRequestManager';
+import { setupDefaultInterceptors } from '@/utils/bridge/defaultInterceptors';
 import { isBridgeUsable } from '@/utils/bridge/tools';
+import { generateUUID } from '@/utils';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
 import DetailDialog from './components/DetailDialog/index.vue';
@@ -96,13 +100,15 @@ import {
   tableHeightOffset,
   tableMinHeight,
   initPagination,
-  initActionIdMap,
   initSearchForm,
   searchFormColumns,
   tableColumns,
+  processBeforeSearchFormSubmit,
 } from './config';
 import type { OutputManagerType } from './type';
-import { isJsonString, generateUUID } from '@/utils';
+import useSearchFormResize from '@/hooks/useSearchFormResize';
+
+const { searchFormItemColRef } = useSearchFormResize();
 
 /** Qt 桥接 store 实例 */
 const qtBridgeStore = useQtBridgeStore();
@@ -115,9 +121,7 @@ const curRow = ref<OutputManagerType.RowRecord>({});
 
 /** 当前查询表单值 */
 const searchForm = ref<OutputManagerType.SearchForm>({});
-/** 全量数据源（来自 Qt 请求） */
-const dataSource = ref<OutputManagerType.RowRecord[]>([]);
-/** 过滤后的表格数据 */
+/** 表格数据（来自 Qt 分页请求） */
 const tableData = ref<OutputManagerType.RowRecord[]>([]);
 /** 当前过滤结果总数 */
 const total = ref<number>(0);
@@ -125,85 +129,88 @@ const total = ref<number>(0);
 const tableHeight = ref<number>(defaultTableHeight);
 /** QtBridge 实例引用 */
 const bridgeRef = ref<QtBridge | null>(null);
+/** QtRequestManager 实例引用 */
+let requestManager: QtRequestManager | null = null;
 
 /** 分页状态 */
 const pagination = reactive(cloneDeep(initPagination));
 
-/** 请求 action_id 映射（用于响应匹配） */
-const actionIdMap = reactive<Record<string, string>>(cloneDeep(initActionIdMap));
-
-/** 当前页表格切片数据 */
-const paginationTableData = computed((): OutputManagerType.RowRecord[] => {
-  if (!total.value) {
-    return [];
-  }
-
-  const startIndex = (pagination.currentPage - 1) * pagination.pageSize;
-  const endIndex = pagination.currentPage * pagination.pageSize;
-  return tableData.value.slice(startIndex, endIndex);
+/** 各操作 loading 状态 */
+const loadingMap = reactive<Record<string, boolean>>({
+  get_mock_data_page: false,
+  edit_mock_data: false,
+  add_mock_data: false,
+  delete_mock_data: false,
+  copy_mock_data: false,
 });
 
-/** 页面级 loading（修复动作） */
-const pageLoading = computed((): boolean => Boolean(actionIdMap.fix_mock_data));
+/** 各请求的最新 token，用于竞态过滤 */
+const requestTokenMap = reactive<Record<string, string>>({});
 
 /** 表格级 loading（拉取/删除动作） */
 const tableLoading = computed((): boolean => {
-  const { get_mock_data = '', delete_mock_data = '' } = actionIdMap;
-  return Boolean(get_mock_data || delete_mock_data);
+  return loadingMap.get_mock_data_page || loadingMap.delete_mock_data;
 });
 
 /** 编辑弹窗级 loading（新增/编辑动作） */
 const editLoading = computed((): boolean => {
-  const { edit_mock_data = '', add_mock_data = '' } = actionIdMap;
-  return Boolean(edit_mock_data || add_mock_data);
+  return loadingMap.edit_mock_data || loadingMap.add_mock_data;
 });
 
 /**
- * 发送请求消息到 Qt。
- * @param options 请求参数
+ * 分页拉取接口数据。
+ * @param pageNum 当前页码
+ * @param pageSize 每页大小
  */
-const sendRequestMessage = (options: {
-  data?: Record<string, any>;
-  name?: OutputManagerType.ActionName;
-  extra?: Record<string, any>;
-}): void => {
-  if (!bridgeRef.value?.isRegister()) {
+const getDataSource = (pageNum: number, pageSize: number): void => {
+  if (!requestManager) {
     return;
   }
 
-  const { data = {}, name, extra = {} } = options;
-  if (!name) {
-    return;
-  }
+  const token = generateUUID();
+  requestTokenMap.get_mock_data_page = token;
+  loadingMap.get_mock_data_page = true;
 
-  const action_id = generateUUID();
-  actionIdMap[name] = action_id;
+  requestManager
+    .request({
+      name: 'get_mock_data_page',
+      params: {
+        ...searchForm.value,
+        page_num: pageNum,
+        page_size: pageSize,
+      },
+    })
+    .then(res => {
+      // 竞态过滤：非最新 token 的响应直接丢弃
+      if (requestTokenMap.get_mock_data_page !== token) return;
 
-  bridgeRef.value.sendObjMsg({
-    params: {},
-    ...data,
-    type: 'request',
-    name,
-    action_id,
-    extra,
-  });
+      const receiveData = isObject(res.data) ? res.data : {};
+      const {
+        list = [],
+        page_num: resPageNum = pageNum,
+        page_size: resPageSize = pageSize,
+        total: resTotal = 0,
+      } = receiveData;
+
+      tableData.value = Array.isArray(list) ? list : [];
+      pagination.currentPage = resPageNum;
+      pagination.pageSize = resPageSize;
+      total.value = resTotal;
+    })
+    .finally(() => {
+      if (requestTokenMap.get_mock_data_page === token) {
+        loadingMap.get_mock_data_page = false;
+      }
+    });
 };
 
 /**
- * 拉取接口数据源。
- * @param refresh 是否重置页码
- * @param params 请求参数
+ * 拉取接口数据。
+ * @param refresh 是否重置到第一页
  */
-const getDataSource = (refresh: boolean = true, params: Record<string, any> = {}): void => {
-  if (!bridgeRef.value?.isRegister()) {
-    return;
-  }
-
-  sendRequestMessage({
-    name: 'get_mock_data',
-    data: { params },
-    extra: { refresh },
-  });
+const fetchData = (refresh: boolean = false): void => {
+  const pageNum = refresh ? 1 : pagination.currentPage;
+  getDataSource(pageNum, pagination.pageSize);
 };
 
 /**
@@ -223,7 +230,7 @@ const getRowIndex = (index: number): number => {
 const onSizeChange = (current: number, pageSize: number): void => {
   pagination.currentPage = current;
   pagination.pageSize = pageSize;
-  onSearch();
+  getDataSource(current, pageSize);
 };
 
 /**
@@ -234,63 +241,16 @@ const onSizeChange = (current: number, pageSize: number): void => {
 const onPageChange = (page: number, pageSize: number): void => {
   pagination.currentPage = page;
   pagination.pageSize = pageSize;
-  onSearch();
-};
-
-/**
- * 按搜索条件执行本地过滤。
- */
-const onSearch = (): void => {
-  const keyList = searchFormColumns.map(item => item.key);
-  const matchList: { key: string; regexp: RegExp }[] = [];
-
-  keyList.forEach(key => {
-    const value = searchForm.value[key];
-    if (!value) {
-      return;
-    }
-
-    try {
-      const regexp = new RegExp(`${value}`, 'i');
-      matchList.push({ key, regexp });
-    } catch {
-      // noop
-    }
-  });
-
-  const isMatch = (record: OutputManagerType.RowRecord = {}): boolean => {
-    for (let i = 0; i < matchList.length; i++) {
-      const { key, regexp } = matchList[i];
-      const value = String(record[key]);
-      if (!regexp.test(value)) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  tableData.value = dataSource.value.filter(item => isMatch(item));
-  total.value = tableData.value.length;
+  getDataSource(page, pageSize);
 };
 
 /**
  * 搜索表单提交。
- * `type` 变化时会重新请求数据，否则仅本地过滤。
  * @param form 搜索表单值
  */
 const onSearchSubmit = (form: OutputManagerType.SearchForm = {}): void => {
-  const { type: oldType = '' } = searchForm.value;
-  const { type: newType = '' } = form;
   searchForm.value = cloneDeep(form);
-
-  if (oldType !== newType) {
-    getDataSource(true, { type: newType });
-    return;
-  }
-
-  pagination.currentPage = 1;
-  onSearch();
+  fetchData(true);
 };
 
 /**
@@ -304,34 +264,6 @@ const onResize = (entry: ResizeObserverEntry): void => {
 
   const { height } = entry.target.getBoundingClientRect();
   tableHeight.value = Math.max(tableMinHeight, height - tableHeightOffset);
-};
-
-/** 触发修复异常接口数据请求 */
-const onFixMockData = (): void => {
-  sendRequestMessage({
-    name: 'fix_mock_data',
-  });
-};
-
-/**
- * 校验接口数据是否可用于编辑/删除。
- * 缺少 id 时会弹框引导执行修复。
- * @param record 行数据
- */
-const checkApiDataValid = (record: OutputManagerType.RowRecord = {}): boolean => {
-  const { id = '' } = record;
-  const valid = Boolean(id);
-  if (!valid) {
-    Modal.confirm({
-      title: '确认',
-      content: '检测到接口数据异常，是否修复？',
-      onOk: () => {
-        onFixMockData();
-      },
-    });
-  }
-
-  return valid;
 };
 
 /** 新增按钮点击 */
@@ -359,10 +291,6 @@ const onDetailDialogClose = (): void => {
  * @param record 行数据
  */
 const onEdit = (record: OutputManagerType.RowRecord = {}): void => {
-  if (!checkApiDataValid(record)) {
-    return;
-  }
-
   curRow.value = cloneDeep(record);
   userApiEditorDialogRef.value?.show?.({ isEdit: true, formData: cloneDeep(record) });
 };
@@ -377,12 +305,34 @@ const onEditSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
     message.error('编辑接口数据失败！');
     return;
   }
+  if (!requestManager) {
+    return;
+  }
 
   const params = { id, ...formData };
-  sendRequestMessage({
-    name: 'edit_mock_data',
-    data: { params },
-  });
+  const token = generateUUID();
+  requestTokenMap.edit_mock_data = token;
+  loadingMap.edit_mock_data = true;
+  requestManager
+    .request({
+      name: 'edit_mock_data',
+      params,
+    })
+    .then(res => {
+      if (requestTokenMap.edit_mock_data !== token) return;
+      if (res.data) {
+        message.success('更新接口数据成功');
+        fetchData(false);
+        userApiEditorDialogRef.value?.close?.();
+      } else {
+        message.error('更新接口数据失败');
+      }
+    })
+    .finally(() => {
+      if (requestTokenMap.edit_mock_data === token) {
+        loadingMap.edit_mock_data = false;
+      }
+    });
 };
 
 /**
@@ -390,10 +340,32 @@ const onEditSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
  * @param formData 表单数据
  */
 const onAddSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
-  sendRequestMessage({
-    name: 'add_mock_data',
-    data: { params: formData },
-  });
+  if (!requestManager) {
+    return;
+  }
+  const token = generateUUID();
+  requestTokenMap.add_mock_data = token;
+  loadingMap.add_mock_data = true;
+  requestManager
+    .request({
+      name: 'add_mock_data',
+      params: formData,
+    })
+    .then(res => {
+      if (requestTokenMap.add_mock_data !== token) return;
+      if (res.data) {
+        message.success('新增接口数据成功');
+        fetchData(true);
+        userApiEditorDialogRef.value?.close?.();
+      } else {
+        message.error('新增接口数据失败');
+      }
+    })
+    .finally(() => {
+      if (requestTokenMap.add_mock_data === token) {
+        loadingMap.add_mock_data = false;
+      }
+    });
 };
 
 /**
@@ -414,8 +386,8 @@ const onUserApiEditorSubmit = (
 /** 编辑弹窗关闭回调 */
 const onUserApiEditorDialogClose = (): void => {
   curRow.value = {};
-  actionIdMap.edit_mock_data = '';
-  actionIdMap.add_mock_data = '';
+  loadingMap.edit_mock_data = false;
+  loadingMap.add_mock_data = false;
 };
 
 /**
@@ -423,15 +395,32 @@ const onUserApiEditorDialogClose = (): void => {
  * @param record 行数据
  */
 const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
-  if (!checkApiDataValid(record)) {
+  const { id = '' } = record;
+  if (!requestManager) {
     return;
   }
-
-  const { id = '' } = record;
-  sendRequestMessage({
-    name: 'delete_mock_data',
-    data: { params: { id } },
-  });
+  const token = generateUUID();
+  requestTokenMap.delete_mock_data = token;
+  loadingMap.delete_mock_data = true;
+  requestManager
+    .request({
+      name: 'delete_mock_data',
+      params: { id },
+    })
+    .then(res => {
+      if (requestTokenMap.delete_mock_data !== token) return;
+      if (res.data) {
+        message.success('删除接口数据成功');
+        fetchData(true);
+      } else {
+        message.error('删除接口数据失败');
+      }
+    })
+    .finally(() => {
+      if (requestTokenMap.delete_mock_data === token) {
+        loadingMap.delete_mock_data = false;
+      }
+    });
 };
 
 /**
@@ -439,132 +428,46 @@ const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
  * @param record 行数据
  */
 const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
+  if (!requestManager) {
+    return;
+  }
+
   const { type = '' } = searchForm.value;
   const refresh = type !== 'MITMPROXY';
 
   const params = {
-    ...record,
-    id: '',
-    type: 'USER',
+    id: record.id,
   };
-
-  sendRequestMessage({
-    name: 'copy_mock_data',
-    data: { params },
-    extra: { refresh },
-  });
-};
-
-/**
- * 处理请求类型响应事件。
- * @param eventData 事件数据
- */
-const onRequestEvent = (eventData: OutputManagerType.RequestEvent = {}): void => {
-  const { type = '', name = '', data = {}, action_id = '', extra = {} } = eventData;
-  if (type !== 'request') {
-    return;
-  }
-
-  if (!actionIdMap[name]) {
-    return;
-  }
-
-  if (!action_id || action_id !== actionIdMap[name]) {
-    return;
-  }
-
-  switch (name) {
-    case 'get_mock_data': {
-      const receiveData = isObject(data) ? data : {};
-      const { list = [] } = receiveData;
-      dataSource.value = Array.isArray(list) ? list : [];
-      const { refresh = true } = extra;
-      if (refresh) {
-        pagination.currentPage = 1;
-      }
-
-      onSearch();
-      break;
-    }
-    case 'fix_mock_data': {
-      if (data) {
-        message.success('修复异常接口数据成功');
-      } else {
-        message.error('修复异常接口数据失败');
-      }
-
-      getDataSource(true);
-      break;
-    }
-    case 'edit_mock_data': {
-      if (data) {
-        message.success('更新接口数据成功');
-        getDataSource(false);
-        userApiEditorDialogRef.value?.close?.();
-      } else {
-        message.error('更新接口数据失败');
-      }
-
-      break;
-    }
-    case 'add_mock_data': {
-      if (data) {
-        message.success('新增接口数据成功');
-        getDataSource(true);
-        userApiEditorDialogRef.value?.close?.();
-      } else {
-        message.error('新增接口数据失败');
-      }
-
-      break;
-    }
-    case 'delete_mock_data': {
-      if (data) {
-        message.success('删除接口数据成功');
-        getDataSource(true);
-      } else {
-        message.error('删除接口数据失败');
-      }
-
-      break;
-    }
-    case 'copy_mock_data': {
-      if (data) {
+  const token = generateUUID();
+  requestTokenMap.copy_mock_data = token;
+  loadingMap.copy_mock_data = true;
+  requestManager
+    .request({
+      name: 'copy_mock_data',
+      params,
+    })
+    .then(res => {
+      if (requestTokenMap.copy_mock_data !== token) return;
+      if (res.data) {
         message.success('复制接口数据成功');
-        const { refresh = true } = extra;
         if (refresh) {
-          getDataSource(refresh);
+          fetchData(true);
         }
       } else {
         message.error('复制接口数据失败');
       }
-
-      break;
-    }
-    default:
-  }
-
-  // 清除对应的 action_id
-  if (actionIdMap[name]) {
-    actionIdMap[name] = '';
-  }
+    })
+    .finally(() => {
+      if (requestTokenMap.copy_mock_data === token) {
+        loadingMap.copy_mock_data = false;
+      }
+    });
 };
 
-/**
- * Qt receive 事件回调。
- * @param messageStr Qt 下发消息
- */
-const onReceive = (messageStr: string = ''): void => {
-  const eventData = isJsonString(messageStr) ? JSON.parse(messageStr) : {};
-  const { type = '' } = eventData;
-  if (type === 'request') {
-    onRequestEvent(eventData);
-  }
-};
-
-/** 销毁 bridge 订阅与实例 */
+/** 销毁 requestManager 与 bridge 实例 */
 const destroyBridge = (): void => {
-  bridgeRef.value?.unsubscribe('receive', onReceive);
+  requestManager?.destroy();
+  requestManager = null;
   bridgeRef.value?.destroy();
   bridgeRef.value = null;
 };
@@ -582,7 +485,10 @@ const init = (): void => {
   destroyBridge();
 
   const bridge = new QtBridge({ bridge: dataManager });
-  bridge.subscribe('receive', onReceive);
+  requestManager = new QtRequestManager(bridge, { timeout: 10000 });
+
+  setupDefaultInterceptors(requestManager, message.error);
+
   bridgeRef.value = bridge;
 
   nextTick(() => {

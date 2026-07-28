@@ -1,5 +1,8 @@
 import type { Form as FormType } from '@/components/form/types';
+import { getRangePickerRanges } from '@/components/form/tools';
 import type { OutputManagerType } from './type';
+import { cloneDeep } from 'lodash-es';
+import dayjs from 'dayjs';
 
 /** 表格默认可视高度（px） */
 const defaultTableHeight = 550;
@@ -13,16 +16,6 @@ const initPagination = {
   currentPage: 1,
   pageSize: 10,
   pageSizes: ['10', '20', '50', '100'],
-};
-
-/** 请求 action_id 初始映射（用于响应匹配） */
-const initActionIdMap: Record<OutputManagerType.ActionName, string> = {
-  get_mock_data: '',
-  fix_mock_data: '',
-  edit_mock_data: '',
-  add_mock_data: '',
-  delete_mock_data: '',
-  copy_mock_data: '',
 };
 
 /** 搜索表单初始值 */
@@ -65,7 +58,40 @@ const searchFormColumns: FormType.FormItemOptions[] = [
     key: 'response',
     inputType: 'input',
   },
+  {
+    label: '创建时间',
+    key: 'create_time_range',
+    inputType: 'rangePicker',
+    inputProps: {
+      ranges: getRangePickerRanges(),
+    },
+  },
 ];
+
+const processBeforeSearchFormSubmit = (form: Record<string, any> = {}): Record<string, any> => {
+  const formCp = cloneDeep(form);
+  const submitForm: Record<string, any> = {};
+  Object.keys(formCp).forEach(key => {
+    const value = formCp[key];
+    if (key !== 'create_time_range') {
+      submitForm[key] = value;
+      return;
+    }
+
+    if (!Array.isArray(value)) {
+      return;
+    }
+
+    const [startTime, endTime] = value;
+    if (!startTime || !endTime) {
+      return;
+    }
+
+    submitForm['create_start_time'] = dayjs(startTime).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    submitForm['create_end_time'] = dayjs(endTime).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+  });
+  return submitForm;
+};
 
 /** 列表表格列配置 */
 const tableColumns: OutputManagerType.TableColumn[] = [
@@ -84,6 +110,7 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     title: '请求Url',
     dataIndex: 'url',
     key: 'url',
+    width: 240,
   },
   {
     title: '请求类型',
@@ -95,6 +122,19 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     title: '请求参数',
     dataIndex: 'params',
     key: 'params',
+    width: 240,
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'created_at',
+    key: 'created_at',
+    width: 180,
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updated_at',
+    key: 'updated_at',
+    width: 180,
   },
   {
     title: '操作',
@@ -109,8 +149,8 @@ export {
   tableHeightOffset,
   tableMinHeight,
   initPagination,
-  initActionIdMap,
   initSearchForm,
   searchFormColumns,
+  processBeforeSearchFormSubmit,
   tableColumns,
 };

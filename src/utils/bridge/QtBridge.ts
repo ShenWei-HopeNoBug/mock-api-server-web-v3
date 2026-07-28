@@ -4,6 +4,11 @@ import { isObject } from 'lodash-es';
 import { isBridgeUsable } from './tools';
 
 class QtBridge extends PubSub<QtBridgeType.EventMap> {
+  static readonly EVENT = {
+    RECEIVE: 'RECEIVE',
+    BEFORE_DESTROY: 'BEFORE_DESTROY',
+  } as const;
+
   // 是否已注册
   private register: boolean = false;
 
@@ -173,6 +178,8 @@ class QtBridge extends PubSub<QtBridgeType.EventMap> {
       return;
     }
 
+    // 先广播遗言消息，确保订阅者在订阅被清理前能收到
+    this.publish(QtBridge.EVENT.BEFORE_DESTROY);
     this.dispose();
     this.destroyed = true;
   }
@@ -199,30 +206,33 @@ class QtBridge extends PubSub<QtBridgeType.EventMap> {
   /**
    * 发送字符串消息给 Qt 客户端。
    * @param message 消息内容
+   * @returns 发送结果，success 为 true 表示已调用底层发送方法
    */
-  send(message: string = ''): void {
+  send(message: string = ''): QtBridgeType.SendResult {
     if (this.destroyed) {
-      return;
+      return { success: false };
     }
 
     if (!this.register) {
-      return;
+      return { success: false };
     }
 
     this.bridge?.send_js2qt_msg?.(message);
+    return { success: true };
   }
 
   /**
    * 发送对象消息给 Qt 客户端（内部会序列化为 JSON 字符串）。
    * @param data 待发送的数据对象
+   * @returns 发送结果，success 为 true 表示已调用底层发送方法
    */
-  sendObjMsg(data: unknown = {}): void {
+  sendObjMsg(data: unknown = {}): QtBridgeType.SendResult {
     if (this.destroyed) {
-      return;
+      return { success: false };
     }
 
     const sendData = isObject(data) ? data : {};
-    this.send(JSON.stringify(sendData));
+    return this.send(JSON.stringify(sendData));
   }
 
   /**
@@ -234,7 +244,7 @@ class QtBridge extends PubSub<QtBridgeType.EventMap> {
       return;
     }
 
-    this.publish('receive', message);
+    this.publish(QtBridge.EVENT.RECEIVE, message);
   }
 }
 

@@ -125,6 +125,12 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     width: 240,
   },
   {
+    title: '响应延时(ms)',
+    dataIndex: 'timeout',
+    key: 'timeout',
+    width: 120,
+  },
+  {
     title: '创建时间',
     dataIndex: 'created_at',
     key: 'created_at',

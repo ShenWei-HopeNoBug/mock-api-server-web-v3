@@ -195,6 +195,25 @@ class QtRequestManager {
   }
 
   /**
+   * 发起请求（axios 风格签名），内部调用 request。
+   * @param name 请求名称（协议标识）
+   * @param params 请求参数，对应消息体的 params 字段
+   * @param config 额外配置（timeout / noMessage）
+   * @returns 响应载荷 Promise
+   */
+  fetch<T = any, P extends Record<string, any> = Record<string, any>>(
+    name: string,
+    params?: P,
+    config?: QtRequestManagerType.FetchConfig,
+  ): Promise<T> {
+    return this.request<T>({
+      name,
+      params,
+      ...config,
+    });
+  }
+
+  /**
    * 统一销毁流程：清理所有 pending 请求、解绑订阅、标记销毁。
    * @param errorCode 拒绝 pending 请求时使用的错误码
    * @param errorMessage 拒绝 pending 请求时使用的错误消息

@@ -7,7 +7,4 @@ export const defaultAttrsMap = {
     modeList: ['tree', 'code', 'form', 'view'],
     currentMode: 'code',
   },
-  copyButtonOptions: {
-    type: 'primary',
-  },
 };

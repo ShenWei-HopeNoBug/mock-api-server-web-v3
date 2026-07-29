@@ -1,5 +1,4 @@
-import type { OutputManagerType } from '@apps/dataManager/views/outputManager/type';
-import { JsonInputType } from '@/components/ui/input/JsonInput/type';
+import type { DataManagerType } from '#/qt/dataManager';
 
 export declare namespace DetailDialogType {
   type FieldType = 'text' | 'jsonString';
@@ -8,6 +7,10 @@ export declare namespace DetailDialogType {
     label: string;
     key: string;
     type: FieldType;
-    codeEditorBindAttrs?: JsonInputType.CodeEditorAttrs;
+    readonly?: boolean;
+  }
+
+  interface DataSource extends DataManagerType.ApiData {
+    [key: string]: any;
   }
 }

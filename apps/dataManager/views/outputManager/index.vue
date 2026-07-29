@@ -43,13 +43,11 @@
                   <a-button type="link">复制</a-button>
                 </a-popconfirm>
 
-                <template v-if="record.type === 'USER'">
-                  <a-button type="link" @click="onEdit(record)">编辑</a-button>
+                <a-button type="link" @click="onEdit(record)">编辑</a-button>
 
-                  <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
-                    <a-button danger type="link">删除</a-button>
-                  </a-popconfirm>
-                </template>
+                <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
+                  <a-button danger type="link">删除</a-button>
+                </a-popconfirm>
               </div>
             </template>
           </template>
@@ -82,14 +80,9 @@
 </template>
 
 <script lang="ts" setup name="outputManager">
-import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue';
-import { cloneDeep, isObject } from 'lodash-es';
+import { computed, nextTick, reactive, ref } from 'vue';
+import { cloneDeep, isPlainObject } from 'lodash-es';
 import { message } from 'ant-design-vue';
-import { useQtBridgeStore } from '@apps/dataManager/store/useQtBridge';
-import QtBridge from '@/utils/bridge/QtBridge';
-import QtRequestManager from '@/utils/bridge/QtRequestManager';
-import { setupDefaultInterceptors } from '@/utils/bridge/defaultInterceptors';
-import { isBridgeUsable } from '@/utils/bridge/tools';
 import { generateUUID } from '@/utils';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
@@ -107,11 +100,19 @@ import {
 } from './config';
 import type { OutputManagerType } from './type';
 import useSearchFormResize from '@/hooks/useSearchFormResize';
+import { useOutputManagerApi } from './hooks/useOutputManagerApi';
 
 const { searchFormItemColRef } = useSearchFormResize();
 
-/** Qt 桥接 store 实例 */
-const qtBridgeStore = useQtBridgeStore();
+const { getMockDataPage, editMockData, addMockData, deleteMockData, copyMockData } =
+  useOutputManagerApi({
+    onReady: () => {
+      nextTick(() => {
+        onSearchSubmit(initSearchForm);
+      });
+    },
+  });
+
 /** 详情弹窗实例 */
 const detailDialogRef = ref<InstanceType<typeof DetailDialog> | null>(null);
 /** 编辑弹窗实例 */
@@ -127,10 +128,6 @@ const tableData = ref<OutputManagerType.RowRecord[]>([]);
 const total = ref<number>(0);
 /** 表格可视高度（单位 px） */
 const tableHeight = ref<number>(defaultTableHeight);
-/** QtBridge 实例引用 */
-const bridgeRef = ref<QtBridge | null>(null);
-/** QtRequestManager 实例引用 */
-let requestManager: QtRequestManager | null = null;
 
 /** 分页状态 */
 const pagination = reactive(cloneDeep(initPagination));
@@ -163,28 +160,20 @@ const editLoading = computed((): boolean => {
  * @param pageSize 每页大小
  */
 const getDataSource = (pageNum: number, pageSize: number): void => {
-  if (!requestManager) {
-    return;
-  }
-
   const token = generateUUID();
   requestTokenMap.get_mock_data_page = token;
   loadingMap.get_mock_data_page = true;
 
-  requestManager
-    .request({
-      name: 'get_mock_data_page',
-      params: {
-        ...searchForm.value,
-        page_num: pageNum,
-        page_size: pageSize,
-      },
-    })
+  getMockDataPage({
+    ...searchForm.value,
+    page_num: pageNum,
+    page_size: pageSize,
+  })
     .then(res => {
       // 竞态过滤：非最新 token 的响应直接丢弃
       if (requestTokenMap.get_mock_data_page !== token) return;
 
-      const receiveData = isObject(res.data) ? res.data : {};
+      const receiveData = isPlainObject(res) ? res : {};
       const {
         list = [],
         page_num: resPageNum = pageNum,
@@ -269,6 +258,7 @@ const onResize = (entry: ResizeObserverEntry): void => {
 /** 新增按钮点击 */
 const onAdd = (): void => {
   curRow.value = {};
+  // 新增时默认 USER 类型
   userApiEditorDialogRef.value?.show?.({ isEdit: false });
 };
 
@@ -292,7 +282,11 @@ const onDetailDialogClose = (): void => {
  */
 const onEdit = (record: OutputManagerType.RowRecord = {}): void => {
   curRow.value = cloneDeep(record);
-  userApiEditorDialogRef.value?.show?.({ isEdit: true, formData: cloneDeep(record) });
+  userApiEditorDialogRef.value?.show?.({
+    isEdit: true,
+    formData: cloneDeep(record),
+    recordType: record.type,
+  });
 };
 
 /**
@@ -305,22 +299,16 @@ const onEditSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
     message.error('编辑接口数据失败！');
     return;
   }
-  if (!requestManager) {
-    return;
-  }
-
   const params = { id, ...formData };
   const token = generateUUID();
   requestTokenMap.edit_mock_data = token;
   loadingMap.edit_mock_data = true;
-  requestManager
-    .request({
-      name: 'edit_mock_data',
-      params,
-    })
+  editMockData(params)
     .then(res => {
-      if (requestTokenMap.edit_mock_data !== token) return;
-      if (res.data) {
+      if (requestTokenMap.edit_mock_data !== token) {
+        return;
+      }
+      if (res) {
         message.success('更新接口数据成功');
         fetchData(false);
         userApiEditorDialogRef.value?.close?.();
@@ -340,20 +328,15 @@ const onEditSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
  * @param formData 表单数据
  */
 const onAddSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
-  if (!requestManager) {
-    return;
-  }
   const token = generateUUID();
   requestTokenMap.add_mock_data = token;
   loadingMap.add_mock_data = true;
-  requestManager
-    .request({
-      name: 'add_mock_data',
-      params: formData,
-    })
+  addMockData(formData)
     .then(res => {
-      if (requestTokenMap.add_mock_data !== token) return;
-      if (res.data) {
+      if (requestTokenMap.add_mock_data !== token) {
+        return;
+      }
+      if (res) {
         message.success('新增接口数据成功');
         fetchData(true);
         userApiEditorDialogRef.value?.close?.();
@@ -396,20 +379,15 @@ const onUserApiEditorDialogClose = (): void => {
  */
 const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
   const { id = '' } = record;
-  if (!requestManager) {
-    return;
-  }
   const token = generateUUID();
   requestTokenMap.delete_mock_data = token;
   loadingMap.delete_mock_data = true;
-  requestManager
-    .request({
-      name: 'delete_mock_data',
-      params: { id },
-    })
+  deleteMockData({ id })
     .then(res => {
-      if (requestTokenMap.delete_mock_data !== token) return;
-      if (res.data) {
+      if (requestTokenMap.delete_mock_data !== token) {
+        return;
+      }
+      if (res) {
         message.success('删除接口数据成功');
         fetchData(true);
       } else {
@@ -428,10 +406,6 @@ const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
  * @param record 行数据
  */
 const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
-  if (!requestManager) {
-    return;
-  }
-
   const { type = '' } = searchForm.value;
   const refresh = type !== 'MITMPROXY';
 
@@ -441,14 +415,12 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
   const token = generateUUID();
   requestTokenMap.copy_mock_data = token;
   loadingMap.copy_mock_data = true;
-  requestManager
-    .request({
-      name: 'copy_mock_data',
-      params,
-    })
+  copyMockData(params)
     .then(res => {
-      if (requestTokenMap.copy_mock_data !== token) return;
-      if (res.data) {
+      if (requestTokenMap.copy_mock_data !== token) {
+        return;
+      }
+      if (res) {
         message.success('复制接口数据成功');
         if (refresh) {
           fetchData(true);
@@ -463,58 +435,6 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
       }
     });
 };
-
-/** 销毁 requestManager 与 bridge 实例 */
-const destroyBridge = (): void => {
-  requestManager?.destroy();
-  requestManager = null;
-  bridgeRef.value?.destroy();
-  bridgeRef.value = null;
-};
-
-/**
- * 初始化页面通信与首屏数据。
- */
-const init = (): void => {
-  const { dataManager = null } = qtBridgeStore.channelObj || {};
-  if (!isObject(dataManager) || !isBridgeUsable(dataManager)) {
-    message.error('dataManager 通信对象获取失败！');
-    return;
-  }
-
-  destroyBridge();
-
-  const bridge = new QtBridge({ bridge: dataManager });
-  requestManager = new QtRequestManager(bridge, { timeout: 10000 });
-
-  setupDefaultInterceptors(requestManager, message.error);
-
-  bridgeRef.value = bridge;
-
-  nextTick(() => {
-    onSearchSubmit(initSearchForm);
-  });
-};
-
-/**
- * 监听 Qt 注册状态，注册完成后执行初始化。
- */
-watch(
-  () => qtBridgeStore.register,
-  bool => {
-    if (bool) {
-      init();
-    }
-  },
-  { immediate: true },
-);
-
-/**
- * 组件卸载时清理 bridge 订阅与实例。
- */
-onBeforeUnmount(() => {
-  destroyBridge();
-});
 </script>
 
 <style scoped lang="scss">

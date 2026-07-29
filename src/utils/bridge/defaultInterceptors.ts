@@ -1,9 +1,9 @@
 import type QtRequestManager from './QtRequestManager';
 import type { QtRequestManagerType } from './type';
 
-/** 默认响应拦截器：解包 QtResponse → ResponsePayload */
+/** 默认响应拦截器：解包 QtResponse → ResponsePayload.data（业务数据） */
 export const defaultResponseOnFulfilled = (qtResponse: QtRequestManagerType.QtResponse) =>
-  qtResponse.data;
+  qtResponse.data.data;
 
 /** 默认错误拦截器：noMessage 检查 + 全局 toast */
 export const defaultResponseOnRejected = (

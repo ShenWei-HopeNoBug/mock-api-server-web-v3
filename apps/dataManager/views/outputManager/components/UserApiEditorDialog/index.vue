@@ -15,7 +15,7 @@
       <div class="scroll" v-jump-forbid>
         <BaseForm
           ref="baseFormRef"
-          :columns="userApiEditFormColumns"
+          :columns="formColumns"
           :init-form-values="initFormValues"
           :process-before-submit="processBeforeSubmit"
           :form-item-col="24"
@@ -27,6 +27,7 @@
               <JsonInput
                 ref="paramsRef"
                 v-model:value="scoped.form[scoped.options.key]"
+                :readonly="isMitmproxy"
                 :code-editor-style="{ height: '300px' }"
                 default-copy-content="{}"
               />
@@ -36,6 +37,7 @@
               <JsonInput
                 ref="responseRef"
                 v-model:value="scoped.form[scoped.options.key]"
+                :readonly="isMitmproxy"
                 :code-editor-style="{ height: previewHeight }"
                 default-copy-content="{}"
               />
@@ -59,12 +61,8 @@ import BaseForm from '@/components/form/BaseForm/index.vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
 import type { OutputManagerType } from '../../type';
 import type { UserApiEditorDialogType } from './type';
-import {
-  userApiEditFormColumns,
-  getDefaultFormValues,
-  processBeforeSubmit,
-  formProps,
-} from './config';
+import { getDefaultFormValues, processBeforeSubmit, formProps } from './config';
+import { useFormColumns } from './useFormColumns';
 
 interface Props {
   loading?: boolean;
@@ -80,20 +78,23 @@ const emits = defineEmits<{
 }>();
 
 const baseFormRef = ref<InstanceType<typeof BaseForm> | null>(null);
-const paramsRef = ref<{ validate?: () => boolean } | null>(null);
-const responseRef = ref<{ validate?: () => boolean } | null>(null);
+const paramsRef = ref<InstanceType<typeof JsonInput> | null>(null);
+const responseRef = ref<InstanceType<typeof JsonInput> | null>(null);
 
 const visible = ref<boolean>(false);
 const previewHeight = ref<string>('300px');
-const showOptions = ref<UserApiEditorDialogType.ShowOptions>({ isEdit: true });
+const showOptions = ref<UserApiEditorDialogType.ShowOptions>({ isEdit: false });
 const initFormValues = ref<OutputManagerType.RowRecord>({});
 
-const isEdit = computed<boolean>(() => Boolean(showOptions.value?.isEdit ?? true));
+const { recordType, isMitmproxy, formColumns } = useFormColumns();
+
+const isEdit = computed<boolean>(() => Boolean(showOptions.value?.isEdit || false));
 
 // 重置弹窗内部状态
 const initStates = (): void => {
   previewHeight.value = '300px';
-  showOptions.value = { isEdit: true };
+  showOptions.value = { isEdit: false };
+  recordType.value = 'USER';
 };
 
 // 内容区尺寸变化时，动态调整 Response 编辑区高度
@@ -112,11 +113,13 @@ const onResize = (entry: ResizeObserverEntry): void => {
 const show = (options: UserApiEditorDialogType.ShowOptions = {}): void => {
   initStates();
   showOptions.value = options || { isEdit: true };
+  recordType.value = options?.recordType || 'USER';
 
   const formData = isEdit.value ? cloneDeep(options?.formData ?? {}) : getDefaultFormValues();
   initFormValues.value = {
     ...getDefaultFormValues(),
     ...(formData || {}),
+    type: recordType.value,
   };
 
   nextTick(() => {
@@ -128,7 +131,6 @@ const show = (options: UserApiEditorDialogType.ShowOptions = {}): void => {
 const close = (): void => {
   visible.value = false;
   emits('close', isEdit.value);
-  initStates();
 };
 
 // 校验 Params/Response 的 JSON 合法性

@@ -16,14 +16,14 @@
           <div v-if="item.type === 'jsonString'" class="value">
             <div class="json-area">
               <JsonInput
-                :value="String(dataSource?.[item.key] ?? '')"
-                :code-editor-bind-attrs="item.codeEditorBindAttrs"
+                :value="getValue(item)"
+                :readonly="item.readonly"
                 :code-editor-style="codeEditorStyleMap[item.key]"
                 default-copy-content="{}"
               />
             </div>
           </div>
-          <div v-else class="value">{{ dataSource?.[item.key] }}</div>
+          <div v-else class="value">{{ getValue(item) }}</div>
         </div>
       </div>
     </div>
@@ -33,14 +33,15 @@
 <script lang="ts" setup name="DetailDialog">
 import { ref } from 'vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
-import type { OutputManagerType } from '../../type';
 import { columns, codeEditorStyleMap } from './config';
+import type { DetailDialogType } from './type';
+import { isPlainObject } from 'lodash-es';
 
 interface Props {
-  dataSource?: OutputManagerType.RowRecord;
+  dataSource?: DetailDialogType.DataSource;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   dataSource: () => ({}),
 });
 
@@ -49,6 +50,19 @@ const emits = defineEmits<{
 }>();
 
 const visible = ref<boolean>(false);
+
+const getValue = (options: DetailDialogType.ColumnItem): string => {
+  const key = options.key || '';
+  if (!key) {
+    return '';
+  }
+
+  if (!isPlainObject(props.dataSource)) {
+    return '';
+  }
+
+  return String(props.dataSource[key] || '');
+};
 
 const show = (): void => {
   visible.value = true;

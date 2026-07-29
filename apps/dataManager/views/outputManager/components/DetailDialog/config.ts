@@ -18,26 +18,21 @@ const columns: DetailDialogType.ColumnItem[] = [
     type: 'text',
   },
   {
+    label: '响应延时(ms)',
+    key: 'timeout',
+    type: 'text',
+  },
+  {
     label: 'Params',
     key: 'params',
     type: 'jsonString',
-    codeEditorBindAttrs: {
-      // 只读模式
-      options: {
-        onEditable: () => false,
-      },
-    },
+    readonly: true,
   },
   {
     label: 'Response',
     key: 'response',
     type: 'jsonString',
-    codeEditorBindAttrs: {
-      // 只读模式
-      options: {
-        onEditable: () => false,
-      },
-    },
+    readonly: true,
   },
 ];
 

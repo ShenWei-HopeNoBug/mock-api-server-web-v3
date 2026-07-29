@@ -1,52 +1,15 @@
 import { cloneDeep } from 'lodash-es';
 import qs from 'qs';
 import { isJsonString } from '@/utils';
-import type { UserApiEditorDialogType } from './type';
 import { isPlainObject } from 'lodash-es';
 
-const userApiEditFormColumns: UserApiEditorDialogType.FormColumns = [
-  {
-    required: true,
-    label: 'Url',
-    key: 'url',
-    inputType: 'textarea',
-  },
-  {
-    required: true,
-    label: 'Method',
-    key: 'method',
-    inputType: 'select',
-    options: [
-      {
-        label: 'GET',
-        value: 'GET',
-      },
-      {
-        label: 'POST',
-        value: 'POST',
-      },
-    ],
-  },
-  {
-    slot: true,
-    required: true,
-    label: 'Params',
-    key: 'params',
-    inputType: '#input#',
-  },
-  {
-    slot: true,
-    required: true,
-    label: 'Response',
-    key: 'response',
-    inputType: '#input#',
-  },
-];
-
+/** 新增接口时的默认表单值 */
 const getDefaultFormValues = (): Record<string, any> => ({
+  type: 'USER',
   method: 'GET',
   params: '{}',
   response: '{}',
+  timeout: 0,
 });
 
 /**
@@ -62,14 +25,32 @@ const getDefaultFormValues = (): Record<string, any> => ({
  */
 const processBeforeSubmit = (form: Record<string, any> = {}): Record<string, any> => {
   const formCp = cloneDeep(form);
-  const submitForm: Record<string, any> = { type: 'USER' };
-  const keyList = userApiEditFormColumns.map(item => item.key);
 
-  // 按配置项提取字段，并规范 JSON 字段格式
-  keyList.forEach(key => {
+  // MITMPROXY 类型仅允许编辑 timeout，其余字段不提交
+  if (formCp.type === 'MITMPROXY') {
+    return {
+      timeout: formCp.timeout || 0,
+    };
+  }
+
+  // USER 类型：遍历表单字段，规范格式后提交
+  const submitForm: Record<string, any> = {};
+
+  // 按表单字段提取并规范 JSON 字段格式
+  Object.keys(formCp).forEach(key => {
+    // type 字段固定不可编辑，不提交
+    if (key === 'type') {
+      return;
+    }
+
     const value = formCp[key];
     if (key === 'params' || key === 'response') {
       submitForm[key] = isJsonString(value) ? JSON.stringify(JSON.parse(value)) : '{}';
+      return;
+    }
+
+    if (key === 'timeout') {
+      submitForm[key] = typeof value === 'number' ? value : Number(value) || 0;
       return;
     }
 
@@ -105,9 +86,10 @@ const processBeforeSubmit = (form: Record<string, any> = {}): Record<string, any
   return submitForm;
 };
 
+/** BaseForm 布局配置 */
 const formProps: Record<string, any> = {
   labelCol: { span: 3 },
   wrapperCol: { span: 21 },
 };
 
-export { userApiEditFormColumns, getDefaultFormValues, processBeforeSubmit, formProps };
+export { getDefaultFormValues, processBeforeSubmit, formProps };

@@ -48,6 +48,8 @@ interface Props {
   codeEditorStyle?: CSSProperties;
   /** 默认复制内容，当 JSON 无效时使用 */
   defaultCopyContent?: string;
+  /** 是否只读，为 true 时编辑器不可编辑 */
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   codeEditorBindAttrs: () => ({}),
   codeEditorStyle: () => ({}),
   defaultCopyContent: '',
+  readonly: false,
 });
 
 const emits = defineEmits<{
@@ -100,10 +103,22 @@ const parseEditorValue = (val: string) => {
 const getBindAttrs = (type: keyof typeof defaultAttrsMap, bindAttrs: Record<string, any> = {}) => {
   const defaultAttrs = defaultAttrsMap[type] || {};
   const elemAttrs = bindAttrs || {};
-  return {
+  const result: Record<string, any> = {
     ...defaultAttrs,
     ...elemAttrs,
   };
+
+  if (type === 'codeEditor' && props.readonly) {
+    result.options = {
+      ...(result.options || {}),
+      /**
+       * 禁用编辑器编辑功能，实现类似 readonly 的效果
+       * */
+      onEditable: () => false,
+    };
+  }
+
+  return result;
 };
 
 /**

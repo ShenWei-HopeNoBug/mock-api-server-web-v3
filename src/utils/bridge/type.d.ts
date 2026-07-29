@@ -111,6 +111,9 @@ export declare namespace QtRequestManagerType {
     data: ResponsePayload | null;
   }
 
+  /** fetch 方法的配置项（request 的精简版，排除 name/params/data） */
+  type FetchConfig = Omit<RequestConfig, 'name' | 'params' | 'data'>;
+
   /** 构造器选项 */
   interface ConstructorOptions {
     timeout?: number;

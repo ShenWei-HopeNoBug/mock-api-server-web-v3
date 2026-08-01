@@ -32,5 +32,14 @@ export declare namespace Form {
     rules?: CommonObject[]; // 完整校验规则（会覆盖内置规则）
     firstRule?: CommonObject; // 第一个校验规则（会和内置规则合并）
     extraRules?: CommonObject[]; // 额外补充的校验规则
+    onChange?: (ctx: FormItemOnChangeContext) => void; // 值变化回调
+  }
+
+  // 表单元素 onChange 回调上下文
+  interface FormItemOnChangeContext {
+    value: any;
+    key: string;
+    formState: CommonObject;
+    options: FormItemOptions;
   }
 }

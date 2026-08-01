@@ -8,13 +8,18 @@ const columns: DetailDialogType.ColumnItem[] = [
     type: 'text',
   },
   {
-    label: 'Url',
+    label: '请求Url',
     key: 'url',
     type: 'text',
   },
   {
-    label: 'Method',
+    label: '请求类型',
     key: 'method',
+    type: 'text',
+  },
+  {
+    label: 'Content-Type',
+    key: 'request_content_type',
     type: 'text',
   },
   {
@@ -23,13 +28,13 @@ const columns: DetailDialogType.ColumnItem[] = [
     type: 'text',
   },
   {
-    label: 'Params',
+    label: '请求参数',
     key: 'params',
     type: 'jsonString',
     readonly: true,
   },
   {
-    label: 'Response',
+    label: '响应数据',
     key: 'response',
     type: 'jsonString',
     readonly: true,

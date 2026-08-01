@@ -7,6 +7,7 @@ import { isPlainObject } from 'lodash-es';
 const getDefaultFormValues = (): Record<string, any> => ({
   type: 'USER',
   method: 'GET',
+  request_content_type: 'NONE',
   params: '{}',
   response: '{}',
   timeout: 0,

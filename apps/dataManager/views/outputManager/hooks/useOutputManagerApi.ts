@@ -2,6 +2,8 @@ import { message } from 'ant-design-vue';
 import { useDataManagerRequest } from '@apps/dataManager/hooks/useDataManagerRequest';
 import type { DataManagerType } from '#/qt/dataManager';
 
+const NOT_READY_MSG: string = 'requestManager 未初始化';
+
 /**
  * outputManager 视图的 API hook。
  *
@@ -21,52 +23,52 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     onError: message.error,
   });
 
+  /** 统一守卫：requestManager 未就绪时弹 toast 并 reject，否则执行 fetch */
+  const guardedFetch = <T = any, P extends Record<string, any> = Record<string, any>>(
+    action: string,
+    params: P,
+  ): Promise<T> => {
+    const manager = requestManager.value;
+    if (!manager) {
+      message.error(NOT_READY_MSG);
+      return Promise.reject(new Error(NOT_READY_MSG));
+    }
+    return manager.fetch<T, P>(action, params);
+  };
+
   /** 获取 Mock 接口分页数据 */
   const getMockDataPage = (
     params: DataManagerType.GetMockDataPageParams = {},
-  ): Promise<DataManagerType.GetMockDataPageRes> => {
-    const manager = requestManager.value;
-    if (!manager) {
-      return Promise.reject(new Error('requestManager 未初始化'));
-    }
-    return manager.fetch<DataManagerType.GetMockDataPageRes>('get_mock_data_page', params);
-  };
+  ): Promise<DataManagerType.GetMockDataPageRes> =>
+    guardedFetch<DataManagerType.GetMockDataPageRes, DataManagerType.GetMockDataPageParams>(
+      'get_mock_data_page',
+      params,
+    );
 
   /** 编辑 Mock 接口数据 */
-  const editMockData = (params: DataManagerType.EditMockDataParams = {}): Promise<boolean> => {
-    const manager = requestManager.value;
-    if (!manager) {
-      return Promise.reject(new Error('requestManager 未初始化'));
-    }
-    return manager.fetch<boolean>('edit_mock_data', params);
-  };
+  const editMockData = (params: DataManagerType.EditMockDataParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.EditMockDataParams>('edit_mock_data', params);
 
   /** 新增 Mock 接口数据 */
-  const addMockData = (params: DataManagerType.AddMockDataParams = {}): Promise<boolean> => {
-    const manager = requestManager.value;
-    if (!manager) {
-      return Promise.reject(new Error('requestManager 未初始化'));
-    }
-    return manager.fetch<boolean>('add_mock_data', params);
-  };
+  const addMockData = (params: DataManagerType.AddMockDataParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.AddMockDataParams>('add_mock_data', params);
 
   /** 删除 Mock 接口数据 */
-  const deleteMockData = (params: DataManagerType.DeleteMockDataParams = {}): Promise<boolean> => {
-    const manager = requestManager.value;
-    if (!manager) {
-      return Promise.reject(new Error('requestManager 未初始化'));
-    }
-    return manager.fetch<boolean>('delete_mock_data', params);
-  };
+  const deleteMockData = (params: DataManagerType.DeleteMockDataParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.DeleteMockDataParams>('delete_mock_data', params);
+
+  /** 批量删除 Mock 接口数据（按筛选条件） */
+  const batchDeleteMockData = (
+    params: DataManagerType.BatchDeleteMockDataParams = {},
+  ): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.BatchDeleteMockDataParams>(
+      'batch_delete_mock_data',
+      params,
+    );
 
   /** 复制 Mock 接口数据 */
-  const copyMockData = (params: DataManagerType.CopyMockDataParams = {}): Promise<boolean> => {
-    const manager = requestManager.value;
-    if (!manager) {
-      return Promise.reject(new Error('requestManager 未初始化'));
-    }
-    return manager.fetch<boolean>('copy_mock_data', params);
-  };
+  const copyMockData = (params: DataManagerType.CopyMockDataParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.CopyMockDataParams>('copy_mock_data', params);
 
   return {
     isReady,
@@ -74,6 +76,7 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     editMockData,
     addMockData,
     deleteMockData,
+    batchDeleteMockData,
     copyMockData,
   };
 };

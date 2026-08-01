@@ -12,6 +12,4 @@ export declare namespace UserApiEditorDialogType {
     form: OutputManagerType.RowRecord;
     isEdit: boolean;
   }
-
-  type FormColumns = FormType.FormItemOptions[];
 }

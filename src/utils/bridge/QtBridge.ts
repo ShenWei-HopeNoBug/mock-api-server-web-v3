@@ -1,6 +1,6 @@
 import PubSub from '@/utils/PubSub';
 import type { QtBridgeType } from './type';
-import { isObject } from 'lodash-es';
+import { isObject, isPlainObject } from 'lodash-es';
 import { isBridgeUsable } from './tools';
 
 class QtBridge extends PubSub<QtBridgeType.EventMap> {
@@ -231,7 +231,7 @@ class QtBridge extends PubSub<QtBridgeType.EventMap> {
       return { success: false };
     }
 
-    const sendData = isObject(data) ? data : {};
+    const sendData = isPlainObject(data) ? data : {};
     return this.send(JSON.stringify(sendData));
   }
 

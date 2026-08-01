@@ -16,6 +16,9 @@ const SRC: string = `${ROOT}/src`;
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  // 打包要忽略的应用
+  const ignoreApps = mode === 'production' ? ['apiTester'] : [];
+  const appEntryConfig = getAppEntryConfig(ignoreApps);
 
   return {
     base: env.VITE_PATHNAME || './',
@@ -113,7 +116,12 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: 3000,
       hmr: true,
-      proxy: {},
+      proxy: {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        },
+      },
     },
     build: {
       sourcemap: mode === 'test',
@@ -131,7 +139,7 @@ export default defineConfig(({ mode }) => {
         },
       },
       rollupOptions: {
-        input: getAppEntryConfig(),
+        input: appEntryConfig,
         output: {
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',

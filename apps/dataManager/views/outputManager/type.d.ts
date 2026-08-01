@@ -5,6 +5,7 @@ export declare namespace OutputManagerType {
     type?: DataManagerType.ApiType;
     url?: string;
     method?: DataManagerType.ApiMethod;
+    request_content_type?: DataManagerType.RequestContentType;
     params?: string;
     response?: string;
     create_start_time?: string;

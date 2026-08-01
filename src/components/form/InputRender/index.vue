@@ -52,7 +52,10 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emits = defineEmits(['update:value']);
+const emits = defineEmits<{
+  (e: 'update:value', value: any): void;
+  (e: 'change', value: any): void;
+}>();
 
 const valueRef = ref<any>();
 
@@ -60,6 +63,7 @@ const visibleRef = computed((): boolean => inputTypeSet.has(props.options?.input
 
 const onChange = () => {
   emits('update:value', valueRef.value);
+  emits('change', valueRef.value);
 };
 
 watch(

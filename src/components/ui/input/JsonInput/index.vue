@@ -30,7 +30,7 @@
 import { ref, watch, CSSProperties } from 'vue';
 import { message } from 'ant-design-vue';
 import { FullscreenOutlined, FullscreenExitOutlined, CopyOutlined } from '@ant-design/icons-vue';
-import { isJsonString, copyText } from '@/utils';
+import { isJsonString, copyText, safeJsonParse } from '@/utils';
 import type { JsonInputType } from './type';
 import { defaultAttrsMap } from './config';
 
@@ -86,11 +86,7 @@ const onChange = () => {
  * @returns 解析后的 JSON 对象，如果无效则返回空对象
  */
 const parseEditorValue = (val: string) => {
-  if (!isJsonString(val)) {
-    return {};
-  }
-
-  return JSON.parse(val);
+  return safeJsonParse(val, {});
 };
 
 /**

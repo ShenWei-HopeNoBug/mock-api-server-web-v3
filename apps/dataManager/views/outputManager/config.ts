@@ -1,5 +1,6 @@
 import type { Form as FormType } from '@/components/form/types';
 import { getRangePickerRanges } from '@/components/form/tools';
+import { API_TYPE_ENUM, METHOD_ENUM, REQUEST_CONTENT_TYPE_ENUM } from '@apps/dataManager/enum';
 import type { OutputManagerType } from './type';
 import { cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
@@ -29,10 +30,7 @@ const searchFormColumns: FormType.FormItemOptions[] = [
     label: '数据来源',
     key: 'type',
     inputType: 'select',
-    options: [
-      { label: 'MITMPROXY', value: 'MITMPROXY' },
-      { label: 'USER', value: 'USER' },
-    ],
+    options: API_TYPE_ENUM,
   },
   {
     label: '请求Url',
@@ -43,10 +41,13 @@ const searchFormColumns: FormType.FormItemOptions[] = [
     label: '请求类型',
     key: 'method',
     inputType: 'select',
-    options: [
-      { label: 'GET', value: 'GET' },
-      { label: 'POST', value: 'POST' },
-    ],
+    options: METHOD_ENUM,
+  },
+  {
+    label: 'Content-Type',
+    key: 'request_content_type',
+    inputType: 'select',
+    options: REQUEST_CONTENT_TYPE_ENUM,
   },
   {
     label: '请求参数',
@@ -119,6 +120,12 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     width: 100,
   },
   {
+    title: 'Content-Type',
+    dataIndex: 'request_content_type',
+    key: 'request_content_type',
+    width: 220,
+  },
+  {
     title: '请求参数',
     dataIndex: 'params',
     key: 'params',
@@ -150,6 +157,11 @@ const tableColumns: OutputManagerType.TableColumn[] = [
   },
 ];
 
+/** 搜索表单布局配置 */
+const searchFormFormProps: Record<string, any> = {
+  labelCol: { style: { width: '100px' } },
+};
+
 export {
   defaultTableHeight,
   tableHeightOffset,
@@ -159,4 +171,5 @@ export {
   searchFormColumns,
   processBeforeSearchFormSubmit,
   tableColumns,
+  searchFormFormProps,
 };

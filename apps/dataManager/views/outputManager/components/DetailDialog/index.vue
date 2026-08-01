@@ -61,7 +61,9 @@ const getValue = (options: DetailDialogType.ColumnItem): string => {
     return '';
   }
 
-  return String(props.dataSource[key] || '');
+  const value = props.dataSource[key];
+
+  return typeof value !== 'undefined' ? value : '-';
 };
 
 const show = (): void => {

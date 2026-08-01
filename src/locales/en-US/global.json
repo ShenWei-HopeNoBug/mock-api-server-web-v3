@@ -36,5 +36,11 @@
       "confirmTitle": "Confirm",
       "confirmReset": "Are you sure you want to reset the form?"
     }
+  },
+  "uploadModule": {
+    "dropTip": "Drop",
+    "maxFiles": "Only a maximum of {count} files can be uploaded.",
+    "invalidFormat": "Please upload files in {formats} format.",
+    "maxSize": "The size of the uploaded file cannot exceed {size}."
   }
 }

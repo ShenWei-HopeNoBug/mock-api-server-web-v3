@@ -13,6 +13,15 @@ export declare namespace DataManagerType {
   type ApiMethod = 'GET' | 'POST';
 
   /**
+   * 请求 content-type 枚举值
+   * */
+  type RequestContentType =
+    | 'NONE'
+    | 'APPLICATION_X_WWW_FORM_URLENCODED'
+    | 'APPLICATION_JSON'
+    | 'MULTIPART_FORM_DATA';
+
+  /**
    * api 数据
    * */
   interface ApiData {
@@ -20,6 +29,7 @@ export declare namespace DataManagerType {
     type?: ApiType;
     url?: string;
     method?: ApiMethod;
+    request_content_type?: RequestContentType;
     params?: string;
     response?: string;
     timeout?: number;
@@ -39,6 +49,7 @@ export declare namespace DataManagerType {
     params?: string;
     response?: string;
     method?: ApiMethod;
+    request_content_type?: RequestContentType;
     create_start_time?: string;
     create_end_time?: string;
   }
@@ -63,6 +74,7 @@ export declare namespace DataManagerType {
     type?: ApiType;
     url?: string;
     method?: ApiMethod;
+    request_content_type?: RequestContentType;
     params?: string;
     response?: string;
     timeout?: number;
@@ -76,6 +88,7 @@ export declare namespace DataManagerType {
     type?: ApiType;
     url?: string;
     method?: ApiMethod;
+    request_content_type?: RequestContentType;
     params?: string;
     response?: string;
     timeout?: number;
@@ -87,6 +100,22 @@ export declare namespace DataManagerType {
    * */
   interface DeleteMockDataParams {
     id?: string;
+  }
+
+  /**
+   * 批量删除 api 数据传参
+   * 协议：batch_delete_mock_data
+   * 筛选条件与 get_mock_data_page 一致，去除分页字段
+   * */
+  interface BatchDeleteMockDataParams {
+    type?: ApiType;
+    url?: string;
+    params?: string;
+    response?: string;
+    method?: ApiMethod;
+    request_content_type?: RequestContentType;
+    create_start_time?: string;
+    create_end_time?: string;
   }
 
   /**

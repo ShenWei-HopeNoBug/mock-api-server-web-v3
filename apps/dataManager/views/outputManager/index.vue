@@ -7,12 +7,16 @@
           :init-form-values="initSearchForm"
           :process-before-submit="processBeforeSearchFormSubmit"
           :form-item-col="searchFormItemColRef"
+          :form-props="searchFormFormProps"
           @submit="onSearchSubmit"
         />
       </div>
       <div class="tool-bar">
         <div class="btn-group">
-          <a-button type="primary" @click="onAdd">新增 Mock 接口</a-button>
+          <a-button class="btn" type="primary" @click="onAdd">新增 Mock 接口</a-button>
+          <a-button class="btn" danger :loading="batchDeleteLoading" @click="onBatchDelete">
+            批量删除
+          </a-button>
         </div>
       </div>
     </a-card>
@@ -82,7 +86,7 @@
 <script lang="ts" setup name="outputManager">
 import { computed, nextTick, reactive, ref } from 'vue';
 import { cloneDeep, isPlainObject } from 'lodash-es';
-import { message } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 import { generateUUID } from '@/utils';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
@@ -96,6 +100,7 @@ import {
   initSearchForm,
   searchFormColumns,
   tableColumns,
+  searchFormFormProps,
   processBeforeSearchFormSubmit,
 } from './config';
 import type { OutputManagerType } from './type';
@@ -104,14 +109,20 @@ import { useOutputManagerApi } from './hooks/useOutputManagerApi';
 
 const { searchFormItemColRef } = useSearchFormResize();
 
-const { getMockDataPage, editMockData, addMockData, deleteMockData, copyMockData } =
-  useOutputManagerApi({
-    onReady: () => {
-      nextTick(() => {
-        onSearchSubmit(initSearchForm);
-      });
-    },
-  });
+const {
+  getMockDataPage,
+  editMockData,
+  addMockData,
+  deleteMockData,
+  batchDeleteMockData,
+  copyMockData,
+} = useOutputManagerApi({
+  onReady: () => {
+    nextTick(() => {
+      onSearchSubmit(initSearchForm);
+    });
+  },
+});
 
 /** 详情弹窗实例 */
 const detailDialogRef = ref<InstanceType<typeof DetailDialog> | null>(null);
@@ -138,6 +149,7 @@ const loadingMap = reactive<Record<string, boolean>>({
   edit_mock_data: false,
   add_mock_data: false,
   delete_mock_data: false,
+  batch_delete_mock_data: false,
   copy_mock_data: false,
 });
 
@@ -153,6 +165,9 @@ const tableLoading = computed((): boolean => {
 const editLoading = computed((): boolean => {
   return loadingMap.edit_mock_data || loadingMap.add_mock_data;
 });
+
+/** 批量删除 loading */
+const batchDeleteLoading = computed((): boolean => loadingMap.batch_delete_mock_data);
 
 /**
  * 分页拉取接口数据。
@@ -401,6 +416,40 @@ const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
     });
 };
 
+/** 批量删除按钮点击 */
+const onBatchDelete = (): void => {
+  Modal.confirm({
+    title: '批量删除确认',
+    content: '确认删除当前筛选条件下的全部 Mock 数据？',
+    okText: '确认删除',
+    okType: 'danger',
+    cancelText: '取消',
+    centered: true,
+    onOk: () => {
+      const token = generateUUID();
+      requestTokenMap.batch_delete_mock_data = token;
+      loadingMap.batch_delete_mock_data = true;
+      return batchDeleteMockData(searchForm.value)
+        .then(res => {
+          if (requestTokenMap.batch_delete_mock_data !== token) {
+            return;
+          }
+          if (res) {
+            message.success('批量删除成功');
+            fetchData(true);
+          } else {
+            message.error('批量删除失败');
+          }
+        })
+        .finally(() => {
+          if (requestTokenMap.batch_delete_mock_data === token) {
+            loadingMap.batch_delete_mock_data = false;
+          }
+        });
+    },
+  });
+};
+
 /**
  * 复制按钮点击。
  * @param record 行数据
@@ -452,6 +501,7 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
 
     .search-bar {
       width: 100%;
+      margin-bottom: 14px;
     }
 
     .tool-bar {
@@ -461,7 +511,12 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
 
       .btn-group {
         display: flex;
-        gap: 14px;
+
+        .btn {
+          &:not(:first-child) {
+            margin-left: 14px;
+          }
+        }
       }
     }
   }

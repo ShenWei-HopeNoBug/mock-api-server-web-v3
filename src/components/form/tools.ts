@@ -15,7 +15,7 @@ export const getFormInputProps = (options: FormType.FormInputOptions): CommonObj
 };
 
 // 合并 a-form 透传参数
-export const getFormProps = (props: CommonObject): CommonObject => {
+export const getFormProps = (props: CommonObject = {}): CommonObject => {
   return { ...defaultFormProps, ...props };
 };
 

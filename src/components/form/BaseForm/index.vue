@@ -9,7 +9,12 @@
       >
         <a-col v-for="(item, j) in list" :key="`formItem_${j}`" :span="formItemCol">
           <a-form-item :label="item.label" :name="item.key" :rules="getFormItemRules(item)">
-            <InputRender v-if="!item.slot" v-model:value="formState[item.key]" :options="item" />
+            <InputRender
+              v-if="!item.slot"
+              v-model:value="formState[item.key]"
+              :options="item"
+              @change="val => handleInputChange(val, item)"
+            />
             <slot
               v-else
               name="input"
@@ -118,6 +123,17 @@ const inputKeySetRef = computed((): Set<string> => {
 });
 
 /** ------------methods*/
+const handleInputChange = (value: any, options: FormType.FormItemOptions) => {
+  if (typeof options.onChange === 'function') {
+    options.onChange({
+      value,
+      key: options.key,
+      formState,
+      options,
+    });
+  }
+};
+
 // 初始化表单
 const initBaseFormValues = () => {
   const keyList: string[] = [...inputKeySetRef.value];

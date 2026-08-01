@@ -21,11 +21,14 @@ const getSubdirectories = (dirPath: string): string[] => {
   }
 };
 
-export const getAppEntryConfig = (): Record<string, string> => {
+export const getAppEntryConfig = (ignoreApps: string[] = []): Record<string, string> => {
   const BASE_DIR: string = './apps';
   const subAppList: string[] = getSubdirectories(BASE_DIR);
   const entryConfig: Record<string, string> = {};
   subAppList.forEach(name => {
+    if (ignoreApps.includes(name)) {
+      return;
+    }
     entryConfig[name] = `${BASE_DIR}/${name}/index.html`;
   });
   return entryConfig;

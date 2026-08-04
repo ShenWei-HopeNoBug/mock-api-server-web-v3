@@ -1,7 +1,7 @@
 <template>
   <a-modal
     v-model:visible="visible"
-    :title="modalTitle"
+    title="响应变体管理"
     :width="'calc(100vw - 48px)'"
     :footer="null"
     :mask-closable="false"
@@ -86,11 +86,9 @@ const tableLoading = ref<boolean>(false);
 const variantList = ref<VariantEditorDialogType.VariantRecord[]>([]);
 const apiDataId = ref<string>('');
 
-const tableHeight = ref<number>(400);
-
-const modalTitle = '响应变体管理';
-
 const variantFormDialogRef = ref<InstanceType<typeof VariantFormDialog> | null>(null);
+const tableHeight = ref<number>(400);
+const currentRequestToken = ref<string>(generateUUID());
 
 // --- 数据加载 ---
 
@@ -99,26 +97,42 @@ const fetchVariants = (): void => {
     return;
   }
   const token = generateUUID();
+  currentRequestToken.value = token;
   tableLoading.value = true;
 
   getMockDataDetail({ id: apiDataId.value })
     .then(res => {
+      if (currentRequestToken.value !== token) {
+        return;
+      }
       variantList.value = Array.isArray(res?.response_variants) ? res.response_variants : [];
     })
     .catch(() => {
+      if (currentRequestToken.value !== token) {
+        return;
+      }
       message.error('获取变体列表失败');
       variantList.value = [];
     })
     .finally(() => {
-      tableLoading.value = false;
+      if (currentRequestToken.value === token) {
+        tableLoading.value = false;
+      }
     });
 };
 
 // --- 弹窗打开/关闭 ---
 
-const show = (options: VariantEditorDialogType.ShowOptions = {}): void => {
-  apiDataId.value = options.apiDataId || '';
+const resetStates = (): void => {
   variantList.value = [];
+  currentRequestToken.value = generateUUID();
+  tableLoading.value = false;
+  apiDataId.value = '';
+};
+
+const show = (options: VariantEditorDialogType.ShowOptions = {}): void => {
+  resetStates();
+  apiDataId.value = options.apiDataId || '';
   visible.value = true;
   nextTick(() => {
     fetchVariants();
@@ -127,8 +141,7 @@ const show = (options: VariantEditorDialogType.ShowOptions = {}): void => {
 
 const close = (): void => {
   visible.value = false;
-  variantList.value = [];
-  apiDataId.value = '';
+  resetStates();
   variantFormDialogRef.value?.close?.();
   emits('close');
 };
@@ -136,7 +149,7 @@ const close = (): void => {
 // --- 新增/编辑表单弹窗 ---
 
 const onAdd = (): void => {
-  variantFormDialogRef.value?.show?.();
+  variantFormDialogRef.value?.show?.({ isEdit: false });
 };
 
 const onEdit = (record: VariantEditorDialogType.VariantRecord): void => {

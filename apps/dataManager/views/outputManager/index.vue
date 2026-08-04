@@ -316,7 +316,6 @@ const onDetailDialogClose = (): void => {
 const onEditVariants = (record: OutputManagerType.RowRecord = {}): void => {
   variantEditorDialogRef.value?.show?.({
     apiDataId: record.id,
-    apiDataUrl: record.url,
   });
 };
 

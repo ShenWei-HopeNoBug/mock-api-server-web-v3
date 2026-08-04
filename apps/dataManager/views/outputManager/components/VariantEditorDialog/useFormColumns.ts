@@ -1,7 +1,7 @@
 import type { Form as FormType } from '@/components/form/types';
 
 /**
- * 管理 VariantEditorDialog 表单列配置。
+ * 管理变体编辑表单列配置。
  */
 export const useFormColumns = () => {
   const formColumns: FormType.FormItemOptions[] = [

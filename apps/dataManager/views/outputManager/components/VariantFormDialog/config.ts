@@ -5,7 +5,6 @@ import { isJsonString } from '@/utils';
 const getDefaultVariantValues = (): Record<string, any> => ({
   name: '',
   response: '{}',
-  enabled: true,
   timeout: 0,
 });
 

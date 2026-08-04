@@ -11,35 +11,40 @@
   >
     <Spin :loading="loading" class="scroll">
       <div class="content" v-jump-forbid>
-        <div v-for="(item, i) in columns" :key="`info_${i}`" class="info-item">
-          <div class="label">{{ item.label }}</div>
-          <div v-if="item.type === 'jsonString'" class="value">
-            <div class="json-area">
+        <InfoDescription :columns="infoColumns" :info-item-style="infoItemStyle" align="left">
+          <template #value="scoped">
+            <div
+              v-if="scoped.rowKey === 'params' || scoped.rowKey === 'response'"
+              class="json-area"
+            >
               <JsonInput
-                :value="getValue(item)"
-                :readonly="item.readonly"
-                :code-editor-style="codeEditorStyleMap[item.key]"
+                :value="scoped.value"
+                :readonly="scoped.options?.extra?.readonly"
+                :code-editor-style="scoped.options?.extra?.codeEditorStyle"
                 default-copy-content="{}"
               />
             </div>
-          </div>
-          <div v-else class="value">{{ getValue(item) }}</div>
-        </div>
+          </template>
+        </InfoDescription>
       </div>
     </Spin>
   </a-modal>
 </template>
 
 <script lang="ts" setup name="DetailDialog">
-import { ref } from 'vue';
+import { computed, CSSProperties, ref } from 'vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
+import InfoDescription from '@/components/InfoDescription/index.vue';
 import Spin from '@/components/Spin/index.vue';
-import { columns, codeEditorStyleMap } from './config';
 import type { DetailDialogType } from './type';
-import { isPlainObject } from 'lodash-es';
+import type { InfoDescriptionType } from '@/components/InfoDescription/type';
 import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
 import { generateUUID } from '@/utils';
 import { message } from 'ant-design-vue';
+
+const infoItemStyle: CSSProperties = {
+  marginBottom: '24px',
+};
 
 const { getMockDataDetail } = useOutputManagerApi();
 
@@ -52,20 +57,83 @@ const loading = ref<boolean>(false);
 const detailData = ref<DetailDialogType.DataSource>({});
 const currentRequestToken = ref<string>(generateUUID());
 
-const getValue = (options: DetailDialogType.ColumnItem): string => {
-  const key = options.key || '';
-  if (!key) {
-    return '';
-  }
+const infoColumns = computed((): InfoDescriptionType.InfoOptions[] => {
+  const {
+    id = '',
+    url = '',
+    method = '',
+    request_content_type = '',
+    timeout,
+    params,
+    response,
+  } = detailData.value;
 
-  if (!isPlainObject(detailData.value)) {
-    return '';
-  }
-
-  const value = detailData.value[key];
-
-  return typeof value !== 'undefined' ? value : '-';
-};
+  return [
+    {
+      rowKey: 'id',
+      value: id,
+      label: 'ID',
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
+      rowKey: 'url',
+      value: url,
+      label: '请求Url',
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
+      rowKey: 'method',
+      label: '请求类型',
+      value: method,
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
+      rowKey: 'request_content_type',
+      label: 'Content-Type',
+      value: request_content_type,
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
+      rowKey: 'timeout',
+      label: '响应延时(ms)',
+      value: timeout,
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
+      rowKey: 'params',
+      label: '请求参数',
+      value: params,
+      slot: true,
+      tooltip: false,
+      ellipsis: false,
+      extra: {
+        readonly: true,
+        codeEditorStyle: {
+          height: '300px',
+        },
+      },
+    },
+    {
+      rowKey: 'response',
+      label: '响应数据',
+      value: response,
+      slot: true,
+      tooltip: false,
+      ellipsis: false,
+      extra: {
+        readonly: true,
+        codeEditorStyle: {
+          height: '550px',
+        },
+      },
+    },
+  ];
+});
 
 const resetStates = () => {
   detailData.value = {};
@@ -130,23 +198,6 @@ defineExpose({
   padding-right: 8px;
   scrollbar-gutter: stable;
   word-break: break-word;
-
-  .info-item {
-    width: 100%;
-    margin-bottom: 20px;
-
-    .label {
-      font-size: 16px;
-      font-weight: bold;
-      line-height: 28px;
-      margin-bottom: 4px;
-
-      &:after {
-        content: ':';
-        padding: 0 4px;
-      }
-    }
-  }
 }
 
 .json-area {

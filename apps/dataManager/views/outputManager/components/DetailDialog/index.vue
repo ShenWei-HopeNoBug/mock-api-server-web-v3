@@ -32,6 +32,7 @@
                     :key="`variant-${variant.id}-${vIndex}`"
                     class="variant-item"
                   >
+                    <div class="variant-index">{{ `#${vIndex + 1}` }}</div>
                     <InfoDescription
                       :columns="getVariantColumns(variant)"
                       :info-item-style="variantItemStyle"
@@ -50,7 +51,7 @@
                     </InfoDescription>
                   </div>
                 </template>
-                <div class="variant-empty">
+                <div v-else class="variant-empty">
                   <a-empty />
                 </div>
               </div>
@@ -330,6 +331,14 @@ defineExpose({
       border: 1px solid #ccc;
 
       .variant-item {
+        width: 100%;
+
+        .variant-index {
+          font-weight: bold;
+          font-size: 18px;
+          margin-bottom: 8px;
+        }
+
         &:not(:last-child) {
           padding-bottom: 12px;
           margin-bottom: 12px;

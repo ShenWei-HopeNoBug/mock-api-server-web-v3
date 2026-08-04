@@ -11,49 +11,52 @@
     wrap-class-name="output-manager-variant-editor-dialog"
     @cancel="close"
   >
-    <Spin :spinning="tableLoading">
+    <div class="container">
       <div class="toolbar">
         <a-button type="primary" @click="onAdd">新增变体</a-button>
       </div>
-      <a-table
-        :columns="variantTableColumns"
-        :data-source="variantList"
-        :pagination="false"
-        row-key="id"
-        :scroll="{ x: 1000, y: tableHeight }"
-      >
-        <template #bodyCell="{ text, column, record, index }">
-          <template v-if="column.key === 'index'">
-            {{ index + 1 }}
+      <div class="content">
+        <a-table
+          :columns="variantTableColumns"
+          :data-source="variantList"
+          :pagination="false"
+          :loading="tableLoading"
+          row-key="id"
+          :scroll="{ x: 1000, y: tableHeight }"
+        >
+          <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key === 'index'">
+              {{ index + 1 }}
+            </template>
+
+            <template v-else-if="column.key === 'enabled'">
+              <a-tag :color="record.enabled ? 'green' : 'red'">
+                {{ record.enabled ? '启用' : '禁用' }}
+              </a-tag>
+            </template>
+
+            <template v-else-if="column.key === 'operation'">
+              <div class="operation">
+                <a-popconfirm
+                  :title="record.enabled ? '确认禁用？' : '确认启用？'"
+                  @confirm="onToggleEnabled(record)"
+                >
+                  <a-button :danger="record.enabled" type="link">
+                    {{ record.enabled ? '禁用' : '启用' }}
+                  </a-button>
+                </a-popconfirm>
+
+                <a-button type="link" @click="onEdit(record)">编辑</a-button>
+
+                <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
+                  <a-button danger type="link">删除</a-button>
+                </a-popconfirm>
+              </div>
+            </template>
           </template>
-
-          <template v-else-if="column.key === 'enabled'">
-            <a-tag :color="record.enabled ? 'green' : 'red'">
-              {{ record.enabled ? '启用' : '禁用' }}
-            </a-tag>
-          </template>
-
-          <template v-else-if="column.key === 'operation'">
-            <div class="operation">
-              <a-popconfirm
-                :title="record.enabled ? '确认禁用？' : '确认启用？'"
-                @confirm="onToggleEnabled(record)"
-              >
-                <a-button :danger="record.enabled" type="link">
-                  {{ record.enabled ? '禁用' : '启用' }}
-                </a-button>
-              </a-popconfirm>
-
-              <a-button type="link" @click="onEdit(record)">编辑</a-button>
-
-              <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
-                <a-button danger type="link">删除</a-button>
-              </a-popconfirm>
-            </div>
-          </template>
-        </template>
-      </a-table>
-    </Spin>
+        </a-table>
+      </div>
+    </div>
 
     <VariantFormDialog
       ref="variantFormDialogRef"
@@ -66,7 +69,6 @@
 <script lang="ts" setup name="VariantEditorDialog">
 import { nextTick, ref } from 'vue';
 import { message } from 'ant-design-vue';
-import Spin from '@/components/Spin/index.vue';
 import VariantFormDialog from '../VariantFormDialog/index.vue';
 import type { VariantEditorDialogType } from './type';
 import { variantTableColumns } from './config';
@@ -175,14 +177,31 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.toolbar {
-  margin-bottom: 14px;
-}
-
-.operation {
+.container {
+  width: 100%;
+  height: calc(100vh - 160px);
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2px;
+  flex-direction: column;
+  overflow: hidden;
+
+  .toolbar {
+    width: 100%;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+
+  .content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .operation {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
 }
 </style>

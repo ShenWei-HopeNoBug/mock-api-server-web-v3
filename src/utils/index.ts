@@ -44,8 +44,12 @@ export const safeJsonParse = <T = any>(v: any, fallback: T): T => {
 // 复制文本到剪贴板
 export const copyText = async (text: string) => {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch (e) {
+      // 权限被拒绝或非安全上下文时回退到 execCommand
+    }
   }
 
   const textArea = document.createElement('textarea');

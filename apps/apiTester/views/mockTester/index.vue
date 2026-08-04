@@ -2,7 +2,7 @@
   <div class="mock-tester">
     <h2>Mock 接口测试</h2>
     <div class="content">
-      <MockRequestTester :option="freedomTester" />
+      <MockRequestTester :option="freedomTester" :deviceId="deviceId" />
       <a-card title="预置接口测试" class="tester-card">
         <template #extra>
           <div class="extra-actions">
@@ -26,6 +26,9 @@
 import { ref } from 'vue';
 import MockRequestTester from './components/MockRequestTester/index.vue';
 import { freedomTester, testerList } from './config';
+import { generateUUID } from '@/utils';
+
+const deviceId = generateUUID();
 
 const testerRefs = ref<InstanceType<typeof MockRequestTester>[]>([]);
 
@@ -46,7 +49,6 @@ const onBatchExpand = () => {
 const onBatchCollapse = () => {
   testerRefs.value.forEach(tester => tester?.collapse?.());
 };
-
 </script>
 
 <style scoped lang="scss">

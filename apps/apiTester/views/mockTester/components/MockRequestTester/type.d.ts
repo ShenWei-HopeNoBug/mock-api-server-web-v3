@@ -18,10 +18,7 @@ export declare namespace MockRequestTesterType {
     defaultExpanded?: boolean;
   }
 
-  interface Props {
-    /** 测试模块配置 */
-    option?: Option;
-  }
+
 
   interface ResponseMeta {
     /** HTTP 状态码 */

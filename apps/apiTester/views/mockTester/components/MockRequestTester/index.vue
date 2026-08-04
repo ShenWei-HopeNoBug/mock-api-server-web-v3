@@ -93,8 +93,16 @@ import { getFileNameInfo } from '@/components/upload/MultiUploadModule/tools';
 
 const COLLAPSE_KEY = 'main';
 
-const props = withDefaults(defineProps<MockRequestTesterType.Props>(), {
+interface Props {
+  /** 测试模块配置 */
+  option?: MockRequestTesterType.Option;
+  /** 设备 ID */
+  deviceId?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
   option: () => ({}),
+  deviceId: '',
 });
 
 const url = ref<string>(props.option?.url ?? '');
@@ -142,6 +150,7 @@ const onSend = async () => {
       contentType: contentType.value,
       params: parsed,
       file: file.value,
+      deviceId: props.deviceId,
     });
 
     const res = await axios.request({

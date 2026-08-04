@@ -43,11 +43,11 @@
 
 <script lang="ts" setup name="VariantFormDialog">
 import { computed, ref } from 'vue';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, isPlainObject } from 'lodash-es';
 import { message } from 'ant-design-vue';
 import BaseForm from '@/components/form/BaseForm/index.vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
-import type { VariantEditorDialogType } from '../VariantEditorDialog/type';
+import type { VariantFormDialogType } from './type';
 import { getDefaultVariantValues, processBeforeSubmit, formProps } from './config';
 import { useFormColumns } from './useFormColumns';
 import { useOutputManagerApi } from '@apps/dataManager/views/outputManager/hooks/useOutputManagerApi';
@@ -68,7 +68,7 @@ const { formColumns } = useFormColumns();
 const { addVariant, updateVariant } = useOutputManagerApi();
 
 const visible = ref<boolean>(false);
-const isEdit = ref<boolean>(false);
+const isEditRef = ref<boolean>(false);
 const formLoading = ref<boolean>(false);
 const editingVariantId = ref<string>('');
 const initFormValues = ref<Record<string, any>>({});
@@ -77,23 +77,23 @@ const formResponseHeight = ref<string>('300px');
 const baseFormRef = ref<InstanceType<typeof BaseForm> | null>(null);
 const responseRef = ref<InstanceType<typeof JsonInput> | null>(null);
 
-const modalTitle = computed<string>(() => (isEdit.value ? '编辑变体' : '新增变体'));
+const modalTitle = computed<string>(() => (isEditRef.value ? '编辑变体' : '新增变体'));
 
-const show = (
-  options: { isEdit?: boolean; record?: VariantEditorDialogType.VariantRecord } = {},
-): void => {
-  isEdit.value = !!options.isEdit;
-  editingVariantId.value = options.record?.id || '';
+const show = (options: VariantFormDialogType.ShowOptions = {}): void => {
+  const { isEdit = false, record = {} } = options;
+  isEditRef.value = isEdit;
+  editingVariantId.value = record?.id || '';
+  const initFormData: Record<string, any> = isPlainObject(record) ? cloneDeep(record) : {};
   initFormValues.value = {
     ...getDefaultVariantValues(),
-    ...(options.record ? cloneDeep(options.record) : {}),
+    ...initFormData,
   };
   visible.value = true;
 };
 
 const close = (): void => {
   visible.value = false;
-  isEdit.value = false;
+  isEditRef.value = false;
   editingVariantId.value = '';
   formLoading.value = false;
 };
@@ -121,7 +121,7 @@ const onFormSubmit = (form: Record<string, any> = {}): void => {
   const submitData = processBeforeSubmit(form);
   formLoading.value = true;
 
-  if (isEdit.value) {
+  if (isEditRef.value) {
     updateVariant({ id: editingVariantId.value, ...submitData })
       .then(res => {
         if (res) {

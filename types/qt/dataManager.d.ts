@@ -152,6 +152,38 @@ export declare namespace DataManagerType {
   }
 
   /**
+   * 新增变体传参
+   * 协议：/variant/create
+   * */
+  interface AddVariantParams {
+    api_data_id?: string;
+    name?: string;
+    response?: string;
+    enabled?: boolean;
+    timeout?: number;
+  }
+
+  /**
+   * 更新变体传参
+   * 协议：/variant/update
+   * */
+  interface UpdateVariantParams {
+    id?: string;
+    name?: string;
+    response?: string;
+    enabled?: boolean;
+    timeout?: number;
+  }
+
+  /**
+   * 删除变体传参
+   * 协议：/variant/delete
+   * */
+  interface DeleteVariantParams {
+    id?: string;
+  }
+
+  /**
    * api 数据详情（含变体列表）
    * 协议：/mock_data/detail 返回数据
    * */

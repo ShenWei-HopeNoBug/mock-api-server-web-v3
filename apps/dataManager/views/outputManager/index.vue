@@ -49,6 +49,8 @@
 
                 <a-button type="link" @click="onEdit(record)">编辑</a-button>
 
+                <a-button type="link" @click="onEditVariants(record)">响应变体</a-button>
+
                 <a-popconfirm
                   :title="record.enabled ? '确认禁用？' : '确认启用？'"
                   @confirm="onToggleEnabled(record)"
@@ -92,6 +94,7 @@
       @submit="onUserApiEditorSubmit"
       @close="onUserApiEditorDialogClose"
     />
+    <VariantEditorDialog ref="variantEditorDialogRef" @close="onVariantEditorClose" />
     <DetailDialog ref="detailDialogRef" @close="onDetailDialogClose" />
   </div>
 </template>
@@ -105,6 +108,7 @@ import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
 import DetailDialog from './components/DetailDialog/index.vue';
 import UserApiEditorDialog from './components/UserApiEditorDialog/index.vue';
+import VariantEditorDialog from './components/VariantEditorDialog/index.vue';
 import {
   defaultTableHeight,
   tableHeightOffset,
@@ -141,6 +145,8 @@ const {
 const detailDialogRef = ref<InstanceType<typeof DetailDialog> | null>(null);
 /** 编辑弹窗实例 */
 const userApiEditorDialogRef = ref<InstanceType<typeof UserApiEditorDialog> | null>(null);
+/** 响应变体编辑弹窗实例 */
+const variantEditorDialogRef = ref<InstanceType<typeof VariantEditorDialog> | null>(null);
 /** 当前操作行数据 */
 const curRow = ref<OutputManagerType.RowRecord>({});
 
@@ -301,6 +307,23 @@ const onDetail = (record: OutputManagerType.RowRecord = {}): void => {
 /** 详情弹窗关闭回调 */
 const onDetailDialogClose = (): void => {
   curRow.value = {};
+};
+
+/**
+ * 响应变体按钮点击。
+ * @param record 行数据
+ */
+const onEditVariants = (record: OutputManagerType.RowRecord = {}): void => {
+  variantEditorDialogRef.value?.show?.({
+    apiDataId: record.id,
+    apiDataUrl: record.url,
+  });
+};
+
+/** 响应变体弹窗关闭回调 */
+const onVariantEditorClose = (): void => {
+  // 关闭后刷新列表，变体操作可能影响 api_data 的 updated_at
+  fetchData(false);
 };
 
 /**

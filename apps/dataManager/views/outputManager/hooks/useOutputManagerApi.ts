@@ -79,6 +79,18 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
       params,
     );
 
+  /** 新增响应变体 */
+  const addVariant = (params: DataManagerType.AddVariantParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.AddVariantParams>('/variant/create', params);
+
+  /** 更新响应变体 */
+  const updateVariant = (params: DataManagerType.UpdateVariantParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.UpdateVariantParams>('/variant/update', params);
+
+  /** 删除响应变体 */
+  const deleteVariant = (params: DataManagerType.DeleteVariantParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.DeleteVariantParams>('/variant/delete', params);
+
   return {
     isReady,
     getMockDataPage,
@@ -88,5 +100,8 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     batchDeleteMockData,
     copyMockData,
     getMockDataDetail,
+    addVariant,
+    updateVariant,
+    deleteVariant,
   };
 };

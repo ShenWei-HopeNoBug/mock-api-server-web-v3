@@ -38,6 +38,8 @@ import { columns, codeEditorStyleMap } from './config';
 import type { DetailDialogType } from './type';
 import { isPlainObject } from 'lodash-es';
 import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
+import { generateUUID } from '@/utils';
+import { message } from 'ant-design-vue';
 
 const { getMockDataDetail } = useOutputManagerApi();
 
@@ -48,6 +50,7 @@ const emits = defineEmits<{
 const visible = ref<boolean>(false);
 const loading = ref<boolean>(false);
 const detailData = ref<DetailDialogType.DataSource>({});
+const currentRequestToken = ref<string>(generateUUID());
 
 const getValue = (options: DetailDialogType.ColumnItem): string => {
   const key = options.key || '';
@@ -64,23 +67,47 @@ const getValue = (options: DetailDialogType.ColumnItem): string => {
   return typeof value !== 'undefined' ? value : '-';
 };
 
+const resetStates = () => {
+  detailData.value = {};
+  currentRequestToken.value = generateUUID();
+  loading.value = false;
+};
+
+const getDetailData = (id: string = '') => {
+  loading.value = true;
+  const token = generateUUID();
+  currentRequestToken.value = token;
+
+  getMockDataDetail({ id })
+    .then(res => {
+      if (currentRequestToken.value !== token) {
+        return;
+      }
+      detailData.value = res || {};
+    })
+    .catch(() => {
+      if (currentRequestToken.value !== token) {
+        return;
+      }
+      message.error('获取抓包接口数据详情失败');
+      detailData.value = {};
+    })
+    .finally(() => {
+      if (currentRequestToken.value === token) {
+        loading.value = false;
+      }
+    });
+};
+
 const show = async (id: string = ''): Promise<void> => {
   visible.value = true;
-  loading.value = true;
-  detailData.value = {};
-  try {
-    const res = await getMockDataDetail({ id });
-    detailData.value = res || {};
-  } catch (e) {
-    detailData.value = {};
-  } finally {
-    loading.value = false;
-  }
+  resetStates();
+  getDetailData(id);
 };
 
 const close = (): void => {
   visible.value = false;
-  detailData.value = {};
+  resetStates();
   emits('close');
 };
 

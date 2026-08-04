@@ -39,6 +39,12 @@
               <div class="params">{{ record.params }}</div>
             </template>
 
+            <template v-else-if="column.key === 'enabled'">
+              <a-tag :color="record.enabled ? 'green' : 'red'">
+                {{ record.enabled ? '启用' : '禁用' }}
+              </a-tag>
+            </template>
+
             <template v-else-if="column.key === 'operation'">
               <div class="operation">
                 <a-button type="link" @click="onDetail(record)">查看详情</a-button>

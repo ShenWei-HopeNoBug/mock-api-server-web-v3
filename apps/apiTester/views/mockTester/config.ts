@@ -2,7 +2,7 @@ import type { MockRequestTesterType } from './components/MockRequestTester/type'
 
 export const freedomTester: MockRequestTesterType.Option = {
   title: '自由测试',
-  url: '/api/mock_tester/freedom',
+  url: '/api/mock_tester/slow-api',
   method: 'GET',
   params: '{}',
   defaultExpanded: true,

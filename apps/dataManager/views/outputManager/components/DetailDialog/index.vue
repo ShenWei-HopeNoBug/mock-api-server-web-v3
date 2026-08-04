@@ -26,27 +26,32 @@
                 />
               </div>
               <div v-else-if="scoped.rowKey === 'response_variants'" class="variant-list">
-                <div
-                  v-for="(variant, vIndex) in scoped.value || []"
-                  :key="`variant-${variant.id}-${vIndex}`"
-                  class="variant-item"
-                >
-                  <InfoDescription
-                    :columns="getVariantColumns(variant)"
-                    :info-item-style="variantItemStyle"
-                    align="left"
+                <template v-if="isArrayValid(scoped.value)">
+                  <div
+                    v-for="(variant, vIndex) in scoped.value || []"
+                    :key="`variant-${variant.id}-${vIndex}`"
+                    class="variant-item"
                   >
-                    <template #value="vScoped">
-                      <div v-if="vScoped.rowKey === 'response'" class="json-area">
-                        <JsonInput
-                          :value="vScoped.value"
-                          :readonly="true"
-                          :code-editor-style="vScoped.options?.extra?.codeEditorStyle"
-                          default-copy-content="{}"
-                        />
-                      </div>
-                    </template>
-                  </InfoDescription>
+                    <InfoDescription
+                      :columns="getVariantColumns(variant)"
+                      :info-item-style="variantItemStyle"
+                      align="left"
+                    >
+                      <template #value="vScoped">
+                        <div v-if="vScoped.rowKey === 'response'" class="json-area">
+                          <JsonInput
+                            :value="vScoped.value"
+                            :readonly="true"
+                            :code-editor-style="vScoped.options?.extra?.codeEditorStyle"
+                            default-copy-content="{}"
+                          />
+                        </div>
+                      </template>
+                    </InfoDescription>
+                  </div>
+                </template>
+                <div class="variant-empty">
+                  <a-empty />
                 </div>
               </div>
             </template>
@@ -66,7 +71,7 @@ import type { DetailDialogType } from './type';
 import type { InfoDescriptionType } from '@/components/InfoDescription/type';
 import type { DataManagerType } from '#/qt/dataManager';
 import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
-import { generateUUID } from '@/utils';
+import { generateUUID, isArrayValid } from '@/utils';
 import { message } from 'ant-design-vue';
 
 const infoItemStyle: CSSProperties = {
@@ -330,6 +335,11 @@ defineExpose({
           margin-bottom: 12px;
           border-bottom: 1px solid #e8e8e8;
         }
+      }
+
+      .variant-empty {
+        width: 100%;
+        padding: 40px 0;
       }
     }
   }

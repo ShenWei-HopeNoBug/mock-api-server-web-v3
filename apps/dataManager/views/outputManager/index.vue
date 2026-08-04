@@ -30,7 +30,7 @@
           row-key="id"
           :scroll="{ x: 1200, y: tableHeight }"
         >
-          <template #bodyCell="{ column, record, index }">
+          <template #bodyCell="{ text,column, record, index }">
             <template v-if="column.key === 'index'">
               {{ getRowIndex(index) }}
             </template>
@@ -49,10 +49,23 @@
 
                 <a-button type="link" @click="onEdit(record)">编辑</a-button>
 
+                <a-popconfirm
+                  :title="record.enabled ? '确认禁用？' : '确认启用？'"
+                  @confirm="onToggleEnabled(record)"
+                >
+                  <a-button :danger="record.enabled" type="link">
+                    {{ record.enabled ? '禁用' : '启用' }}
+                  </a-button>
+                </a-popconfirm>
+
                 <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
                   <a-button danger type="link">删除</a-button>
                 </a-popconfirm>
               </div>
+            </template>
+
+            <template v-else-if="typeof column.formatter === 'function'">
+              {{ column.formatter({ text, record }) }}
             </template>
           </template>
         </a-table>
@@ -416,6 +429,27 @@ const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
     });
 };
 
+/**
+ * 切换启用状态按钮点击。
+ * @param record 行数据
+ */
+const onToggleEnabled = (record: OutputManagerType.RowRecord = {}): void => {
+  const { id = '' } = record;
+  if (!id) {
+    message.error('切换启用状态失败！');
+    return;
+  }
+  const nextEnabled = !record.enabled;
+  editMockData({ id, enabled: nextEnabled }).then(res => {
+    if (res) {
+      message.success(nextEnabled ? '启用成功' : '禁用成功');
+      fetchData(false);
+    } else {
+      message.error('切换启用状态失败！');
+    }
+  });
+};
+
 /** 批量删除按钮点击 */
 const onBatchDelete = (): void => {
   Modal.confirm({
@@ -535,6 +569,7 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
     .operation {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 2px;
     }
 

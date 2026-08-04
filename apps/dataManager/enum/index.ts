@@ -1,4 +1,5 @@
 import type { CommonType } from '#/common';
+import { createLabelMapFromValueEnum } from '@/utils';
 
 export const API_TYPE_ENUM: CommonType.EnumItem[] = [
   { label: 'USER', value: 'USER' },
@@ -16,3 +17,10 @@ export const REQUEST_CONTENT_TYPE_ENUM: CommonType.EnumItem[] = [
   { label: 'MULTIPART_FORM_DATA', value: 'MULTIPART_FORM_DATA' },
   { label: 'APPLICATION_X_WWW_FORM_URLENCODED', value: 'APPLICATION_X_WWW_FORM_URLENCODED' },
 ];
+
+export const ENABLED_ENUM: CommonType.EnumItem[] = [
+  { label: '启用', value: true },
+  { label: '禁用', value: false },
+];
+
+export const ENABLED_LABEL_MAP: Record<string, string> = createLabelMapFromValueEnum(ENABLED_ENUM);

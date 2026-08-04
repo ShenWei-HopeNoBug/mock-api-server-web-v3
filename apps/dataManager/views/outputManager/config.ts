@@ -1,9 +1,17 @@
 import type { Form as FormType } from '@/components/form/types';
 import { getRangePickerRanges } from '@/components/form/tools';
-import { API_TYPE_ENUM, METHOD_ENUM, REQUEST_CONTENT_TYPE_ENUM } from '@apps/dataManager/enum';
+import {
+  API_TYPE_ENUM,
+  METHOD_ENUM,
+  REQUEST_CONTENT_TYPE_ENUM,
+  ENABLED_ENUM,
+  ENABLED_LABEL_MAP,
+} from '@apps/dataManager/enum';
 import type { OutputManagerType } from './type';
 import { cloneDeep } from 'lodash-es';
 import dayjs from 'dayjs';
+import { getValueFromMap } from '@/utils';
+import type { CommonType } from '#/common';
 
 /** 表格默认可视高度（px） */
 const defaultTableHeight = 550;
@@ -48,6 +56,12 @@ const searchFormColumns: FormType.FormItemOptions[] = [
     key: 'request_content_type',
     inputType: 'select',
     options: REQUEST_CONTENT_TYPE_ENUM,
+  },
+  {
+    label: '启用状态',
+    key: 'enabled',
+    inputType: 'select',
+    options: ENABLED_ENUM,
   },
   {
     label: '请求参数',
@@ -136,6 +150,15 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     dataIndex: 'timeout',
     key: 'timeout',
     width: 120,
+  },
+  {
+    title: '启用状态',
+    dataIndex: 'enabled',
+    key: 'enabled',
+    width: 100,
+    formatter: ({ text }: CommonType.TableFormatterOptions): string => {
+      return getValueFromMap(text ?? '', ENABLED_LABEL_MAP);
+    },
   },
   {
     title: '创建时间',

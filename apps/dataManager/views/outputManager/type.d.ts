@@ -20,5 +20,6 @@ export declare namespace OutputManagerType {
     key: string;
     width?: number;
     fixed?: 'left' | 'right';
+    formatter?: (options: CommonType.TableFormatterOptions) => string;
   }
 }

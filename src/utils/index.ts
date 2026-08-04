@@ -1,6 +1,7 @@
 import MD5 from 'crypto-js/md5';
 import { isPlainObject } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
+import { CommonType } from '#/common';
 
 // 限制数值的范围
 export const limitNumRange = (num: number, min: number, max: number) => {
@@ -68,3 +69,52 @@ export const createMd5 = (text: string): string => {
 };
 
 export const isEmptyObject = (d: any): boolean => isPlainObject(d) && Object.keys(d).length === 0;
+
+/**
+ * @description 从 Object 数组创建映射表
+ * */
+export const createLabelMapFromValueEnum = (
+  valueEnum: Array<Record<string, any> & CommonType.EnumItem> = [],
+  options: { labelKey?: string; valueKey?: string } = {},
+): Record<string, string> => {
+  if (!Array.isArray(valueEnum)) {
+    return {};
+  }
+
+  const { labelKey = 'label', valueKey = 'value' } = options || {};
+
+  const map: Record<string, string> = {};
+  valueEnum.forEach(item => {
+    const label = item[labelKey];
+    const value = item[valueKey];
+    if (typeof value === 'undefined') {
+      return;
+    }
+
+    map[value] = String(label);
+  });
+
+  return map;
+};
+
+/**
+ * @description 根据已知键名从 map 表中取值，应用在表格数据的枚举值渲染
+ * */
+export const getValueFromMap = (
+  key: string,
+  map: Record<string, any> = {},
+  defaultValue: string = '-',
+): string => {
+  if (!isPlainObject(map)) {
+    return defaultValue;
+  }
+
+  const value = map[key];
+  if (typeof value !== 'undefined') {
+    return String(value);
+  }
+
+  const emptySet = new Set([null, '']);
+
+  return typeof key === 'undefined' || emptySet.has(key) ? defaultValue : key;
+};

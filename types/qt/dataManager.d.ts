@@ -33,13 +33,15 @@ export declare namespace DataManagerType {
     params?: string;
     response?: string;
     timeout?: number;
+    enabled?: boolean;
+    response_variant_ids?: string[];
     created_at?: string;
     updated_at?: string;
   }
 
   /**
    * 获取 api 数据分页传参
-   * 协议：get_mock_data_page
+   * 协议：/mock_data/list
    * */
   interface GetMockDataPageParams {
     page_num?: number;
@@ -56,7 +58,7 @@ export declare namespace DataManagerType {
 
   /**
    * 获取 api 数据分页结果
-   * 协议：get_mock_data_page
+   * 协议：/mock_data/list
    * */
   interface GetMockDataPageRes {
     list?: ApiData[];
@@ -67,7 +69,7 @@ export declare namespace DataManagerType {
 
   /**
    * 编辑 api 数据传参
-   * 协议：edit_mock_data
+   * 协议：/mock_data/update
    * */
   interface EditMockDataParams {
     id?: string;
@@ -78,11 +80,12 @@ export declare namespace DataManagerType {
     params?: string;
     response?: string;
     timeout?: number;
+    enabled?: boolean;
   }
 
   /**
    * 新增 api 数据传参
-   * 协议：add_mock_data
+   * 协议：/mock_data/create
    * */
   interface AddMockDataParams {
     type?: ApiType;
@@ -96,7 +99,7 @@ export declare namespace DataManagerType {
 
   /**
    * 删除 api 数据传参
-   * 协议：delete_mock_data
+   * 协议：/mock_data/delete
    * */
   interface DeleteMockDataParams {
     id?: string;
@@ -104,8 +107,8 @@ export declare namespace DataManagerType {
 
   /**
    * 批量删除 api 数据传参
-   * 协议：batch_delete_mock_data
-   * 筛选条件与 get_mock_data_page 一致，去除分页字段
+   * 协议：/mock_data/batch_delete
+   * 筛选条件与 /mock_data/list 一致，去除分页字段
    * */
   interface BatchDeleteMockDataParams {
     type?: ApiType;
@@ -120,7 +123,7 @@ export declare namespace DataManagerType {
 
   /**
    * 复制 api 数据传参
-   * 协议：copy_mock_data
+   * 协议：/mock_data/copy
    * */
   interface CopyMockDataParams {
     id?: string;

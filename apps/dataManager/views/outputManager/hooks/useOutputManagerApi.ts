@@ -41,34 +41,34 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     params: DataManagerType.GetMockDataPageParams = {},
   ): Promise<DataManagerType.GetMockDataPageRes> =>
     guardedFetch<DataManagerType.GetMockDataPageRes, DataManagerType.GetMockDataPageParams>(
-      'get_mock_data_page',
+      '/mock_data/list',
       params,
     );
 
   /** 编辑 Mock 接口数据 */
   const editMockData = (params: DataManagerType.EditMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.EditMockDataParams>('edit_mock_data', params);
+    guardedFetch<boolean, DataManagerType.EditMockDataParams>('/mock_data/update', params);
 
   /** 新增 Mock 接口数据 */
   const addMockData = (params: DataManagerType.AddMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.AddMockDataParams>('add_mock_data', params);
+    guardedFetch<boolean, DataManagerType.AddMockDataParams>('/mock_data/create', params);
 
   /** 删除 Mock 接口数据 */
   const deleteMockData = (params: DataManagerType.DeleteMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.DeleteMockDataParams>('delete_mock_data', params);
+    guardedFetch<boolean, DataManagerType.DeleteMockDataParams>('/mock_data/delete', params);
 
   /** 批量删除 Mock 接口数据（按筛选条件） */
   const batchDeleteMockData = (
     params: DataManagerType.BatchDeleteMockDataParams = {},
   ): Promise<boolean> =>
     guardedFetch<boolean, DataManagerType.BatchDeleteMockDataParams>(
-      'batch_delete_mock_data',
+      '/mock_data/batch_delete',
       params,
     );
 
   /** 复制 Mock 接口数据 */
   const copyMockData = (params: DataManagerType.CopyMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.CopyMockDataParams>('copy_mock_data', params);
+    guardedFetch<boolean, DataManagerType.CopyMockDataParams>('/mock_data/copy', params);
 
   return {
     isReady,

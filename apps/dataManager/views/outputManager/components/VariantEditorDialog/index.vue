@@ -15,7 +15,7 @@
       <div class="toolbar">
         <a-button type="primary" @click="onAdd">新增变体</a-button>
       </div>
-      <div class="content">
+      <div class="content" v-dom-resize="onResize">
         <a-table
           :columns="variantTableColumns"
           :data-source="variantList"
@@ -89,6 +89,18 @@ const apiDataId = ref<string>('');
 const variantFormDialogRef = ref<InstanceType<typeof VariantFormDialog> | null>(null);
 const tableHeight = ref<number>(400);
 const currentRequestToken = ref<string>(generateUUID());
+
+// 内容区尺寸变化时，动态调整 Response 编辑区高度
+const onResize = (entry: ResizeObserverEntry): void => {
+  if (!entry?.target) {
+    return;
+  }
+
+  const { height } = entry.target.getBoundingClientRect();
+  const offset = 60;
+  const minHeight = 100;
+  tableHeight.value = Math.max(minHeight, height - offset);
+};
 
 // --- 数据加载 ---
 

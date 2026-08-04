@@ -48,13 +48,9 @@ import { message } from 'ant-design-vue';
 import BaseForm from '@/components/form/BaseForm/index.vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
 import type { VariantEditorDialogType } from '../VariantEditorDialog/type';
-import {
-  getDefaultVariantValues,
-  processBeforeSubmit,
-  formProps,
-} from '../VariantEditorDialog/config';
-import { useFormColumns } from '../VariantEditorDialog/useFormColumns';
-import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
+import { getDefaultVariantValues, processBeforeSubmit, formProps } from './config';
+import { useFormColumns } from './useFormColumns';
+import { useOutputManagerApi } from '@apps/dataManager/views/outputManager/hooks/useOutputManagerApi';
 
 interface Props {
   apiDataId?: string;
@@ -83,7 +79,9 @@ const responseRef = ref<InstanceType<typeof JsonInput> | null>(null);
 
 const modalTitle = computed<string>(() => (isEdit.value ? '编辑变体' : '新增变体'));
 
-const show = (options: { isEdit?: boolean; record?: VariantEditorDialogType.VariantRecord } = {}): void => {
+const show = (
+  options: { isEdit?: boolean; record?: VariantEditorDialogType.VariantRecord } = {},
+): void => {
   isEdit.value = !!options.isEdit;
   editingVariantId.value = options.record?.id || '';
   initFormValues.value = {

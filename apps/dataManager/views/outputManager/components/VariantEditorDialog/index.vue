@@ -69,10 +69,10 @@
 <script lang="ts" setup name="VariantEditorDialog">
 import { nextTick, ref } from 'vue';
 import { message } from 'ant-design-vue';
-import VariantFormDialog from '../VariantFormDialog/index.vue';
+import VariantFormDialog from '@apps/dataManager/views/outputManager/components/VariantFormDialog/index.vue';
 import type { VariantEditorDialogType } from './type';
-import { variantTableColumns } from './config';
-import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
+import { variantTableColumns } from '@apps/dataManager/views/outputManager/components/VariantFormDialog/config';
+import { useOutputManagerApi } from '@apps/dataManager/views/outputManager/hooks/useOutputManagerApi';
 import { generateUUID } from '@/utils';
 
 const emits = defineEmits<{

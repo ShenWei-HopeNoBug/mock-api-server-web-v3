@@ -9,7 +9,7 @@
     wrap-class-name="output-manager-detail-dialog"
     @cancel="close"
   >
-    <div v-if="visible" class="scroll">
+    <Spin :loading="loading" class="scroll">
       <div class="content" v-jump-forbid>
         <div v-for="(item, i) in columns" :key="`info_${i}`" class="info-item">
           <div class="label">{{ item.label }}</div>
@@ -26,30 +26,28 @@
           <div v-else class="value">{{ getValue(item) }}</div>
         </div>
       </div>
-    </div>
+    </Spin>
   </a-modal>
 </template>
 
 <script lang="ts" setup name="DetailDialog">
 import { ref } from 'vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
+import Spin from '@/components/Spin/index.vue';
 import { columns, codeEditorStyleMap } from './config';
 import type { DetailDialogType } from './type';
 import { isPlainObject } from 'lodash-es';
+import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
 
-interface Props {
-  dataSource?: DetailDialogType.DataSource;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  dataSource: () => ({}),
-});
+const { getMockDataDetail } = useOutputManagerApi();
 
 const emits = defineEmits<{
   (e: 'close'): void;
 }>();
 
 const visible = ref<boolean>(false);
+const loading = ref<boolean>(false);
+const detailData = ref<DetailDialogType.DataSource>({});
 
 const getValue = (options: DetailDialogType.ColumnItem): string => {
   const key = options.key || '';
@@ -57,21 +55,32 @@ const getValue = (options: DetailDialogType.ColumnItem): string => {
     return '';
   }
 
-  if (!isPlainObject(props.dataSource)) {
+  if (!isPlainObject(detailData.value)) {
     return '';
   }
 
-  const value = props.dataSource[key];
+  const value = detailData.value[key];
 
   return typeof value !== 'undefined' ? value : '-';
 };
 
-const show = (): void => {
+const show = async (id: string = ''): Promise<void> => {
   visible.value = true;
+  loading.value = true;
+  detailData.value = {};
+  try {
+    const res = await getMockDataDetail({ id });
+    detailData.value = res || {};
+  } catch (e) {
+    detailData.value = {};
+  } finally {
+    loading.value = false;
+  }
 };
 
 const close = (): void => {
   visible.value = false;
+  detailData.value = {};
   emits('close');
 };
 

@@ -10,7 +10,7 @@ export declare namespace DetailDialogType {
     readonly?: boolean;
   }
 
-  interface DataSource extends DataManagerType.ApiData {
+  interface DataSource extends DataManagerType.ApiDataDetail {
     [key: string]: any;
   }
 }

@@ -70,6 +70,15 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
   const copyMockData = (params: DataManagerType.CopyMockDataParams = {}): Promise<boolean> =>
     guardedFetch<boolean, DataManagerType.CopyMockDataParams>('/mock_data/copy', params);
 
+  /** 获取 Mock 接口详情数据 */
+  const getMockDataDetail = (
+    params: DataManagerType.GetMockDataDetailParams,
+  ): Promise<DataManagerType.ApiDataDetail> =>
+    guardedFetch<DataManagerType.ApiDataDetail, DataManagerType.GetMockDataDetailParams>(
+      '/mock_data/detail',
+      params,
+    );
+
   return {
     isReady,
     getMockDataPage,
@@ -78,5 +87,6 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     deleteMockData,
     batchDeleteMockData,
     copyMockData,
+    getMockDataDetail,
   };
 };

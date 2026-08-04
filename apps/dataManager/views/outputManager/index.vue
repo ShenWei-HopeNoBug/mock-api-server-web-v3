@@ -30,7 +30,7 @@
           row-key="id"
           :scroll="{ x: 1200, y: tableHeight }"
         >
-          <template #bodyCell="{ text,column, record, index }">
+          <template #bodyCell="{ text, column, record, index }">
             <template v-if="column.key === 'index'">
               {{ getRowIndex(index) }}
             </template>
@@ -92,7 +92,7 @@
       @submit="onUserApiEditorSubmit"
       @close="onUserApiEditorDialogClose"
     />
-    <DetailDialog ref="detailDialogRef" :data-source="curRow" @close="onDetailDialogClose" />
+    <DetailDialog ref="detailDialogRef" @close="onDetailDialogClose" />
   </div>
 </template>
 
@@ -295,8 +295,7 @@ const onAdd = (): void => {
  * @param record 行数据
  */
 const onDetail = (record: OutputManagerType.RowRecord = {}): void => {
-  curRow.value = cloneDeep(record);
-  detailDialogRef.value?.show?.();
+  detailDialogRef.value?.show?.(record.id);
 };
 
 /** 详情弹窗关闭回调 */

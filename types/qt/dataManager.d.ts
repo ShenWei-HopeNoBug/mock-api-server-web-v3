@@ -128,4 +128,34 @@ export declare namespace DataManagerType {
   interface CopyMockDataParams {
     id?: string;
   }
+
+  /**
+   * 获取 api 数据详情传参
+   * 协议：/mock_data/detail
+   * */
+  interface GetMockDataDetailParams {
+    id?: string;
+  }
+
+  /**
+   * response 变体数据
+   * */
+  interface ApiResponseVariant {
+    id?: string;
+    api_data_id?: string;
+    name?: string;
+    response?: string;
+    enabled?: boolean;
+    timeout?: number;
+    created_at?: string;
+    updated_at?: string;
+  }
+
+  /**
+   * api 数据详情（含变体列表）
+   * 协议：/mock_data/detail 返回数据
+   * */
+  interface ApiDataDetail extends ApiData {
+    response_variants?: ApiResponseVariant[];
+  }
 }

@@ -56,17 +56,24 @@
               <div class="operation">
                 <a-popconfirm
                   :title="record.enabled ? '确认禁用？' : '确认启用？'"
+                  :disabled="isOperating(record.id)"
                   @confirm="onToggleEnabled(record)"
                 >
-                  <a-button :danger="record.enabled" type="link">
+                  <a-button :danger="record.enabled" type="link" :loading="isOperating(record.id)">
                     {{ record.enabled ? '禁用' : '启用' }}
                   </a-button>
                 </a-popconfirm>
 
-                <a-button type="link" @click="onEdit(record)">编辑</a-button>
+                <a-button type="link" :disabled="isOperating(record.id)" @click="onEdit(record)">
+                  编辑
+                </a-button>
 
-                <a-popconfirm title="确认删除？" @confirm="onDelete(record)">
-                  <a-button danger type="link">删除</a-button>
+                <a-popconfirm
+                  title="确认删除？"
+                  :disabled="isOperating(record.id)"
+                  @confirm="onDelete(record)"
+                >
+                  <a-button danger type="link" :loading="isOperating(record.id)">删除</a-button>
                 </a-popconfirm>
               </div>
             </template>
@@ -107,16 +114,25 @@ const apiDataId = ref<string>('');
 
 const variantFormDialogRef = ref<InstanceType<typeof VariantFormDialog> | null>(null);
 const tableHeight = ref<number>(400);
+/** 请求竞态令牌，仅最后一次请求的 token 匹配时才更新数据 */
 const currentRequestToken = ref<string>(generateUUID());
+/** 记录正在操作中的变体 id，防止同一条记录并发操作 */
+const operatingIds = ref<Record<string, boolean>>({});
+
+/** 判断指定变体是否正在操作中 */
+const isOperating = (id: string): boolean => !!operatingIds.value[id];
 
 // --- 拖拽排序相关状态 ---
+let sortableInstance: SortableType | null = null;
 const isSortMode = ref<boolean>(false);
 const isSavingSort = ref<boolean>(false);
 const hasOrderChanged = ref<boolean>(false);
+/** 进入排序模式时记录的原始 id 顺序，用于比较是否有变化 */
 const originalVariantIds = ref<string[]>([]);
-let sortableInstance: SortableType | null = null;
+/** 排序保存请求竞态令牌 */
 const sortRequestToken = ref<string>(generateUUID());
 
+/** 排序模式下隐藏操作列 */
 const currentColumns = computed(() => {
   if (isSortMode.value) {
     return variantTableColumns.filter(col => col.key !== 'operation');
@@ -138,6 +154,7 @@ const onResize = (entry: ResizeObserverEntry): void => {
 
 // --- 数据加载 ---
 
+/** 拉取当前接口的变体列表，通过 token 防竞态 */
 const fetchVariants = (): void => {
   if (!apiDataId.value) {
     return;
@@ -169,6 +186,7 @@ const fetchVariants = (): void => {
 
 // --- 拖拽排序 ---
 
+/** 销毁 Sortable 实例 */
 const destroySortable = (): void => {
   if (sortableInstance) {
     sortableInstance.destroy();
@@ -176,6 +194,7 @@ const destroySortable = (): void => {
   }
 };
 
+/** 初始化 Sortable 实例，绑定到表格 tbody */
 const initSortable = (): void => {
   const tableBody = document.querySelector(
     '.output-manager-variant-editor-dialog .ant-table-tbody',
@@ -203,11 +222,13 @@ const initSortable = (): void => {
   });
 };
 
+/** 比较当前顺序与原始顺序，更新 hasOrderChanged */
 const checkOrderChanged = (): void => {
   const currentIds = variantList.value.map(v => v.id!);
   hasOrderChanged.value = currentIds.some((id, i) => id !== originalVariantIds.value[i]);
 };
 
+/** 切换拖拽排序模式 */
 const toggleSortMode = (): void => {
   if (isSortMode.value) {
     destroySortable();
@@ -223,6 +244,7 @@ const toggleSortMode = (): void => {
   });
 };
 
+/** 保存排序结果到服务端 */
 const onSaveSort = (): void => {
   if (!hasOrderChanged.value || !apiDataId.value || isSavingSort.value) {
     return;
@@ -259,6 +281,7 @@ const onSaveSort = (): void => {
 
 // --- 弹窗打开/关闭 ---
 
+/** 重置所有内部状态 */
 const resetStates = (): void => {
   variantList.value = [];
   currentRequestToken.value = generateUUID();
@@ -270,8 +293,10 @@ const resetStates = (): void => {
   hasOrderChanged.value = false;
   originalVariantIds.value = [];
   sortRequestToken.value = generateUUID();
+  operatingIds.value = {};
 };
 
+/** 打开弹窗并加载变体数据 */
 const show = (options: VariantEditorDialogType.ShowOptions = {}): void => {
   resetStates();
   apiDataId.value = options.apiDataId || '';
@@ -281,6 +306,7 @@ const show = (options: VariantEditorDialogType.ShowOptions = {}): void => {
   });
 };
 
+/** 关闭弹窗并重置状态 */
 const close = (): void => {
   visible.value = false;
   resetStates();
@@ -290,39 +316,67 @@ const close = (): void => {
 
 // --- 新增/编辑表单弹窗 ---
 
+/** 打开新增变体表单 */
 const onAdd = (): void => {
   variantFormDialogRef.value?.show?.({ isEdit: false });
 };
 
+/** 打开编辑变体表单 */
 const onEdit = (record: VariantEditorDialogType.VariantRecord): void => {
   variantFormDialogRef.value?.show?.({ isEdit: true, record });
 };
 
 // --- 启用/禁用切换 ---
 
+/** 切换变体启用状态，防重复点击 */
 const onToggleEnabled = (record: VariantEditorDialogType.VariantRecord): void => {
+  const id: string = record.id || '';
+  if (isOperating(id)) {
+    return;
+  }
+  operatingIds.value[id] = true;
   const nextEnabled = !record.enabled;
-  updateVariant({ id: record.id, enabled: nextEnabled }).then(res => {
-    if (res) {
-      message.success(nextEnabled ? '启用成功' : '禁用成功');
-      fetchVariants();
-    } else {
+  updateVariant({ id, enabled: nextEnabled })
+    .then(res => {
+      if (res) {
+        message.success(nextEnabled ? '启用成功' : '禁用成功');
+        fetchVariants();
+      } else {
+        message.error('切换启用状态失败');
+      }
+    })
+    .catch(() => {
       message.error('切换启用状态失败');
-    }
-  });
+    })
+    .finally(() => {
+      operatingIds.value[id] = false;
+    });
 };
 
 // --- 删除 ---
 
+/** 删除指定变体，防重复点击 */
 const onDelete = (record: VariantEditorDialogType.VariantRecord): void => {
-  deleteVariant({ id: record.id }).then(res => {
-    if (res) {
-      message.success('删除变体成功');
-      fetchVariants();
-    } else {
+  const id: string = record.id || '';
+  if (isOperating(id)) {
+    return;
+  }
+  operatingIds.value[id] = true;
+  deleteVariant({ id })
+    .then(res => {
+      if (res) {
+        message.success('删除变体成功');
+        fetchVariants();
+      } else {
+        message.error('删除变体失败');
+      }
+    })
+    .catch(() => {
       message.error('删除变体失败');
-    }
-  });
+    })
+    .finally(() => {
+      operatingIds.value[id] = false;
+    });
 };
 
 onBeforeUnmount(() => {

@@ -91,6 +91,10 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
   const deleteVariant = (params: DataManagerType.DeleteVariantParams = {}): Promise<boolean> =>
     guardedFetch<boolean, DataManagerType.DeleteVariantParams>('/variant/delete', params);
 
+  /** 变体排序 */
+  const reorderVariants = (params: DataManagerType.ReorderVariantParams): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.ReorderVariantParams>('/variant/reorder', params);
+
   return {
     isReady,
     getMockDataPage,
@@ -103,5 +107,6 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     addVariant,
     updateVariant,
     deleteVariant,
+    reorderVariants,
   };
 };

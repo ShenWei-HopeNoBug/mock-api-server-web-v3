@@ -184,6 +184,15 @@ export declare namespace DataManagerType {
   }
 
   /**
+   * 变体排序传参
+   * 协议：/variant/reorder
+   * */
+  interface ReorderVariantParams {
+    api_data_id?: string;
+    variant_ids?: string[];
+  }
+
+  /**
    * api 数据详情（含变体列表）
    * 协议：/mock_data/detail 返回数据
    * */

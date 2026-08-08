@@ -49,6 +49,7 @@ const formProps: Record<string, any> = {
 
 /** 变体列表表格列配置 */
 const variantTableColumns = [
+  { title: '', key: 'dragHandle', width: 48, align: 'center' as const },
   { title: '变体名称', dataIndex: 'name', key: 'name', width: 160, ellipsis: true },
   { title: '响应延时(ms)', dataIndex: 'timeout', key: 'timeout', width: 120 },
   { title: '启用状态', dataIndex: 'enabled', key: 'enabled', width: 100 },

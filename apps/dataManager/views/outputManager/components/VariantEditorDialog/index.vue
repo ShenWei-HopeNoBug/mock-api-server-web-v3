@@ -6,9 +6,8 @@
     :footer="null"
     :mask-closable="false"
     :keyboard="false"
-    centered
-    destroy-on-close
-    wrap-class-name="output-manager-variant-editor-dialog"
+    :centered="true"
+    :destroy-on-close="true"
     @cancel="close"
   >
     <div class="container" :class="{ 'is-sort-mode': isSortMode }">
@@ -32,11 +31,11 @@
       </div>
       <div ref="contentRef" class="content" v-dom-resize="onResize">
         <a-table
+          row-key="id"
           :columns="currentColumns"
           :data-source="variantList"
           :pagination="false"
           :loading="tableLoading"
-          row-key="id"
           :scroll="{ x: 1000, y: tableHeight }"
         >
           <template #bodyCell="{ column, record }">

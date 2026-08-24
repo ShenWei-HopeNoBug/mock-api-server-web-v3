@@ -95,6 +95,10 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
   const reorderVariants = (params: DataManagerType.ReorderVariantParams): Promise<boolean> =>
     guardedFetch<boolean, DataManagerType.ReorderVariantParams>('/variant/reorder', params);
 
+  /** 复制响应变体 */
+  const copyVariant = (params: DataManagerType.CopyVariantParams = {}): Promise<boolean> =>
+    guardedFetch<boolean, DataManagerType.CopyVariantParams>('/variant/copy', params);
+
   return {
     isReady,
     getMockDataPage,
@@ -108,5 +112,6 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     updateVariant,
     deleteVariant,
     reorderVariants,
+    copyVariant,
   };
 };

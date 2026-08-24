@@ -193,6 +193,15 @@ export declare namespace DataManagerType {
   }
 
   /**
+   * 复制变体传参
+   * 协议：/variant/copy
+   * */
+  interface CopyVariantParams {
+    id?: string;
+    api_data_id?: string;
+  }
+
+  /**
    * api 数据详情（含变体列表）
    * 协议：/mock_data/detail 返回数据
    * */

@@ -307,7 +307,7 @@ const onSaveSort = (): void => {
       if (sortRequestToken.value !== token) {
         return;
       }
-      if (res) {
+      if (res?.success) {
         message.success('排序保存成功');
         destroySortable();
         isSortMode.value = false;
@@ -315,8 +315,6 @@ const onSaveSort = (): void => {
         nextTick(() => {
           fetchVariants();
         });
-      } else {
-        message.error('排序保存失败');
       }
     })
     .finally(() => {
@@ -385,11 +383,9 @@ const onToggleEnabled = (record: VariantEditorDialogType.VariantRecord): void =>
   const nextEnabled = !record.enabled;
   updateVariant({ id, enabled: nextEnabled })
     .then(res => {
-      if (res) {
+      if (res?.success) {
         message.success(nextEnabled ? '启用成功' : '禁用成功');
         fetchVariants();
-      } else {
-        message.error('切换启用状态失败');
       }
     })
     .catch(() => {
@@ -411,11 +407,9 @@ const onCopy = (record: VariantEditorDialogType.VariantRecord): void => {
   operatingIds.value[id] = true;
   copyVariant({ id, api_data_id: apiDataId.value })
     .then(res => {
-      if (res) {
+      if (res?.success) {
         message.success('复制变体成功');
         fetchVariants();
-      } else {
-        message.error('复制变体失败');
       }
     })
     .catch(() => {
@@ -437,11 +431,9 @@ const onDelete = (record: VariantEditorDialogType.VariantRecord): void => {
   operatingIds.value[id] = true;
   deleteVariant({ id })
     .then(res => {
-      if (res) {
+      if (res?.success) {
         message.success('删除变体成功');
         fetchVariants();
-      } else {
-        message.error('删除变体失败');
       }
     })
     .catch(() => {

@@ -363,12 +363,10 @@ const onEditSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
       if (requestTokenMap.edit_mock_data !== token) {
         return;
       }
-      if (res) {
+      if (res?.success) {
         message.success('更新接口数据成功');
         fetchData(false);
         userApiEditorDialogRef.value?.close?.();
-      } else {
-        message.error('更新接口数据失败');
       }
     })
     .finally(() => {
@@ -391,12 +389,10 @@ const onAddSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
       if (requestTokenMap.add_mock_data !== token) {
         return;
       }
-      if (res) {
+      if (res?.success) {
         message.success('新增接口数据成功');
         fetchData(true);
         userApiEditorDialogRef.value?.close?.();
-      } else {
-        message.error('新增接口数据失败');
       }
     })
     .finally(() => {
@@ -442,11 +438,9 @@ const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
       if (requestTokenMap.delete_mock_data !== token) {
         return;
       }
-      if (res) {
+      if (res?.success) {
         message.success('删除接口数据成功');
         fetchData(true);
-      } else {
-        message.error('删除接口数据失败');
       }
     })
     .finally(() => {
@@ -468,11 +462,9 @@ const onToggleEnabled = (record: OutputManagerType.RowRecord = {}): void => {
   }
   const nextEnabled = !record.enabled;
   editMockData({ id, enabled: nextEnabled }).then(res => {
-    if (res) {
+    if (res?.success) {
       message.success(nextEnabled ? '启用成功' : '禁用成功');
       fetchData(false);
-    } else {
-      message.error('切换启用状态失败！');
     }
   });
 };
@@ -495,11 +487,10 @@ const onBatchDelete = (): void => {
           if (requestTokenMap.batch_delete_mock_data !== token) {
             return;
           }
-          if (res) {
-            message.success('批量删除成功');
+          if (res?.success) {
+            const count = res.affected_count || 0;
+            message.success(`批量删除成功，共删除 ${count} 条记录`);
             fetchData(true);
-          } else {
-            message.error('批量删除失败');
           }
         })
         .finally(() => {
@@ -530,13 +521,11 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
       if (requestTokenMap.copy_mock_data !== token) {
         return;
       }
-      if (res) {
+      if (res?.success) {
         message.success('复制接口数据成功');
         if (refresh) {
           fetchData(true);
         }
-      } else {
-        message.error('复制接口数据失败');
       }
     })
     .finally(() => {

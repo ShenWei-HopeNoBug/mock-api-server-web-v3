@@ -3,6 +3,28 @@
  * */
 export declare namespace DataManagerType {
   /**
+   * 操作结果
+   * success: 操作是否成功
+   * id: 操作成功时返回的记录 ID（可选）
+   * */
+  interface OperationResult {
+    success: boolean;
+    status_code: number;
+    status_msg: string;
+    id?: string;
+  }
+
+  /**
+   * 批量操作结果
+   */
+  interface BatchOperationResult {
+    success: boolean;
+    status_code: number;
+    status_msg: string;
+    affected_count?: number;
+  }
+
+  /**
    * api 数据类型
    * */
   type ApiType = 'USER' | 'MITMPROXY';

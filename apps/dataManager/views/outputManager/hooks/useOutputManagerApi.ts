@@ -46,29 +46,29 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     );
 
   /** 编辑 Mock 接口数据 */
-  const editMockData = (params: DataManagerType.EditMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.EditMockDataParams>('/mock_data/update', params);
+  const editMockData = (params: DataManagerType.EditMockDataParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.EditMockDataParams>('/mock_data/update', params);
 
   /** 新增 Mock 接口数据 */
-  const addMockData = (params: DataManagerType.AddMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.AddMockDataParams>('/mock_data/create', params);
+  const addMockData = (params: DataManagerType.AddMockDataParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.AddMockDataParams>('/mock_data/create', params);
 
   /** 删除 Mock 接口数据 */
-  const deleteMockData = (params: DataManagerType.DeleteMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.DeleteMockDataParams>('/mock_data/delete', params);
+  const deleteMockData = (params: DataManagerType.DeleteMockDataParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.DeleteMockDataParams>('/mock_data/delete', params);
 
   /** 批量删除 Mock 接口数据（按筛选条件） */
   const batchDeleteMockData = (
     params: DataManagerType.BatchDeleteMockDataParams = {},
-  ): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.BatchDeleteMockDataParams>(
+  ): Promise<DataManagerType.BatchOperationResult> =>
+    guardedFetch<DataManagerType.BatchOperationResult, DataManagerType.BatchDeleteMockDataParams>(
       '/mock_data/batch_delete',
       params,
     );
 
   /** 复制 Mock 接口数据 */
-  const copyMockData = (params: DataManagerType.CopyMockDataParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.CopyMockDataParams>('/mock_data/copy', params);
+  const copyMockData = (params: DataManagerType.CopyMockDataParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.CopyMockDataParams>('/mock_data/copy', params);
 
   /** 获取 Mock 接口详情数据 */
   const getMockDataDetail = (
@@ -80,24 +80,24 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     );
 
   /** 新增响应变体 */
-  const addVariant = (params: DataManagerType.AddVariantParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.AddVariantParams>('/variant/create', params);
+  const addVariant = (params: DataManagerType.AddVariantParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.AddVariantParams>('/variant/create', params);
 
   /** 更新响应变体 */
-  const updateVariant = (params: DataManagerType.UpdateVariantParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.UpdateVariantParams>('/variant/update', params);
+  const updateVariant = (params: DataManagerType.UpdateVariantParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.UpdateVariantParams>('/variant/update', params);
 
   /** 删除响应变体 */
-  const deleteVariant = (params: DataManagerType.DeleteVariantParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.DeleteVariantParams>('/variant/delete', params);
+  const deleteVariant = (params: DataManagerType.DeleteVariantParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.DeleteVariantParams>('/variant/delete', params);
 
   /** 变体排序 */
-  const reorderVariants = (params: DataManagerType.ReorderVariantParams): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.ReorderVariantParams>('/variant/reorder', params);
+  const reorderVariants = (params: DataManagerType.ReorderVariantParams): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.ReorderVariantParams>('/variant/reorder', params);
 
   /** 复制响应变体 */
-  const copyVariant = (params: DataManagerType.CopyVariantParams = {}): Promise<boolean> =>
-    guardedFetch<boolean, DataManagerType.CopyVariantParams>('/variant/copy', params);
+  const copyVariant = (params: DataManagerType.CopyVariantParams = {}): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.CopyVariantParams>('/variant/copy', params);
 
   return {
     isReady,

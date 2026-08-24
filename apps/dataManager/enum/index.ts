@@ -4,6 +4,7 @@ import { createLabelMapFromValueEnum } from '@/utils';
 export const API_TYPE_ENUM: CommonType.EnumItem[] = [
   { label: 'USER', value: 'USER' },
   { label: 'MITMPROXY', value: 'MITMPROXY' },
+  { label: 'MCP', value: 'MCP' },
 ];
 
 export const METHOD_ENUM: CommonType.EnumItem[] = [

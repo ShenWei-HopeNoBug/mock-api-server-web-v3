@@ -10,6 +10,7 @@ export declare namespace OutputManagerType {
     response?: string;
     create_start_time?: string;
     create_end_time?: string;
+    operator?: string;
   }
 
   type RowRecord = DataManagerType.ApiData;

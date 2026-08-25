@@ -71,6 +71,11 @@ const searchFormColumns: FormType.FormItemOptions[] = [
     inputType: 'input',
   },
   {
+    label: '操作人',
+    key: 'operator',
+    inputType: 'input',
+  },
+  {
     label: '创建时间',
     key: 'create_time_range',
     inputType: 'rangePicker',
@@ -152,6 +157,12 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     title: '启用状态',
     dataIndex: 'enabled',
     key: 'enabled',
+    width: 100,
+  },
+  {
+    title: '操作人',
+    dataIndex: 'operator',
+    key: 'operator',
     width: 100,
   },
   {

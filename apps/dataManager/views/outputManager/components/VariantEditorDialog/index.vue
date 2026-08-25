@@ -39,7 +39,11 @@
           :scroll="{ x: 1000, y: tableHeight }"
         >
           <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'dragHandle'">
+            <template v-if="column.key === 'name'">
+              <span class="variant-name" :title="record.name">{{ record.name }}</span>
+            </template>
+
+            <template v-else-if="column.key === 'dragHandle'">
               <div class="drag-handle" :class="{ 'drag-handle--active': isSortMode }">
                 <span class="drag-handle__icon">&#8942;&#8942;</span>
               </div>
@@ -252,6 +256,16 @@ const initSortable = (): void => {
       if (oi === ni || oi < 0 || ni < 0) {
         return;
       }
+
+      // 还原 SortableJS 对 DOM 的直接操作，把拖拽行移回原位，
+      // 避免实际 DOM 与 Vue 虚拟 DOM 顺序不一致导致重渲染时产生重复元素
+      const children = Array.from(tableBody.children);
+      const movedNode = children[newIndex];
+      const refNode = children[oldIndex] || null;
+      if (movedNode && oldIndex !== newIndex) {
+        tableBody.insertBefore(movedNode, refNode);
+      }
+
       const arr = cloneDeep(variantList.value);
       const oldValue = arr[oi];
       if (!oldValue) {
@@ -485,6 +499,15 @@ defineExpose({
     align-items: center;
     flex-wrap: wrap;
     gap: 2px;
+  }
+
+  .variant-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
   }
 
   .drag-handle {

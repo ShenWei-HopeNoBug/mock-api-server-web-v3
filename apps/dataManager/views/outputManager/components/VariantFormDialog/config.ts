@@ -49,13 +49,14 @@ const formProps: Record<string, any> = {
 
 /** 变体列表表格列配置 */
 const variantTableColumns = [
-  { title: '', key: 'dragHandle', width: 48, align: 'center' as const },
-  { title: '变体名称', dataIndex: 'name', key: 'name', width: 160, ellipsis: true },
+  { title: '', key: 'dragHandle', width: 48, align: 'center' },
+  { title: '变体名称', dataIndex: 'name', key: 'name', width: 160 },
   { title: '响应延时(ms)', dataIndex: 'timeout', key: 'timeout', width: 120 },
   { title: '启用状态', dataIndex: 'enabled', key: 'enabled', width: 100 },
+  { title: '操作人', dataIndex: 'operator', key: 'operator', width: 120 },
   { title: '创建时间', dataIndex: 'created_at', key: 'created_at', width: 180 },
   { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at', width: 180 },
-  { title: '操作', key: 'operation', width: 200, fixed: 'right' as const },
+  { title: '操作', key: 'operation', width: 280, fixed: 'right' },
 ];
 
 export { getDefaultVariantValues, processBeforeSubmit, formProps, variantTableColumns };

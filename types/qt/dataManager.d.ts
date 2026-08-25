@@ -57,6 +57,7 @@ export declare namespace DataManagerType {
     timeout?: number;
     enabled?: boolean;
     response_variant_ids?: string[];
+    operator?: string;
     created_at?: string;
     updated_at?: string;
   }
@@ -76,6 +77,7 @@ export declare namespace DataManagerType {
     request_content_type?: RequestContentType;
     create_start_time?: string;
     create_end_time?: string;
+    operator?: string;
   }
 
   /**
@@ -103,6 +105,7 @@ export declare namespace DataManagerType {
     response?: string;
     timeout?: number;
     enabled?: boolean;
+    operator?: string;
   }
 
   /**
@@ -117,6 +120,7 @@ export declare namespace DataManagerType {
     params?: string;
     response?: string;
     timeout?: number;
+    operator?: string;
   }
 
   /**
@@ -141,6 +145,7 @@ export declare namespace DataManagerType {
     request_content_type?: RequestContentType;
     create_start_time?: string;
     create_end_time?: string;
+    operator?: string;
   }
 
   /**
@@ -169,6 +174,7 @@ export declare namespace DataManagerType {
     response?: string;
     enabled?: boolean;
     timeout?: number;
+    operator?: string;
     created_at?: string;
     updated_at?: string;
   }
@@ -183,6 +189,7 @@ export declare namespace DataManagerType {
     response?: string;
     enabled?: boolean;
     timeout?: number;
+    operator?: string;
   }
 
   /**
@@ -195,6 +202,7 @@ export declare namespace DataManagerType {
     response?: string;
     enabled?: boolean;
     timeout?: number;
+    operator?: string;
   }
 
   /**

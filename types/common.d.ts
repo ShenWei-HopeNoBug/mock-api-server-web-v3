@@ -13,4 +13,6 @@ export declare namespace CommonType {
     text?: string;
     record?: Common.CommonMap;
   }
+
+  type UrlQueryMap = Record<string, string | null>;
 }

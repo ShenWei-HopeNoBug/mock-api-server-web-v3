@@ -14,6 +14,14 @@ const staticRoute: RouteRecordRaw[] = [
           title: 'mockTester',
         },
       },
+      {
+        path: '/staticResourceTester',
+        name: 'staticResourceTester',
+        component: () => import('@apps/apiTester/views/staticResourceTester/index.vue'),
+        meta: {
+          title: 'staticResourceTester',
+        },
+      },
     ],
   },
 ];

@@ -121,6 +121,14 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:5000',
           changeOrigin: true,
         },
+        '/static_delay': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        },
+        '/static': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        },
       },
     },
     build: {

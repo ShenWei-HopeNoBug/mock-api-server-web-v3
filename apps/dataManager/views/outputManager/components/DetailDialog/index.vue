@@ -221,6 +221,20 @@ const getVariantColumns = (
       ellipsis: false,
     },
     {
+      rowKey: 'operator',
+      label: '操作人',
+      value: variant.operator,
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
+      rowKey: 'type',
+      label: '来源类型',
+      value: variant.type,
+      tooltip: false,
+      ellipsis: false,
+    },
+    {
       rowKey: 'response',
       label: '响应数据',
       value: variant.response,

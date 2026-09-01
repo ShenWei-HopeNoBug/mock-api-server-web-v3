@@ -54,6 +54,7 @@ const variantTableColumns = [
   { title: '响应延时(ms)', dataIndex: 'timeout', key: 'timeout', width: 120 },
   { title: '启用状态', dataIndex: 'enabled', key: 'enabled', width: 100 },
   { title: '操作人', dataIndex: 'operator', key: 'operator', width: 120 },
+  { title: '来源类型', dataIndex: 'type', key: 'type', width: 120 },
   { title: '创建时间', dataIndex: 'created_at', key: 'created_at', width: 180 },
   { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at', width: 180 },
   { title: '操作', key: 'operation', width: 280, fixed: 'right' },

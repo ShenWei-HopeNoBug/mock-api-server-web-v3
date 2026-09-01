@@ -165,6 +165,11 @@ export declare namespace DataManagerType {
   }
 
   /**
+   * 响应变体来源类型
+   * */
+  type VariantType = 'USER' | 'MCP';
+
+  /**
    * response 变体数据
    * */
   interface ApiResponseVariant {
@@ -175,6 +180,7 @@ export declare namespace DataManagerType {
     enabled?: boolean;
     timeout?: number;
     operator?: string;
+    type?: VariantType;
     created_at?: string;
     updated_at?: string;
   }
@@ -190,6 +196,7 @@ export declare namespace DataManagerType {
     enabled?: boolean;
     timeout?: number;
     operator?: string;
+    type?: VariantType;
   }
 
   /**
@@ -203,6 +210,8 @@ export declare namespace DataManagerType {
     enabled?: boolean;
     timeout?: number;
     operator?: string;
+    // type 创建后不可变更，update 时忽略（保留该字段用于协议兼容，但不应主动传入）
+    type?: VariantType;
   }
 
   /**

@@ -121,7 +121,7 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:5000',
           changeOrigin: true,
         },
-        '/static_delay': {
+        '/slow_network': {
           target: 'http://localhost:5000',
           changeOrigin: true,
         },

@@ -2,9 +2,19 @@
   <div class="video-tester">
     <a-card title="视频列表" class="video-config-card">
       <div class="video-url-list">
-        <div v-for="(item, index) in videoUrlItems" :key="item.id" class="video-url-row">
+        <div
+          v-for="(item, index) in videoUrlItems"
+          :key="`${item.id}_${index}`"
+          class="video-url-row"
+        >
           <StaticUrlInput v-model:value="item.url" class="url-input" />
-          <a-button danger shape="circle" size="small" @click="onRemoveVideoUrl(index)">
+          <a-button
+            danger
+            shape="circle"
+            size="small"
+            class="remove-btn"
+            @click="onRemoveVideoUrl(index)"
+          >
             <template #icon><MinusOutlined /></template>
           </a-button>
         </div>
@@ -19,28 +29,30 @@
       </div>
     </a-card>
 
-    <a-card title="轮播预览" class="video-preview-card">
-      <div class="video-box">
-        <CarouselVideo
-          v-if="videoList.length"
-          :videos="videoList"
-          :immediate-update="true"
-          :muted="true"
-          :loading-timeout="30000"
-          :video-style="{ width: '100%', height: '100%' }"
-          @all-videos-error="onAllVideosError"
-          @loading-timeout="onLoadingTimeout"
-        />
-        <div v-else class="video-placeholder">请输入视频 URL 并点击"更新轮播列表"</div>
-      </div>
-    </a-card>
+    <div class="video-preview-row">
+      <a-card title="轮播预览" class="video-preview-card">
+        <div class="video-box">
+          <CarouselVideo
+            v-if="videoList.length"
+            :videos="videoList"
+            :immediate-update="true"
+            :muted="true"
+            :loading-timeout="30000"
+            :video-style="{ width: '100%', height: '100%' }"
+            @all-videos-error="onAllVideosError"
+            @loading-timeout="onLoadingTimeout"
+          />
+          <div v-else class="video-placeholder">请输入视频 URL 并点击"更新轮播列表"</div>
+        </div>
+      </a-card>
 
-    <a-card title="网络请求日志" class="video-log-card">
-      <div class="log-list">
-        <div v-for="(log, i) in videoLog" :key="i" class="log-item">{{ log }}</div>
-        <div v-if="!videoLog.length" class="log-empty">暂无视频资源加载记录</div>
-      </div>
-    </a-card>
+      <a-card title="网络请求日志" class="video-log-card">
+        <div class="log-list">
+          <div v-for="(log, i) in videoLog" :key="i" class="log-item">{{ log }}</div>
+          <div v-if="!videoLog.length" class="log-empty">暂无视频资源加载记录</div>
+        </div>
+      </a-card>
+    </div>
   </div>
 </template>
 
@@ -53,7 +65,10 @@ import { generateUUID } from '@/utils';
 import { StaticResourceTesterType } from '../../type';
 
 const videoUrlItems = ref<StaticResourceTesterType.VideoUrlItem[]>([
-  { id: generateUUID(), url: '' },
+  {
+    id: generateUUID(),
+    url: 'http://localhost:5000/slow_network/17a00905-0147-4841-88f4-188347230c55.webm',
+  },
 ]);
 const videoList = ref<StaticResourceTesterType.VideoItem[]>([]);
 
@@ -99,14 +114,15 @@ const onClearVideoLog = () => {
 
 const handleResourceEntry = (entry: PerformanceResourceTiming) => {
   if (isVideoUrl(entry.name)) {
+    console.log(entry);
     const status = (entry as any).responseStatus ?? '-';
     const size = entry.encodedBodySize ? `${(entry.encodedBodySize / 1024).toFixed(2)} KB` : '-';
     const line = `[${timeNow()}] ${entry.name}  status=${status}  duration=${Math.round(
       entry.duration,
     )}ms  size=${size}`;
-    videoLog.value.unshift(line);
+    videoLog.value.push(line);
     if (videoLog.value.length > 50) {
-      videoLog.value.pop();
+      videoLog.value.shift();
     }
   }
 };
@@ -129,10 +145,48 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .video-tester {
-  .video-config-card,
-  .video-preview-card,
-  .video-log-card {
+  .video-config-card {
     margin-bottom: 16px;
+  }
+
+  .video-preview-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: stretch;
+    height: 500px;
+
+    .video-preview-card {
+      width: 268px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      :deep(.ant-card-body) {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    .video-log-card {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+
+      :deep(.ant-card-body) {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding-right: 12px;
+      }
+    }
   }
 
   .video-url-list {
@@ -144,11 +198,15 @@ onBeforeUnmount(() => {
 
   .video-url-row {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
 
     .url-input {
       flex: 1;
+    }
+
+    .remove-btn {
+      margin-bottom: 4px;
     }
   }
 
@@ -158,27 +216,32 @@ onBeforeUnmount(() => {
   }
 
   .video-box {
+    height: 100%;
     aspect-ratio: 9 / 16;
-    height: 360px;
-    background: #000;
     border-radius: 4px;
     overflow: hidden;
+    background: #000;
 
     .video-placeholder {
-      width: 100%;
       height: 100%;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
       color: #999;
+      padding: 20px;
+      font-size: 14px;
+      text-align: center;
     }
   }
 
   .log-list {
-    max-height: 240px;
+    flex: 1;
+    overflow: hidden;
     overflow-y: auto;
+    scrollbar-gutter: stable;
     font-size: 12px;
-    font-family: monospace;
+    padding-right: 12px;
 
     .log-item {
       padding: 4px 0;

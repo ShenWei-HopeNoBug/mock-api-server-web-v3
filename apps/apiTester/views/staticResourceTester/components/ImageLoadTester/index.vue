@@ -28,6 +28,7 @@
 import { ref, computed, watch } from 'vue';
 import Spin from '@/components/Spin/index.vue';
 import getImageSizeData from '@/utils/getImageSizeData';
+import { generateUUID } from '@/utils';
 
 interface Props {
   /** 待测图片 URL */
@@ -46,6 +47,7 @@ const duration = ref<number | null>(null);
 const imgWidth = ref<number>(0);
 const imgHeight = ref<number>(0);
 const errorMsg = ref<string>('');
+const currentReqId = ref<string>(generateUUID());
 
 const durationText = computed(() => (duration.value !== null ? `${duration.value}ms` : '-'));
 
@@ -77,10 +79,18 @@ const loadImage = async (forceRefresh = false) => {
     targetUrl = `${targetUrl}${sep}_t=${Date.now()}`;
   }
 
+  const reqId = generateUUID();
+  currentReqId.value = reqId;
+
   startTime.value = performance.now();
-  imgSrc.value = url.value;
+  imgSrc.value = targetUrl;
 
   const result = await getImageSizeData(targetUrl);
+
+  if (reqId !== currentReqId.value) {
+    return;
+  }
+
   duration.value = Math.round(performance.now() - startTime.value);
 
   if (result.error) {

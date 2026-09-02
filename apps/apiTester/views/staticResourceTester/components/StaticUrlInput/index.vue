@@ -24,7 +24,7 @@
       <a-input :value="`/`" :disabled="true" class="separator" />
       <a-select v-model:value="mode" class="mode-select" @change="onTemplateChange">
         <a-select-option value="static">static</a-select-option>
-        <a-select-option value="static_delay">static_delay</a-select-option>
+        <a-select-option value="slow_network">slow_network</a-select-option>
       </a-select>
       <a-input :value="`/`" :disabled="true" class="separator" />
       <a-input
@@ -67,7 +67,7 @@ const emit = defineEmits<{
   (e: 'change', value: string): void;
 }>();
 
-const FULL_URL_RE = /^http:\/\/localhost:(\d+)\/(static|static_delay)\/(.*)$/;
+const FULL_URL_RE = /^http:\/\/localhost:(\d+)\/(static|slow_network)\/(.*)$/;
 
 const innerMode = ref<StaticUrlInputType.InputMode>(props.mode);
 const portNum = ref<number>(props.defaultPort);
@@ -170,19 +170,19 @@ watch(
   }
 
   .prefix-text {
-    width: auto !important;
+    width: 120px !important;
     color: #999;
     background: #fafafa;
     pointer-events: none;
   }
 
   .port-input {
-    width: 80px;
+    width: 72px !important;
     text-align: center;
   }
 
   .separator {
-    width: 24px !important;
+    width: 30px !important;
     text-align: center;
     color: #999;
     background: #fafafa;
@@ -190,10 +190,11 @@ watch(
   }
 
   .mode-select {
-    width: 130px;
+    width: 120px !important;
   }
 
   .path-input {
+    min-width: 120px !important;
     flex: 1;
   }
 }

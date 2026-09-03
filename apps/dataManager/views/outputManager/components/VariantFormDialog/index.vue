@@ -123,24 +123,20 @@ const onFormSubmit = (form: Record<string, any> = {}): void => {
 
   if (isEditRef.value) {
     updateVariant({ id: editingVariantId.value, ...submitData })
-      .then(res => {
-        if (res?.success) {
-          message.success('更新变体成功');
-          close();
-          emits('success');
-        }
+      .then(() => {
+        message.success('更新变体成功');
+        close();
+        emits('success');
       })
       .finally(() => {
         formLoading.value = false;
       });
   } else {
     addVariant({ api_data_id: props.apiDataId, ...submitData })
-      .then(res => {
-        if (res?.success) {
-          message.success('新增变体成功');
-          close();
-          emits('success');
-        }
+      .then(() => {
+        message.success('新增变体成功');
+        close();
+        emits('success');
       })
       .finally(() => {
         formLoading.value = false;

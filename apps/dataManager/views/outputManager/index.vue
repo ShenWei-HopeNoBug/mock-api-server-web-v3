@@ -35,6 +35,14 @@
               {{ getRowIndex(index) }}
             </template>
 
+            <template v-else-if="column.key === 'url'">
+              <template v-if="text">
+                <span class="url-text">{{ text }}</span>
+                <CopyIcon :text="text" :tooltip="true" />
+              </template>
+              <template v-else>-</template>
+            </template>
+
             <template v-else-if="column.key === 'params'">
               <div class="params">{{ record.params }}</div>
             </template>
@@ -112,6 +120,7 @@ import { message, Modal } from 'ant-design-vue';
 import { generateUUID } from '@/utils';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
+import CopyIcon from '@/components/CopyIcon/index.vue';
 import DetailDialog from './components/DetailDialog/index.vue';
 import UserApiEditorDialog from './components/UserApiEditorDialog/index.vue';
 import VariantEditorDialog from './components/VariantEditorDialog/index.vue';
@@ -359,15 +368,13 @@ const onEditSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
   requestTokenMap.edit_mock_data = token;
   loadingMap.edit_mock_data = true;
   editMockData(params)
-    .then(res => {
+    .then(() => {
       if (requestTokenMap.edit_mock_data !== token) {
         return;
       }
-      if (res?.success) {
-        message.success('更新接口数据成功');
-        fetchData(false);
-        userApiEditorDialogRef.value?.close?.();
-      }
+      message.success('更新接口数据成功');
+      fetchData(false);
+      userApiEditorDialogRef.value?.close?.();
     })
     .finally(() => {
       if (requestTokenMap.edit_mock_data === token) {
@@ -385,15 +392,13 @@ const onAddSubmit = (formData: OutputManagerType.RowRecord = {}): void => {
   requestTokenMap.add_mock_data = token;
   loadingMap.add_mock_data = true;
   addMockData(formData)
-    .then(res => {
+    .then(() => {
       if (requestTokenMap.add_mock_data !== token) {
         return;
       }
-      if (res?.success) {
-        message.success('新增接口数据成功');
-        fetchData(true);
-        userApiEditorDialogRef.value?.close?.();
-      }
+      message.success('新增接口数据成功');
+      fetchData(true);
+      userApiEditorDialogRef.value?.close?.();
     })
     .finally(() => {
       if (requestTokenMap.add_mock_data === token) {
@@ -434,14 +439,12 @@ const onDelete = (record: OutputManagerType.RowRecord = {}): void => {
   requestTokenMap.delete_mock_data = token;
   loadingMap.delete_mock_data = true;
   deleteMockData({ id })
-    .then(res => {
+    .then(() => {
       if (requestTokenMap.delete_mock_data !== token) {
         return;
       }
-      if (res?.success) {
-        message.success('删除接口数据成功');
-        fetchData(true);
-      }
+      message.success('删除接口数据成功');
+      fetchData(true);
     })
     .finally(() => {
       if (requestTokenMap.delete_mock_data === token) {
@@ -461,11 +464,9 @@ const onToggleEnabled = (record: OutputManagerType.RowRecord = {}): void => {
     return;
   }
   const nextEnabled = !record.enabled;
-  editMockData({ id, enabled: nextEnabled }).then(res => {
-    if (res?.success) {
-      message.success(nextEnabled ? '启用成功' : '禁用成功');
-      fetchData(false);
-    }
+  editMockData({ id, enabled: nextEnabled }).then(() => {
+    message.success(nextEnabled ? '启用成功' : '禁用成功');
+    fetchData(false);
   });
 };
 
@@ -487,11 +488,9 @@ const onBatchDelete = (): void => {
           if (requestTokenMap.batch_delete_mock_data !== token) {
             return;
           }
-          if (res?.success) {
-            const count = res.affected_count || 0;
-            message.success(`批量删除成功，共删除 ${count} 条记录`);
-            fetchData(true);
-          }
+          const count = res?.affected_count || 0;
+          message.success(`批量删除成功，共删除 ${count} 条记录`);
+          fetchData(true);
         })
         .finally(() => {
           if (requestTokenMap.batch_delete_mock_data === token) {
@@ -517,15 +516,13 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
   requestTokenMap.copy_mock_data = token;
   loadingMap.copy_mock_data = true;
   copyMockData(params)
-    .then(res => {
+    .then(() => {
       if (requestTokenMap.copy_mock_data !== token) {
         return;
       }
-      if (res?.success) {
-        message.success('复制接口数据成功');
-        if (refresh) {
-          fetchData(true);
-        }
+      message.success('复制接口数据成功');
+      if (refresh) {
+        fetchData(true);
       }
     })
     .finally(() => {
@@ -548,6 +545,15 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
     width: 100%;
     margin-bottom: 24px;
     flex-shrink: 0;
+
+    :deep(.search-form) {
+      .form-wrapper {
+        scrollbar-gutter: stable;
+        max-height: 168px;
+        overflow: hidden;
+        overflow-y: auto;
+      }
+    }
 
     .search-bar {
       width: 100%;
@@ -594,6 +600,11 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
       display: flex;
       flex-direction: row-reverse;
       align-items: center;
+    }
+
+    .url-text {
+      margin-right: 6px;
+      word-break: break-all;
     }
   }
 

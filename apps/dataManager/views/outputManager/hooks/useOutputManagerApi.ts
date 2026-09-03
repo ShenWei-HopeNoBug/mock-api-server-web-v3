@@ -99,6 +99,15 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
   const copyVariant = (params: DataManagerType.CopyVariantParams = {}): Promise<DataManagerType.OperationResult> =>
     guardedFetch<DataManagerType.OperationResult, DataManagerType.CopyVariantParams>('/variant/copy', params);
 
+  /** 设为唯一启用（禁用同 api_data_id 下的其他所有变体） */
+  const setVariantExclusiveEnabled = (
+    params: DataManagerType.SetVariantExclusiveEnabledParams,
+  ): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.SetVariantExclusiveEnabledParams>(
+      '/variant/set_exclusive_enabled',
+      params,
+    );
+
   return {
     isReady,
     getMockDataPage,
@@ -113,5 +122,6 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     deleteVariant,
     reorderVariants,
     copyVariant,
+    setVariantExclusiveEnabled,
   };
 };

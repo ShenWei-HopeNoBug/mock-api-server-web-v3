@@ -33,6 +33,9 @@ import { FullscreenOutlined, FullscreenExitOutlined, CopyOutlined } from '@ant-d
 import { isJsonString, copyText, safeJsonParse } from '@/utils';
 import type { JsonInputType } from './type';
 import { defaultAttrsMap } from './config';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 /**
  * 组件属性接口
@@ -142,10 +145,10 @@ const onCopy = async () => {
     : props.defaultCopyContent;
   try {
     await copyText(content);
-    message.success('复制成功');
+    message.success(t('global.toast.copySuccess'));
   } catch (e) {
     console.warn('onCopy error', e);
-    message.error('复制失败');
+    message.error(t('global.toast.copyFailed'));
   }
 };
 

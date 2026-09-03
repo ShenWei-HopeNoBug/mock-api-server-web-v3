@@ -20,11 +20,11 @@ const useSearchFormResize = () => {
   };
 
   onBeforeUnmount(() => {
-    onWindowResize();
     window.removeEventListener('resize', onWindowResize);
   });
 
   onBeforeMount(() => {
+    onWindowResize();
     window.addEventListener('resize', onWindowResize);
   });
 

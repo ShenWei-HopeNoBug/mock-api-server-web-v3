@@ -75,6 +75,14 @@
                   <a-button type="link" :disabled="isOperating(record.id)">复制</a-button>
                 </a-popconfirm>
 
+                <a-popconfirm
+                  title="确认设为唯一启用？其他变体将被禁用。"
+                  :disabled="isOperating(record.id)"
+                  @confirm="onSetExclusiveEnabled(record)"
+                >
+                  <a-button type="link" :disabled="isOperating(record.id)">设为唯一启用</a-button>
+                </a-popconfirm>
+
                 <a-button type="link" :disabled="isOperating(record.id)" @click="onEdit(record)">
                   编辑
                 </a-button>
@@ -118,8 +126,14 @@ const emits = defineEmits<{
 }>();
 
 /** 接口数据相关 API */
-const { getMockDataDetail, updateVariant, deleteVariant, reorderVariants, copyVariant } =
-  useOutputManagerApi();
+const {
+  getMockDataDetail,
+  updateVariant,
+  deleteVariant,
+  reorderVariants,
+  copyVariant,
+  setVariantExclusiveEnabled,
+} = useOutputManagerApi();
 
 const visible = ref<boolean>(false); // 弹窗显隐
 const tableLoading = ref<boolean>(false); // 表格加载态
@@ -200,7 +214,6 @@ const fetchVariants = (): void => {
       if (currentRequestToken.value !== token) {
         return;
       }
-      message.error('获取变体列表失败');
       variantList.value = [];
     })
     .finally(() => {
@@ -396,14 +409,9 @@ const onToggleEnabled = (record: VariantEditorDialogType.VariantRecord): void =>
   operatingIds.value[id] = true;
   const nextEnabled = !record.enabled;
   updateVariant({ id, enabled: nextEnabled })
-    .then(res => {
-      if (res?.success) {
-        message.success(nextEnabled ? '启用成功' : '禁用成功');
-        fetchVariants();
-      }
-    })
-    .catch(() => {
-      message.error('切换启用状态失败');
+    .then(() => {
+      message.success(nextEnabled ? '启用成功' : '禁用成功');
+      fetchVariants();
     })
     .finally(() => {
       operatingIds.value[id] = false;
@@ -420,14 +428,28 @@ const onCopy = (record: VariantEditorDialogType.VariantRecord): void => {
   }
   operatingIds.value[id] = true;
   copyVariant({ id, api_data_id: apiDataId.value })
-    .then(res => {
-      if (res?.success) {
-        message.success('复制变体成功');
-        fetchVariants();
-      }
+    .then(() => {
+      message.success('复制变体成功');
+      fetchVariants();
     })
-    .catch(() => {
-      message.error('复制变体失败');
+    .finally(() => {
+      operatingIds.value[id] = false;
+    });
+};
+
+// --- 设为唯一启用 ---
+
+/** 设为唯一启用，禁用同 api_data_id 下的其他所有变体，防重复点击 */
+const onSetExclusiveEnabled = (record: VariantEditorDialogType.VariantRecord): void => {
+  const id: string = record.id || '';
+  if (isOperating(id)) {
+    return;
+  }
+  operatingIds.value[id] = true;
+  setVariantExclusiveEnabled({ id })
+    .then(() => {
+      message.success('设置成功');
+      fetchVariants();
     })
     .finally(() => {
       operatingIds.value[id] = false;
@@ -444,14 +466,9 @@ const onDelete = (record: VariantEditorDialogType.VariantRecord): void => {
   }
   operatingIds.value[id] = true;
   deleteVariant({ id })
-    .then(res => {
-      if (res?.success) {
-        message.success('删除变体成功');
-        fetchVariants();
-      }
-    })
-    .catch(() => {
-      message.error('删除变体失败');
+    .then(() => {
+      message.success('删除变体成功');
+      fetchVariants();
     })
     .finally(() => {
       operatingIds.value[id] = false;

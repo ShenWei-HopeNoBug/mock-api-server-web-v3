@@ -127,7 +127,7 @@ const tableColumns: OutputManagerType.TableColumn[] = [
     title: '请求Url',
     dataIndex: 'url',
     key: 'url',
-    width: 240,
+    width: 260,
   },
   {
     title: '请求类型',

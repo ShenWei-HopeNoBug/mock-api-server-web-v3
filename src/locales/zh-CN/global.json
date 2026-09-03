@@ -3,7 +3,11 @@
   "toast": {
     "sendError": "请求错误！",
     "retryError": "请求失败，请重试！",
-    "responseError": "响应错误！"
+    "responseError": "响应错误！",
+    "copySuccess": "复制成功",
+    "copyFailed": "复制失败",
+    "copy": "复制",
+    "copied": "已复制"
   },
   "form": {
     "action": {

@@ -14,8 +14,15 @@
         <div class="content" v-jump-forbid>
           <InfoDescription :columns="infoColumns" :info-item-style="infoItemStyle" align="left">
             <template #value="scoped">
+              <div v-if="scoped.rowKey === 'url'" class="url-cell">
+                <template v-if="scoped.value">
+                  <span class="url-text">{{ scoped.value }}</span>
+                  <CopyIcon :text="scoped.value" :tooltip="true" />
+                </template>
+                <template v-else>-</template>
+              </div>
               <div
-                v-if="scoped.rowKey === 'params' || scoped.rowKey === 'response'"
+                v-else-if="scoped.rowKey === 'params' || scoped.rowKey === 'response'"
                 class="json-area"
               >
                 <JsonInput
@@ -68,12 +75,12 @@ import { computed, CSSProperties, ref } from 'vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
 import InfoDescription from '@/components/InfoDescription/index.vue';
 import Spin from '@/components/Spin/index.vue';
+import CopyIcon from '@/components/CopyIcon/index.vue';
 import type { DetailDialogType } from './type';
 import type { InfoDescriptionType } from '@/components/InfoDescription/type';
 import type { DataManagerType } from '#/qt/dataManager';
 import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
 import { generateUUID, isArrayValid } from '@/utils';
-import { message } from 'ant-design-vue';
 
 const infoItemStyle: CSSProperties = {
   marginBottom: '24px',
@@ -120,6 +127,7 @@ const infoColumns = computed((): InfoDescriptionType.InfoOptions[] => {
       label: '请求Url',
       tooltip: false,
       ellipsis: false,
+      slot: true,
     },
     {
       rowKey: 'method',
@@ -286,7 +294,6 @@ const getDetailData = (id: string = '') => {
       if (currentRequestToken.value !== token) {
         return;
       }
-      message.error('获取抓包接口数据详情失败');
       detailData.value = {};
     })
     .finally(() => {
@@ -331,6 +338,16 @@ defineExpose({
       padding-right: 8px;
       scrollbar-gutter: stable;
       word-break: break-word;
+
+      .url-cell {
+        display: flex;
+        align-items: center;
+
+        .url-text {
+          word-break: break-all;
+          margin-right: 6px;
+        }
+      }
     }
 
     .json-area {

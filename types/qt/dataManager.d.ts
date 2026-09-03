@@ -241,6 +241,14 @@ export declare namespace DataManagerType {
   }
 
   /**
+   * 设为唯一启用传参
+   * 协议：/variant/set_exclusive_enabled
+   * */
+  interface SetVariantExclusiveEnabledParams {
+    id?: string;
+  }
+
+  /**
    * api 数据详情（含变体列表）
    * 协议：/mock_data/detail 返回数据
    * */

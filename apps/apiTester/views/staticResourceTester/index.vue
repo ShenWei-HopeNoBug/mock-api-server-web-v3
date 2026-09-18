@@ -6,6 +6,7 @@
       <a-radio-group v-model:value="activeTab" button-style="solid">
         <a-radio-button value="image">图片测试</a-radio-button>
         <a-radio-button value="video">视频测试</a-radio-button>
+        <a-radio-button value="speed">网速测试</a-radio-button>
       </a-radio-group>
     </div>
 
@@ -17,6 +18,10 @@
       <div v-if="activeTab === 'video'" class="tab-pane">
         <VideoTester />
       </div>
+
+      <div v-if="activeTab === 'speed'" class="tab-pane">
+        <SpeedTester />
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +30,7 @@
 import { ref } from 'vue';
 import ImageTester from './components/ImageTester/index.vue';
 import VideoTester from './components/VideoTester/index.vue';
+import SpeedTester from './components/SpeedTester/index.vue';
 
 const activeTab = ref<string>('image');
 </script>

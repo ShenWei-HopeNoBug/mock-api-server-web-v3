@@ -13,6 +13,14 @@ export declare namespace QtSdkType {
     send_js2qt_msg?: Send;
   }
 
+  interface EventMessage {
+    type: 'event';
+    name: string;
+    action_id: string;
+    params?: Record<string, unknown>;
+    data?: unknown;
+  }
+
   interface QtChannel {
     objects?: Record<string, Bridge>;
   }

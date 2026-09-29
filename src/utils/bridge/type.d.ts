@@ -26,6 +26,22 @@ export declare namespace QtBridgeType {
   }
 }
 
+export declare namespace QtEventSenderType {
+  interface SendOptions {
+    actionId?: string;
+    params?: Record<string, unknown>;
+    data?: unknown;
+    errorMessage?: string;
+  }
+
+  interface SendResult {
+    success: boolean;
+    actionId: string;
+  }
+
+  type SendEvent = (name: string, options?: SendOptions) => SendResult;
+}
+
 export declare namespace InterceptorManagerType {
   type OnFulfilled<V> = (value: V) => any | Promise<any>;
   type OnRejected = (error: any) => any | Promise<any>;

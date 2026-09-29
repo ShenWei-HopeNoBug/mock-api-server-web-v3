@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:apiTester": "vite --open ./apps/apiTester/index.html",
+    "dev:configEdit": "vite --open ./apps/configEdit/index.html",
     "build:test": "vite build --mode test",
     "build": "vite build --mode production",
     "preview": "vite preview",

@@ -5,8 +5,9 @@ export const protocolOptions: Array<{ label: string; value: DownloadProxyType.Pr
   { label: 'https', value: 'https' },
 ];
 
-export const defaultDownloadProxy: DownloadProxyType.NormalizedProxyConfig = {
+/** 新增代理时的默认配置 */
+export const getDefaultDownloadProxy = (): DownloadProxyType.ProxyConfig => ({
   protocol: 'https',
-  proxy: '',
+  proxy: undefined,
   includes: [],
-};
+});

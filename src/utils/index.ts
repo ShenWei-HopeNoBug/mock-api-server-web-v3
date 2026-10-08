@@ -67,6 +67,9 @@ export const generateUUID = (): string => uuidv4();
 
 export const isArrayValid = (arr: any) => Array.isArray(arr) && arr.length > 0;
 
+// 非空白字符串校验
+export const isNonEmptyString = (v: any): boolean => typeof v === 'string' && Boolean(v.trim());
+
 // 返回 md5 加密字符
 export const createMd5 = (text: string): string => {
   return MD5(text).toString();

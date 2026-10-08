@@ -4,66 +4,77 @@
       <div class="form-item">
         <label>Protocol</label>
         <a-select
-          :value="value.protocol"
+          v-model:value="config.protocol"
           :options="protocolOptions"
+          :disabled="disabled"
           allow-clear
           class="field-input"
-          @change="onProtocolChange"
+          @change="onChange"
         />
       </div>
       <div class="form-item">
         <label>Proxy</label>
         <a-input
-          :value="value.proxy || ''"
+          v-model:value="config.proxy"
+          :disabled="disabled"
           allow-clear
           class="field-input"
-          @update:value="updateField('proxy', $event)"
+          @change="onChange"
         />
       </div>
     </div>
     <div class="form-item includes-item">
       <label>Includes</label>
       <TextListInput
-        :value="includes"
+        v-model:value="config.includes"
+        :disabled="disabled"
         class="field-input"
-        @update:value="updateField('includes', $event)"
+        @change="onChange"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
 import type { DownloadProxyType } from '#/qt/downloadProxy';
-import { protocolOptions } from '../../config';
-import TextListInput from '../TextListInput/index.vue';
+import { getDefaultDownloadProxy, protocolOptions } from '../../config';
+import { isPlainObject } from 'lodash-es';
+import TextListInput from '@/components/ui/input/TextListInput/index.vue';
 
 interface Props {
-  value: DownloadProxyType.ProxyConfig;
+  value?: DownloadProxyType.ProxyConfig;
+  disabled?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  value: undefined,
+  disabled: false,
+});
 
 const emit = defineEmits<{
   (event: 'update:value', value: DownloadProxyType.ProxyConfig): void;
+  (event: 'change', value: DownloadProxyType.ProxyConfig): void;
 }>();
 
-const includes = computed<string[]>(() =>
-  Array.isArray(props.value.includes)
-    ? props.value.includes.filter((item): item is string => typeof item === 'string')
-    : [],
+const config = ref<DownloadProxyType.ProxyConfig>(getDefaultDownloadProxy());
+
+const onChange = (): void => {
+  emit('update:value', config.value);
+  emit('change', config.value);
+};
+
+watch(
+  () => props.value,
+  obj => {
+    if (obj && isPlainObject(obj)) {
+      config.value = obj;
+    } else {
+      onChange();
+    }
+  },
+  { immediate: true, deep: true },
 );
-
-const updateField = <K extends keyof DownloadProxyType.ProxyConfig>(
-  key: K,
-  value: DownloadProxyType.ProxyConfig[K],
-): void => {
-  emit('update:value', { ...props.value, [key]: value });
-};
-
-const onProtocolChange = (value: string | undefined): void => {
-  updateField('protocol', value);
-};
 </script>
 
 <style scoped lang="scss">
@@ -73,16 +84,18 @@ const onProtocolChange = (value: string | undefined): void => {
 
 .inline-fields {
   display: flex;
-  gap: 14px;
   margin-bottom: 14px;
 }
 
 .form-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
   min-width: 0;
   width: 100%;
+
+  &:not(:last-child) {
+    margin-bottom: 14px;
+  }
 
   label {
     display: flex;
@@ -90,6 +103,7 @@ const onProtocolChange = (value: string | undefined): void => {
     flex: 0 0 80px;
     min-height: 32px;
     padding-left: 10px;
+    margin-right: 8px;
 
     &::after {
       content: ':';

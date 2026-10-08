@@ -32,6 +32,7 @@ export declare namespace QtEventSenderType {
     params?: Record<string, unknown>;
     data?: unknown;
     errorMessage?: string;
+    noMessage?: boolean;
   }
 
   interface SendResult {

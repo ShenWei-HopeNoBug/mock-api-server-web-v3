@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
       Components({
         resolvers: [
           AntDesignVueResolver({
-            importStyle: false,
+            importStyle: 'css',
           }),
         ],
       }),

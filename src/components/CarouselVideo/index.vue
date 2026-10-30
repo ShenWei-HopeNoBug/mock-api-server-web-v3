@@ -31,7 +31,8 @@
 </template>
 
 <script lang="ts" setup name="CarouselVideo">
-import { ref, watch, onMounted, onBeforeUnmount, nextTick, CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { cloneDeep } from 'lodash-es';
 import hashSum from 'hash-sum';
 import { generateUUID } from '@/utils';

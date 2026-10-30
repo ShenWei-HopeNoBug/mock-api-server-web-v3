@@ -4,7 +4,7 @@
 
 import mitt from 'mitt';
 
-type Events = {};
+type Events = Record<string, unknown>;
 
 const emitter = mitt<Events>();
 export default emitter;

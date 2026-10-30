@@ -1,6 +1,6 @@
 <template>
   <a-collapse
-    v-model:activeKey="activeKey"
+    v-model:active-key="activeKey"
     class="mock-request-tester"
     expand-icon-position="right"
     :destroy-inactive-panel="false"
@@ -79,7 +79,8 @@
 
 <script lang="ts" setup name="MockRequestTester">
 import { ref, reactive, watch, computed } from 'vue';
-import axios, { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';

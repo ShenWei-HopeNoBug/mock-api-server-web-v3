@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { QtSdkType } from '#/qtSdk';
+import type { QtSdkType } from '#/qtSdk';
 
 const useQtBridgeStore = defineStore('qtBridge', () => {
   const register = ref<boolean>(false);

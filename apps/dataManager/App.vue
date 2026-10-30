@@ -24,7 +24,9 @@ const init = () => {
     .then(result => {
       const { error, message: msg = '', channelObj = null } = result;
       if (error) {
-        msg && message.error(msg);
+        if (msg) {
+          message.error(msg);
+        }
       }
 
       qtBridgeStore.setRegister(!error);

@@ -22,7 +22,7 @@
         @change="onTemplateChange"
       />
       <a-input :value="`/`" :disabled="true" class="separator" />
-      <a-select v-model:value="mode" class="mode-select" @change="onTemplateChange">
+      <a-select v-model:value="staticMode" class="mode-select" @change="onTemplateChange">
         <a-select-option value="static">static</a-select-option>
         <a-select-option value="slow_network">slow_network</a-select-option>
       </a-select>
@@ -71,12 +71,12 @@ const FULL_URL_RE = /^http:\/\/localhost:(\d+)\/(static|slow_network)\/(.*)$/;
 
 const innerMode = ref<StaticUrlInputType.InputMode>(props.mode);
 const portNum = ref<number>(props.defaultPort);
-const mode = ref<StaticUrlInputType.StaticMode>('static');
+const staticMode = ref<StaticUrlInputType.StaticMode>('static');
 const path = ref('');
 const customUrl = ref('');
 
 const assembleUrl = (): string =>
-  `http://localhost:${portNum.value}/${mode.value}/${path.value.replace(/^\/+/, '')}`;
+  `http://localhost:${portNum.value}/${staticMode.value}/${path.value.replace(/^\/+/, '')}`;
 
 const parseUrl = (val: string): boolean => {
   if (val) {
@@ -84,7 +84,7 @@ const parseUrl = (val: string): boolean => {
     if (fullMatch) {
       const port = Number(fullMatch[1]);
       portNum.value = port >= 1000 && port <= 9999 ? port : props.defaultPort;
-      mode.value = fullMatch[2] as StaticUrlInputType.StaticMode;
+      staticMode.value = fullMatch[2] as StaticUrlInputType.StaticMode;
       path.value = fullMatch[3];
       return port >= 1000 && port <= 9999;
     }
@@ -92,7 +92,7 @@ const parseUrl = (val: string): boolean => {
 
   // 兜底：无法解析，重置为默认值
   portNum.value = props.defaultPort;
-  mode.value = 'static';
+  staticMode.value = 'static';
   path.value = '';
   return false;
 };

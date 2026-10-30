@@ -11,7 +11,7 @@
   >
     <Spin class="container" :spinning="loading">
       <div class="scroll">
-        <div class="content" v-jump-forbid>
+        <div v-jump-forbid class="content">
           <InfoDescription :columns="infoColumns" :info-item-style="infoItemStyle" align="left">
             <template #value="scoped">
               <div v-if="scoped.rowKey === 'url'" class="url-cell">
@@ -71,7 +71,8 @@
 </template>
 
 <script lang="ts" setup name="DetailDialog">
-import { computed, CSSProperties, ref } from 'vue';
+import type { CSSProperties } from 'vue';
+import { computed, ref } from 'vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
 import InfoDescription from '@/components/InfoDescription/index.vue';
 import Spin from '@/components/Spin/index.vue';

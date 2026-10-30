@@ -96,7 +96,7 @@
             show-quick-jumper
             :show-total="(num: number) => `共 ${num} 条`"
             @change="onPageChange"
-            @showSizeChange="onSizeChange"
+            @show-size-change="onSizeChange"
           />
         </div>
       </Spin>

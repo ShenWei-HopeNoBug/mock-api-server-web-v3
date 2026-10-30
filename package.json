@@ -10,8 +10,10 @@
     "build:test": "vite build --mode test",
     "build": "vite build --mode production",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write ."
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@ant-design/icons-vue": "6.1.0",
@@ -31,6 +33,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@types/crypto-js": "^4.2.2",
     "@types/hash-sum": "^1.0.2",
@@ -42,10 +45,16 @@
     "@vitejs/plugin-legacy": "^5.4.3",
     "@vitejs/plugin-vue": "^5.0.4",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "eslint-plugin-vue": "^10.12.0",
+    "globals": "^16.5.0",
     "prettier": "^3.4.2",
     "sass": "^1.82.0",
     "terser": "^5.44.0",
     "typescript": "~5.7.3",
+    "typescript-eslint": "^8.72.1",
     "unplugin-vue-components": "^0.27.5",
     "vite": "^5.2.0",
     "vite-svg-loader": "^5.1.0"

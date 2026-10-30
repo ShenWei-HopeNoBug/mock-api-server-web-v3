@@ -1,4 +1,4 @@
-import { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
 
 export declare namespace InfoDescriptionType {
   interface InfoOptions {

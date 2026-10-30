@@ -1,7 +1,7 @@
 import MD5 from 'crypto-js/md5';
 import { isPlainObject } from 'lodash-es';
 import { v4 as uuidv4 } from 'uuid';
-import { CommonType } from '#/common';
+import type { CommonType } from '#/common';
 
 // 限制数值的范围
 export const limitNumRange = (num: number, min: number, max: number) => {
@@ -24,7 +24,7 @@ export const isJsonString = (v: any): boolean => {
 
     JSON.parse(v);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -36,7 +36,7 @@ export const safeJsonParse = <T = any>(v: any, fallback: T): T => {
     }
 
     return JSON.parse(v) as T;
-  } catch (e) {
+  } catch {
     return fallback;
   }
 };
@@ -47,7 +47,7 @@ export const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
       return;
-    } catch (e) {
+    } catch {
       // 权限被拒绝或非安全上下文时回退到 execCommand
     }
   }

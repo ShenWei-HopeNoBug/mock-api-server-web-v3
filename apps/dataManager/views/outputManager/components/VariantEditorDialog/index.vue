@@ -29,7 +29,7 @@
           保存排序
         </a-button>
       </div>
-      <div ref="contentRef" class="content" v-dom-resize="onResize">
+      <div ref="contentRef" v-dom-resize="onResize" class="content">
         <a-table
           row-key="id"
           :columns="currentColumns"

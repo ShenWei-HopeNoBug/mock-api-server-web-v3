@@ -21,7 +21,8 @@
 
 <script lang="ts" setup name="UploadModule">
 import DragUploadModule from '@/components/upload/UploadModule/DragUploadModule.vue';
-import { ref, computed, CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
+import { ref, computed } from 'vue';
 import { message } from 'ant-design-vue';
 import { throttle } from 'lodash-es';
 import { useI18n } from 'vue-i18n';

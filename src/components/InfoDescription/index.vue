@@ -11,7 +11,7 @@
         <slot
           :index="i"
           :options="info"
-          :rowKey="info.rowKey"
+          :row-key="info.rowKey"
           :value="info.value"
           name="value"
         ></slot>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" name="InfoDescription" setup>
-import { InfoDescriptionType } from './type.ts';
+import type { InfoDescriptionType } from './type.d';
 
 withDefaults(defineProps<InfoDescriptionType.Props>(), {
   columns: () => [],

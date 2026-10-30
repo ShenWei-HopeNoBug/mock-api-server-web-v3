@@ -2,7 +2,7 @@
   <div class="mock-tester">
     <h2>Mock 接口测试</h2>
     <div class="content">
-      <MockRequestTester :option="freedomTester" :deviceId="deviceId" />
+      <MockRequestTester :option="freedomTester" :device-id="deviceId" />
       <a-card title="预置接口测试" class="tester-card">
         <template #extra>
           <div class="extra-actions">

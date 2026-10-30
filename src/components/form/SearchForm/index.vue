@@ -4,7 +4,7 @@
       <BaseForm
         ref="baseFormRef"
         :columns="columns"
-        :processBeforeSubmit="processBeforeSubmit"
+        :process-before-submit="processBeforeSubmit"
         :filter-form-value="filterFormValue"
         :filter-value-set="filterValueSet"
         :form-item-col="formItemCol"
@@ -20,8 +20,12 @@
     </div>
     <div class="tools">
       <div>
-        <a-button @click="onReset" style="margin-right: 8px">{{ t('global.form.action.reset') }}</a-button>
-        <a-button type="primary" :loading="loading" @click="onSearch">{{ t('global.form.action.search') }}</a-button>
+        <a-button style="margin-right: 8px" @click="onReset">
+          {{ t('global.form.action.reset') }}
+        </a-button>
+        <a-button type="primary" :loading="loading" @click="onSearch">
+          {{ t('global.form.action.search') }}
+        </a-button>
       </div>
     </div>
   </div>
@@ -35,7 +39,7 @@ import { useI18n } from 'vue-i18n';
 
 interface Props {
   columns: FormType.FormItemOptions[];
-  processBeforeSubmit?: Function;
+  processBeforeSubmit?: (form: Record<string, any>) => Record<string, any>;
   filterFormValue?: boolean;
   filterValueSet?: Set<any>;
   loading?: boolean;

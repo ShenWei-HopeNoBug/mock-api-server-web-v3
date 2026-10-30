@@ -1,7 +1,8 @@
 export declare namespace MockRequestTesterType {
   type Method = 'GET' | 'POST';
 
-  type ContentType = 'application/json' | 'multipart/form-data' | 'application/x-www-form-urlencoded';
+  type ContentType =
+    'application/json' | 'multipart/form-data' | 'application/x-www-form-urlencoded';
 
   interface Option {
     /** 模块标题 */
@@ -17,8 +18,6 @@ export declare namespace MockRequestTesterType {
     /** 是否默认展开 */
     defaultExpanded?: boolean;
   }
-
-
 
   interface ResponseMeta {
     /** HTTP 状态码 */

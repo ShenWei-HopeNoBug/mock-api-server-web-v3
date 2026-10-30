@@ -27,7 +27,8 @@
 </template>
 
 <script lang="ts" setup name="JsonInput">
-import { ref, watch, CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
+import { ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
 import { FullscreenOutlined, FullscreenExitOutlined, CopyOutlined } from '@ant-design/icons-vue';
 import { isJsonString, copyText, safeJsonParse } from '@/utils';

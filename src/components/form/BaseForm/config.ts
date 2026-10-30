@@ -1,4 +1,4 @@
-import { CommonObject } from '@/components/form/types';
+import type { CommonObject } from '@/components/form/types';
 import i18n from '@/locales';
 
 // 表单校验message

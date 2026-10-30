@@ -62,7 +62,7 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons-vue';
 import CarouselVideo from '@/components/CarouselVideo/index.vue';
 import StaticUrlInput from '../StaticUrlInput/index.vue';
 import { generateUUID } from '@/utils';
-import { StaticResourceTesterType } from '../../type';
+import type { StaticResourceTesterType } from '../../type';
 
 const videoUrlItems = ref<StaticResourceTesterType.VideoUrlItem[]>([
   {

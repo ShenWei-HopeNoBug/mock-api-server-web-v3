@@ -2,8 +2,8 @@
   <div class="text-list-input">
     <div v-for="(_, index) in list" :key="`text_${index}`" class="text-row">
       <a-input
-        class="text-input"
         v-model:value="list[index]"
+        class="text-input"
         :disabled="disabled"
         placeholder="请输入"
         allow-clear

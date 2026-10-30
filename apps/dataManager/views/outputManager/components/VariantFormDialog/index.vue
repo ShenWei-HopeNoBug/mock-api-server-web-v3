@@ -10,8 +10,8 @@
     destroy-on-close
     @cancel="close"
   >
-    <div v-if="visible" class="form-content" v-dom-resize="onFormResize">
-      <div class="form-scroll" v-jump-forbid>
+    <div v-if="visible" v-dom-resize="onFormResize" class="form-content">
+      <div v-jump-forbid class="form-scroll">
         <BaseForm
           ref="baseFormRef"
           :columns="formColumns"

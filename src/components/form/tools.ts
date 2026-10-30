@@ -1,4 +1,4 @@
-import { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
 import type { Form as FormType, CommonObject } from '@/components/form/types';
 import { getInputDefaultPropsMap } from '@/components/form/InputRender/config.ts';
 import { defaultFormProps } from '@/components/form/BaseForm/config.ts';
@@ -83,11 +83,29 @@ export const getRangePickerRanges = () => {
 
   return {
     [i18n.global.t('global.form.preset.today')]: [current.clone().startOf('day'), current],
-    [i18n.global.t('global.form.preset.lastDay')]: [current.clone().subtract(1, 'day').startOf('day'), current],
-    [i18n.global.t('global.form.preset.lastWeek')]: [current.clone().subtract(1, 'week').startOf('day'), current],
-    [i18n.global.t('global.form.preset.lastTwoWeeks')]: [current.clone().subtract(Number('2'), 'week').startOf('day'), current],
-    [i18n.global.t('global.form.preset.lastMonth')]: [current.clone().subtract(1, 'month').startOf('day'), current],
-    [i18n.global.t('global.form.preset.lastThreeMonths')]: [current.clone().subtract(Number('3'), 'month').startOf('day'), current],
-    [i18n.global.t('global.form.preset.lastSixMonths')]: [current.clone().subtract(Number('6'), 'month').startOf('day'), current],
+    [i18n.global.t('global.form.preset.lastDay')]: [
+      current.clone().subtract(1, 'day').startOf('day'),
+      current,
+    ],
+    [i18n.global.t('global.form.preset.lastWeek')]: [
+      current.clone().subtract(1, 'week').startOf('day'),
+      current,
+    ],
+    [i18n.global.t('global.form.preset.lastTwoWeeks')]: [
+      current.clone().subtract(Number('2'), 'week').startOf('day'),
+      current,
+    ],
+    [i18n.global.t('global.form.preset.lastMonth')]: [
+      current.clone().subtract(1, 'month').startOf('day'),
+      current,
+    ],
+    [i18n.global.t('global.form.preset.lastThreeMonths')]: [
+      current.clone().subtract(Number('3'), 'month').startOf('day'),
+      current,
+    ],
+    [i18n.global.t('global.form.preset.lastSixMonths')]: [
+      current.clone().subtract(Number('6'), 'month').startOf('day'),
+      current,
+    ],
   };
 };

@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts" name="Spin" setup>
-import { computed, CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
+import { computed } from 'vue';
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import i18n from '@/locales';
 

@@ -2,9 +2,9 @@
   <div class="base-form" :style="baseFormScrollStyle">
     <a-form ref="formInstanceRef" :model="formState" v-bind="getFormProps(formProps)">
       <a-row
-        :class="{ 'form-row': true, 'no-last-row-margin': !lastRowHasMarginBottom }"
         v-for="(list, i) in rowColumnsRef"
         :key="`row_${i}`"
+        :class="{ 'form-row': true, 'no-last-row-margin': !lastRowHasMarginBottom }"
         :gutter="ROW_GUTTER"
       >
         <a-col v-for="(item, j) in list" :key="`formItem_${j}`" :span="formItemCol">
@@ -17,9 +17,9 @@
             />
             <slot
               v-else
+              :key="item.key"
               name="input"
               :form="formState"
-              :key="item.key"
               :options="item"
               :columns="columns"
             />
@@ -31,11 +31,13 @@
 </template>
 
 <script lang="ts" setup name="BaseForm">
-import { ref, reactive, computed, onBeforeMount, CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
+import { ref, reactive, computed, onBeforeMount } from 'vue';
 import { cloneDeep } from 'lodash-es';
 import InputRender from '@/components/form/InputRender/index.vue';
 import type { Form as FormType, CommonObject } from '@/components/form/types';
-import { FormInstance, message as AntdMessage } from 'ant-design-vue';
+import type { FormInstance } from 'ant-design-vue';
+import { message as AntdMessage } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
 import { getRuleMessageMap } from './config.ts';
 import { getFormProps, getFormScrollStyle } from '@/components/form/tools.ts';
@@ -46,7 +48,7 @@ interface Props {
   // 表单项 col 布局参数
   formItemCol?: number;
   // 提交表单前处理函数
-  processBeforeSubmit?: Function;
+  processBeforeSubmit?: (form: Record<string, any>) => Record<string, any>;
   // 提交表单是否过滤数据
   filterFormValue?: boolean;
   // 表单提交时要过滤的参数

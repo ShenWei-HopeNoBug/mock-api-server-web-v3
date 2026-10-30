@@ -4,7 +4,7 @@
     :title="title"
     :footer="false"
     :keyboard="false"
-    :destroyOnClose="true"
+    :destroy-on-close="true"
     :mask-closable="false"
     v-bind="$attrs"
   >
@@ -12,7 +12,7 @@
       <BaseForm
         ref="baseFormRef"
         :columns="columns"
-        :processBeforeSubmit="processBeforeSubmit"
+        :process-before-submit="processBeforeSubmit"
         :filter-form-value="filterFormValue"
         :filter-value-set="filterValueSet"
         :init-form-values="initFormValues"
@@ -30,8 +30,12 @@
     <slot name="footer">
       <div class="footer">
         <div>
-          <a-button @click="onReset" style="margin-right: 8px">{{ t('global.form.action.reset') }}</a-button>
-          <a-button type="primary" :loading="loading" @click="onSave">{{ t('global.form.action.save') }}</a-button>
+          <a-button style="margin-right: 8px" @click="onReset">
+            {{ t('global.form.action.reset') }}
+          </a-button>
+          <a-button type="primary" :loading="loading" @click="onSave">
+            {{ t('global.form.action.save') }}
+          </a-button>
         </div>
       </div>
     </slot>
@@ -51,7 +55,7 @@ const { t } = useI18n();
 interface Props {
   title?: string;
   columns: FormType.FormItemOptions[];
-  processBeforeSubmit?: Function;
+  processBeforeSubmit?: (form: Record<string, any>) => Record<string, any>;
   filterFormValue?: boolean;
   filterValueSet?: Set<any>;
   loading?: boolean;

@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import qs from 'qs';
 import type { MockRequestTesterType } from './type';
 

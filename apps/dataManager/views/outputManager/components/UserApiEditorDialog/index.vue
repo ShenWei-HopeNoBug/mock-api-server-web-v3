@@ -11,8 +11,8 @@
     wrap-class-name="output-manager-user-api-editor-dialog"
     @cancel="close"
   >
-    <div v-if="visible" class="content" v-dom-resize="onResize">
-      <div class="scroll" v-jump-forbid>
+    <div v-if="visible" v-dom-resize="onResize" class="content">
+      <div v-jump-forbid class="scroll">
         <BaseForm
           ref="baseFormRef"
           :columns="formColumns"

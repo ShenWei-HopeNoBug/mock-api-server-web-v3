@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts" setup name="DragUploadModule">
-import { CSSProperties, ref } from 'vue';
+import type { CSSProperties } from 'vue';
+import { ref } from 'vue';
 import i18n from '@/locales';
 
 interface Props {

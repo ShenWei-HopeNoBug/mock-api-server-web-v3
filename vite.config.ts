@@ -169,12 +169,18 @@ export default defineConfig(({ mode }) => {
           },
           // 代码拆分
           manualChunks: id => {
-            if (id.includes('node_modules')) {
-              const moduleName = id.toString().split('node_modules/')[1].split('/')[0];
-              // 将核心框架库单独打包
-              if (['vue', 'vue-router', 'pinia'].includes(moduleName)) {
-                return 'vue-vendor';
-              }
+            if (!id.includes('node_modules')) return;
+
+            // scope 包（@scope/name）需要取两段路径才能得到真实包名
+            const parts = id.split('node_modules/')[1].split('/');
+            const moduleName = parts[0].startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0];
+
+            // 核心框架库单独打包，便于长缓存
+            if (['vue', 'vue-router', 'pinia', 'vue-i18n'].includes(moduleName)) {
+              return 'vue-vendor';
+            }
+            if (['ant-design-vue', '@ant-design/icons-vue'].includes(moduleName)) {
+              return 'antd-vendor';
             }
           },
         },

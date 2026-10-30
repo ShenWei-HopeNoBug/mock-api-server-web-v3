@@ -17,11 +17,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "#/*": ["types/*"],
-      "@apps/*": ["apps/*"]
+      "@/*": ["./src/*"],
+      "#/*": ["./types/*"],
+      "@apps/*": ["./apps/*"]
     },
     "allowSyntheticDefaultImports": true
   },

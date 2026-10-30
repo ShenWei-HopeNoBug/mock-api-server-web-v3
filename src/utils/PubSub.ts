@@ -1,10 +1,10 @@
-type EventMap = Record<string, any[]>;
+type EventMap = Record<string, unknown[]>;
 
-interface Subscribe<Payload extends any[] = any[]> {
-  callback: (...payload: Payload) => void;
+interface Subscribe {
+  callback: (...payload: unknown[]) => void;
 }
 
-type SubscribeMap = Record<string, { name: string; subscribes: Subscribe<any>[] }>;
+type SubscribeMap = Record<string, { name: string; subscribes: Subscribe[] }>;
 
 class PubSub<Events extends EventMap = EventMap> {
   private _subscribeMap: SubscribeMap = {}; // 订阅消息
@@ -32,13 +32,14 @@ class PubSub<Events extends EventMap = EventMap> {
    * */
   subscribe<K extends keyof Events>(name: K, callback: (...payload: Events[K]) => void): void {
     const key = name as string;
+    const sub: Subscribe = { callback: callback as Subscribe['callback'] };
     const message = this._subscribeMap[key];
     if (message) {
-      message.subscribes.push({ callback });
+      message.subscribes.push(sub);
     } else {
       this._subscribeMap[key] = {
         name: key,
-        subscribes: [{ callback }],
+        subscribes: [sub],
       };
     }
   }
@@ -53,7 +54,7 @@ class PubSub<Events extends EventMap = EventMap> {
       return;
     }
 
-    // 清除对于应的订阅
+    // 清除对应的订阅
     message.subscribes = message.subscribes.filter(o => o.callback !== callback);
 
     // 如果订阅事件回调全部被清除，删除该订阅
@@ -63,25 +64,10 @@ class PubSub<Events extends EventMap = EventMap> {
   }
 
   /**
-   * @description 清除制定订阅配置
+   * @description 清除指定订阅配置
    * */
   clearSubscription<K extends keyof Events>(name: K) {
-    const key = name as string;
-    const message = this._subscribeMap[key];
-    if (!message) {
-      return;
-    }
-
-    const map: SubscribeMap = {};
-    Object.keys(this._subscribeMap).forEach(key => {
-      if (key === (name as string)) {
-        return;
-      }
-
-      map[key] = this._subscribeMap[key];
-    });
-
-    this._subscribeMap = map;
+    delete this._subscribeMap[name as string];
   }
 
   /**

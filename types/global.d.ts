@@ -1,8 +1,9 @@
 import { QtSdkType } from '#/qtSdk';
 
+// 扩展 axios 配置项
 declare module 'axios' {
-  // 扩展axios配置项
   interface AxiosRequestConfig {
+    /** 置为 true 时拦截器不再弹出全局错误提示 */
     noMessage?: boolean;
   }
 }

@@ -1,14 +1,14 @@
+import type { App, DirectiveBinding } from 'vue';
+
+const handlers = new WeakMap<Element, EventListener>();
+
 /**
  * 注册 jump-forbid，阻止容器内 a 标签点击自动跳转
  * 使用指令 v-jump-forbid="callback"
  */
-const installJumpForbidDirective = (app: any): void => {
-  if (!app) {
-    return;
-  }
-
+const installJumpForbidDirective = (app: App): void => {
   app.directive('jump-forbid', {
-    mounted(el: any, binding: any) {
+    mounted(el: Element, binding: DirectiveBinding) {
       const clickHandler = (event: Event) => {
         const target = event.target as HTMLElement | null;
         if (!target) {
@@ -21,19 +21,20 @@ const installJumpForbidDirective = (app: any): void => {
         }
 
         event.preventDefault();
-        if (typeof binding?.value === 'function') {
+        if (typeof binding.value === 'function') {
           binding.value(event);
         }
       };
 
       el.addEventListener('click', clickHandler);
-      // 把监听器挂在 dom 节点上
-      el.JUMP_FORBID_HANDLER = clickHandler;
+      // 记录监听器，便于卸载时清理
+      handlers.set(el, clickHandler);
     },
-    beforeUnmount(el: any) {
-      if (el.JUMP_FORBID_HANDLER) {
-        el.removeEventListener('click', el.JUMP_FORBID_HANDLER);
-        el.JUMP_FORBID_HANDLER = null;
+    beforeUnmount(el: Element) {
+      const handler = handlers.get(el);
+      if (handler) {
+        el.removeEventListener('click', handler);
+        handlers.delete(el);
       }
     },
   });

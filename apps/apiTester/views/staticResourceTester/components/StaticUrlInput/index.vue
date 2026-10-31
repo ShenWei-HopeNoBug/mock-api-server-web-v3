@@ -11,7 +11,7 @@
       <a-radio-button value="custom">自定义</a-radio-button>
     </a-radio-group>
 
-    <a-input-group v-if="innerMode === 'template'" compact class="template-group">
+    <a-space-compact v-if="innerMode === 'template'" class="template-group">
       <a-input :value="`http://localhost:`" :disabled="true" class="prefix-text" />
       <a-input-number
         v-model:value="portNum"
@@ -34,7 +34,7 @@
         placeholder="输入资源路径，如 test.jpg"
         @change="onTemplateChange"
       />
-    </a-input-group>
+    </a-space-compact>
 
     <a-input
       v-else

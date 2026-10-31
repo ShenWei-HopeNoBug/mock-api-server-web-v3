@@ -4,7 +4,6 @@ import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import { resolve } from 'path';
 import svgLoader from 'vite-svg-loader';
-import legacy from '@vitejs/plugin-legacy';
 import { getAppEntryConfig } from './scripts/package';
 import { createMultiAppHistoryFallback } from './scripts/createMultiAppHistoryFallback';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
@@ -28,7 +27,7 @@ export default defineConfig(({ mode }) => {
       Components({
         resolvers: [
           AntDesignVueResolver({
-            importStyle: 'css',
+            importStyle: false,
           }),
         ],
       }),
@@ -69,17 +68,6 @@ export default defineConfig(({ mode }) => {
             'sortAttrs',
           ],
         },
-      }),
-      legacy({
-        targets: [
-          'Chrome >= 64',
-          'Edge >= 79',
-          'Firefox >= 67',
-          'Safari >= 12',
-          'iOS >= 12',
-          'Android >= 8',
-        ],
-        modernPolyfills: true,
       }),
       // 多子项目 History 路由回退插件
       createMultiAppHistoryFallback(env.VITE_PATHNAME || ''),

@@ -1,6 +1,6 @@
 # ant-design-vue 4.x 升级方案（antdv 3.2.20 → 4.2.x）
 
-> 状态：待实施
+> 状态：已实施（回归验证中）
 > 范围：本仓 `package.json` / `vite.config.ts` / `apps/*/{main.ts,App.vue}` / `src/components/form/**` / `apps/dataManager/views/outputManager/**`
 > 前置：`mock-api-server` 仓 `docs/v0_1_5/pyside6/pyside6-migration-plan.md` 已落地（Qt WebEngine 内核 Chromium 134，解除 antdv 4.x cssinjs `:where()` 兼容约束）；后端仓本方案零改动
 
@@ -123,9 +123,18 @@ package.json 三处版本 → npm install（dayjs 显式化随安装生效）
 | 日期 | 步骤 | 结果 | 备注 |
 |---|---|---|---|
 | 2026-11-01 | 方案定稿 | 影响面全量扫描完成：css import ×3、`v-model:visible` ×5、`ranges` ×1、`:deep(.ant-*)` 覆盖 ×8、Sortable measure-row 依赖 ×1；选型对齐 vue3-project-template（antdv ^4.2.1 / icons ^7.0.1 / dayjs 显式化） | 待实施 |
+| 2026-11-01 | §3 依赖换绑 | `ant-design-vue@4.2.6` / `@ant-design/icons-vue@7.0.1` / `dayjs@1.11.21`（显式声明）；moment 已移除，`npm install` 收敛 | — |
+| 2026-11-01 | §4.1 必改落地 | `importStyle: false`；3× main.ts 删 css import + 补 `dayjs.locale('zh-cn')`；5× `v-model:open`；`ranges→presets` + 删 `getRangePickerRanges` | — |
+| 2026-11-01 | §4.2/§4.3 落地 | 2× `Modal.confirm` → `Modal.useModal()` + contextHolder（最小实现，见 §10-修正2）；`a-input-group` → `a-space-compact`；`a-collapse-panel` 维持不动 | — |
+| 2026-11-01 | 扫描补充项 | 实施中发现 `wrap-class-name` ×2（DetailDialog / UserApiEditorDialog）→ `root-class-name`，见 §10-修正1 | — |
+| 2026-11-01 | 构建验证 | `lint:check` 0 error；`build` / `build:test` 均通过（三入口全量，antd-vendor chunk 正常）；dev server 三入口 200 + 模块 transform 无报错；`Modal.useModal`/resolver `SpaceCompact→Compact` 链路确认 | §6 人工回归矩阵待执行 |
+| 2026-11-01 | 移除 `@vitejs/plugin-legacy` | 卸载插件及 117 个传递依赖（core-js/regenerator 等）；`build:test` 通过，构建耗时 ~42s → ~13s，产物不再含 legacy/polyfills 冗余 chunk，index.html 体积减半；Vite 默认 `target:'modules'` 即现代 ESM 浏览器基线，未显式配 target | 见 §10-修正3 |
 
 ## 10. 方案修正
 
 | 日期 | 修正内容 | 原因 |
 |---|---|---|
 | 2026-11-01 | 初稿 | — |
+| 2026-11-01 | 修正1：补充 `wrap-class-name` → `root-class-name` ×2 | 4.x 中 Modal 的 `wrapClassName` 更名为 `rootClassName`，方案定稿扫描遗漏（DetailDialog、UserApiEditorDialog 各 1 处），实施中补改 |
+| 2026-11-01 | 修正2：§4.2 收敛为最小实现——仅 2× `Modal.confirm` → `Modal.useModal()`，`message` 保持静态，不包 `<a-app>` | `message` 调用面 ~10 处且含 `src/utils/request` 等非组件模块（无 setup 上下文，无法走 `App.useApp()`），部分迁移反而口径不一；静态 `message` 内容均为自定义中文文案，无内建 locale 文案问题。useModal 经 ConfigProvider 注入即可获得 zhCN，无需 `<a-app>` 包装 |
+| 2026-11-01 | 修正3：移除 `@vitejs/plugin-legacy`，不配置显式 `build.target` | 页面唯一运行场景为 PySide6 内嵌 webview（Chromium 134）与现代桌面浏览器访问 `localhost:5000`，legacy 的 Chrome>=64 双份转译 + polyfills 已无受众；Vite 默认 `target:'modules'` 即为现代 ESM 浏览器基线。§7「老浏览器」风险行随之失效，若后续确有老浏览器诉求再加回插件或收紧 target |

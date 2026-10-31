@@ -6,15 +6,18 @@ import router from './router';
 
 // 重置浏览器默认样式
 import '@/styles/reset.css';
-// message / Modal.confirm 为编程式调用，样式需手动引入；
-// 模板内 <a-*> 组件由 unplugin-vue-components 按需自动引入组件与样式
-import 'ant-design-vue/es/message/style/css';
-import 'ant-design-vue/es/modal/style/css';
+// antdv 4.x：组件样式由 cssinjs 运行时注入，无需手动引入；
+// 模板内 <a-*> 组件由 unplugin-vue-components 按需自动引入；
+// DatePicker/RangePicker 面板中文文案依赖 dayjs locale
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
 import '@/styles/global.scss';
 import installDomResizeDirective from '@/utils/installDomResizeDirective';
 import installDomExposureDirective from '@/utils/installDomExposureDirective';
 import installJumpForbidDirective from '@/utils/installJumpForbidDirective';
 import JsonEditorVue from 'json-editor-vue3';
+
+dayjs.locale('zh-cn');
 
 const app = createApp(App);
 const pinia = createPinia();

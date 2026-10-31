@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    v-model:visible="visible"
+    v-model:open="visible"
     title="响应变体管理"
     :width="'calc(100vw - 48px)'"
     :footer="null"

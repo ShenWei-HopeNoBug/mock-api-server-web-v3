@@ -1,5 +1,6 @@
 <template>
   <div class="output-manager">
+    <contextHolder />
     <a-card class="header">
       <div class="search-bar">
         <SearchForm
@@ -140,6 +141,10 @@ import useSearchFormResize from '@/hooks/useSearchFormResize';
 import { useOutputManagerApi } from './hooks/useOutputManagerApi';
 
 const { searchFormItemColRef } = useSearchFormResize();
+
+// 4.x 起 Modal.confirm 等静态方法不消费 ConfigProvider 上下文，
+// 改用 useModal 使 confirm 继承 a-config-provider 的 zhCN locale
+const [modal, contextHolder] = Modal.useModal();
 
 const {
   getMockDataPage,
@@ -472,7 +477,7 @@ const onToggleEnabled = (record: OutputManagerType.RowRecord = {}): void => {
 
 /** 批量删除按钮点击 */
 const onBatchDelete = (): void => {
-  Modal.confirm({
+  modal.confirm({
     title: '批量删除确认',
     content: '确认删除当前筛选条件下的全部 Mock 数据？',
     okText: '确认删除',

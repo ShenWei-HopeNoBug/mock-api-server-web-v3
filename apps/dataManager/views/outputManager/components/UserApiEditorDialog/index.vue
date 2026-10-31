@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    v-model:visible="visible"
+    v-model:open="visible"
     :title="isEdit ? '编辑 Mock 接口' : '新增 Mock 接口'"
     :width="'calc(100vw - 48px)'"
     :footer="null"
@@ -8,7 +8,7 @@
     :keyboard="false"
     centered
     destroy-on-close
-    wrap-class-name="output-manager-user-api-editor-dialog"
+    root-class-name="output-manager-user-api-editor-dialog"
     @cancel="close"
   >
     <div v-if="visible" v-dom-resize="onResize" class="content">

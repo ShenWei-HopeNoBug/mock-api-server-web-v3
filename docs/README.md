@@ -16,7 +16,7 @@
 
 | 文档 | 范围 | 说明 | 状态 |
 |---|---|---|---|
-| [antdv4-upgrade-plan](v0_1_5/antdv/antdv4-upgrade-plan.md) | 本仓 antd 全量适配 | 依赖三件套 + importStyle/open/presets 适配，含静态方法上下文化与回归矩阵 | 待实施 |
+| [antdv4-upgrade-plan](v0_1_5/antdv/antdv4-upgrade-plan.md) | 本仓 antd 全量适配 | 依赖三件套 + importStyle/open/presets 适配 + Modal.confirm 上下文化，构建/lint/dev 冒烟已过 | 已实施（回归验证中） |
 
 ## 新文档归置约定
 

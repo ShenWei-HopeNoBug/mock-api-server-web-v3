@@ -1,6 +1,7 @@
 <template>
+  <contextHolder />
   <a-modal
-    v-model:visible="visibleRef"
+    v-model:open="visibleRef"
     :title="title"
     :footer="false"
     :keyboard="false"
@@ -51,6 +52,9 @@ import { useI18n } from 'vue-i18n';
 import i18n from '@/locales';
 
 const { t } = useI18n();
+// 4.x 起 Modal.confirm 等静态方法不消费 ConfigProvider 上下文，
+// 改用 useModal 使 confirm 继承 a-config-provider 的 zhCN locale
+const [modal, contextHolder] = Modal.useModal();
 
 interface Props {
   title?: string;
@@ -99,7 +103,7 @@ const onReset = () => {
   }
 
   // 重置表单二次确认
-  Modal.confirm({
+  modal.confirm({
     title: t('global.form.modal.confirmTitle'),
     content: t('global.form.modal.confirmReset'),
     centered: true,

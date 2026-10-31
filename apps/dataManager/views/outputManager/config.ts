@@ -1,5 +1,5 @@
 import type { Form as FormType } from '@/components/form/types';
-import { getRangePickerRanges } from '@/components/form/tools';
+import { getRangePickerPresets } from '@/components/form/tools';
 import {
   API_TYPE_ENUM,
   METHOD_ENUM,
@@ -80,7 +80,7 @@ const searchFormColumns: FormType.FormItemOptions[] = [
     key: 'create_time_range',
     inputType: 'rangePicker',
     inputProps: {
-      ranges: getRangePickerRanges(),
+      presets: getRangePickerPresets(),
     },
   },
 ];

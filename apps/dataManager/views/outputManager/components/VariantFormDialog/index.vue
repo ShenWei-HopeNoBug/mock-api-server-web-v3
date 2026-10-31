@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    v-model:visible="visible"
+    v-model:open="visible"
     :title="modalTitle"
     :width="'calc(100vw - 200px)'"
     :footer="null"

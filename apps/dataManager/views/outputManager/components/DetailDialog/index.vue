@@ -1,12 +1,12 @@
 <template>
   <a-modal
-    v-model:visible="visible"
+    v-model:open="visible"
     title="抓包接口数据详情"
     :width="'calc(100vw - 48px)'"
     :footer="null"
     centered
     destroy-on-close
-    wrap-class-name="output-manager-detail-dialog"
+    root-class-name="output-manager-detail-dialog"
     @cancel="close"
   >
     <Spin class="container" :spinning="loading">

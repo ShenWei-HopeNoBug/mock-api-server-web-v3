@@ -4,23 +4,18 @@
 export declare namespace DataManagerType {
   /**
    * 操作结果
-   * success: 操作是否成功
    * id: 操作成功时返回的记录 ID（可选）
+   * 注：信封 status_code 已承载成败语义，载荷只剩业务字段
    * */
   interface OperationResult {
-    success: boolean;
-    status_code: number;
-    status_msg: string;
     id?: string;
   }
 
   /**
    * 批量操作结果
+   * affected_count: 影响的记录数
    */
   interface BatchOperationResult {
-    success: boolean;
-    status_code: number;
-    status_msg: string;
     affected_count?: number;
   }
 

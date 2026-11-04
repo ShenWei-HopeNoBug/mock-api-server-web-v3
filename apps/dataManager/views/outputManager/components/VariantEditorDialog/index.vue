@@ -330,19 +330,17 @@ const onSaveSort = (): void => {
 
   const variantIds = variantList.value.map(v => v.id!);
   reorderVariants({ api_data_id: apiDataId.value, variant_ids: variantIds })
-    .then(res => {
+    .then(() => {
       if (sortRequestToken.value !== token) {
         return;
       }
-      if (res?.success) {
-        message.success('排序保存成功');
-        destroySortable();
-        isSortMode.value = false;
-        hasOrderChanged.value = false;
-        nextTick(() => {
-          fetchVariants();
-        });
-      }
+      message.success('排序保存成功');
+      destroySortable();
+      isSortMode.value = false;
+      hasOrderChanged.value = false;
+      nextTick(() => {
+        fetchVariants();
+      });
     })
     .finally(() => {
       if (sortRequestToken.value === token) {

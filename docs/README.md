@@ -18,6 +18,14 @@
 |---|---|---|---|
 | [antdv4-upgrade-plan](v0_1_5/antdv/antdv4-upgrade-plan.md) | 本仓 antd 全量适配 | 依赖三件套 + importStyle/open/presets 适配 + Modal.confirm 上下文化，构建/lint/dev 冒烟已过 | 已实施（回归验证中） |
 
+### qt-bridge/
+
+Qt Bridge 协议演进的本仓侧适配：信封 `status_code` 收敛为成败唯一权威，载荷状态字段清零。上游方案见 `mock-api-server` 仓 `docs/v0_1_5/qt-bridge/`。
+
+| 文档 | 范围 | 说明 | 状态 |
+|---|---|---|---|
+| [qt-bridge-web-adapt-plan](v0_1_5/qt-bridge/qt-bridge-web-adapt-plan.md) | `dataManager.d.ts` 类型瘦身 + `VariantEditorDialog` 守卫删除 | 随后端 Phase 1 同批落地 | 已实施（待联调验收） |
+
 ## 新文档归置约定
 
 - 新功能方案按功能域入对应子目录；新功能域先在本文件登记再建目录。

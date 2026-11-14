@@ -32,6 +32,14 @@ webview 主题适配：`mock-api-server` 仓 `config/theme.py` `PALETTE` 暖调�
 | -------------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------- | ------ |
 | [qt-warm-theme-plan](v0_1_5/theme/qt-warm-theme-plan.md) | `src/styles/` + configEdit/dataManager App.vue + 视图/共享组件手码色 | antd token 映射 PALETTE + `$qt-*` scss 变量双源 | 已实施 |
 
+### data-manager/
+
+dataManager 子应用功能演进。
+
+| 文档 | 范围 | 说明 | 状态 |
+|---|---|---|---|
+| [search-collapse-plan](v0_1_5/data-manager/search-collapse-plan.md) | `outputManager/index.vue` header | 9 字段搜索区 v-show 折叠，默认收起，生效数徽标 | 已实施 |
+
 ## 新文档归置约定
 
 - 新功能方案按功能域入对应子目录；新功能域先在本文件登记再建目录。

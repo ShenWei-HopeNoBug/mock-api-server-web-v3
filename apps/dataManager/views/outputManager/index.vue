@@ -2,22 +2,31 @@
   <div class="output-manager">
     <contextHolder />
     <a-card class="header">
-      <div class="search-bar">
-        <SearchForm
-          :columns="searchFormColumns"
-          :init-form-values="initSearchForm"
-          :process-before-submit="processBeforeSearchFormSubmit"
-          :form-item-col="searchFormItemColRef"
-          :form-props="searchFormFormProps"
-          @submit="onSearchSubmit"
-        />
+      <div class="collapse-row">
+        <a-button class="btn filter-toggle" @click="searchCollapsed = !searchCollapsed">
+          <FilterOutlined />
+          筛选{{ activeFilterCount > 0 ? ` (${activeFilterCount})` : '' }}
+          <DownOutlined class="toggle-icon" :class="{ 'toggle-icon--up': !searchCollapsed }" />
+        </a-button>
+        <a-button class="btn" type="primary" @click="onAdd">新增 Mock 接口</a-button>
       </div>
-      <div class="tool-bar">
-        <div class="btn-group">
-          <a-button class="btn" type="primary" @click="onAdd">新增 Mock 接口</a-button>
-          <a-button class="btn" danger :loading="batchDeleteLoading" @click="onBatchDelete">
-            批量删除
-          </a-button>
+      <div v-show="!searchCollapsed" class="search-area">
+        <div class="search-bar">
+          <SearchForm
+            :columns="searchFormColumns"
+            :init-form-values="initSearchForm"
+            :process-before-submit="processBeforeSearchFormSubmit"
+            :form-item-col="searchFormItemColRef"
+            :form-props="searchFormFormProps"
+            @submit="onSearchSubmit"
+          />
+        </div>
+        <div class="tool-bar">
+          <div class="btn-group">
+            <a-button class="btn" danger :loading="batchDeleteLoading" @click="onBatchDelete">
+              批量删除
+            </a-button>
+          </div>
         </div>
       </div>
     </a-card>
@@ -118,6 +127,7 @@
 import { computed, nextTick, reactive, ref } from 'vue';
 import { cloneDeep, isPlainObject } from 'lodash-es';
 import { message, Modal } from 'ant-design-vue';
+import { DownOutlined, FilterOutlined } from '@ant-design/icons-vue';
 import { generateUUID } from '@/utils';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
@@ -172,6 +182,12 @@ const curRow = ref<OutputManagerType.RowRecord>({});
 
 /** 当前查询表单值 */
 const searchForm = ref<OutputManagerType.SearchForm>({});
+/** 搜索区折叠态：默认收起（9 字段占高过大），v-show 保留表单状态 */
+const searchCollapsed = ref<boolean>(true);
+/** 已生效筛选项数（提交态），>0 时 toggle 按钮带计数提示 */
+const activeFilterCount = computed((): number => {
+  return Object.values(searchForm.value).filter(v => v != null && v !== '').length;
+});
 /** 表格数据（来自 Qt 分页请求） */
 const tableData = ref<OutputManagerType.RowRecord[]>([]);
 /** 当前过滤结果总数 */
@@ -293,6 +309,7 @@ const onPageChange = (page: number, pageSize: number): void => {
  */
 const onSearchSubmit = (form: OutputManagerType.SearchForm = {}): void => {
   searchForm.value = cloneDeep(form);
+  searchCollapsed.value = true; // 提交即收起悬浮层看结果
   fetchData(true);
 };
 
@@ -550,6 +567,7 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
     width: 100%;
     margin-bottom: 24px;
     flex-shrink: 0;
+    position: relative; // 悬浮搜索层锚点（antd card 根不裁切，absolute 子级可溢出卡片边界）
 
     :deep(.search-form) {
       .form-wrapper {
@@ -558,6 +576,38 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
         overflow: hidden;
         overflow-y: auto;
       }
+    }
+
+    .collapse-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-toggle {
+      .toggle-icon {
+        font-size: 10px;
+        transition: transform 0.2s;
+      }
+
+      .toggle-icon--up {
+        transform: rotate(180deg);
+      }
+    }
+
+    // 悬浮层：出文档流不占高，从 header 卡下沿展开盖住表格上部（popover 语义）
+    .search-area {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 8px;
+      z-index: 10; // 压 content 卡与表格 sticky 表头
+      background: $qt-panel-bg;
+      border: 1px solid $qt-border-soft;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      padding: 14px 20px;
     }
 
     .search-bar {

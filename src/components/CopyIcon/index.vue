@@ -64,14 +64,14 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .copy-icon {
-  color: #1677ff;
+  color: $qt-link;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   line-height: 1;
 
   &--disabled {
-    color: #52c41a;
+    color: $qt-success;
   }
 }
 </style>

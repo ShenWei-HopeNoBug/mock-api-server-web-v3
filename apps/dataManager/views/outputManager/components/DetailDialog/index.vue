@@ -354,13 +354,13 @@ defineExpose({
     .json-area {
       padding: 14px;
       border-radius: 4px;
-      border: 1px solid #ccc;
+      border: 1px solid $qt-border-soft;
     }
 
     .variant-list {
       padding: 14px;
       border-radius: 4px;
-      border: 1px solid #ccc;
+      border: 1px solid $qt-border-soft;
 
       .variant-item {
         width: 100%;
@@ -374,7 +374,7 @@ defineExpose({
         &:not(:last-child) {
           padding-bottom: 12px;
           margin-bottom: 12px;
-          border-bottom: 1px solid #e8e8e8;
+          border-bottom: 1px solid $qt-divider;
         }
       }
 

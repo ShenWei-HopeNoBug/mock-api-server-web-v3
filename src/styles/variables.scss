@@ -1,0 +1,33 @@
+// Qt 客户端暖调主题变量：与 mock-api-server 仓 config/theme.py PALETTE 同源
+// 调色以 Qt 侧 PALETTE 为准，此处仅映射 scss 侧需要的手码色值；
+// antd 组件 token 走 src/styles/qtWarmTheme.ts（a-config-provider :theme）
+
+// 主底色
+$qt-window-bg: #ffe8c3; // WINDOW_BG 窗体大底
+$qt-panel-bg: #fff8e1; // PANEL_BG 卡片/输入框底
+$qt-panel-hover: #fff5e1; // PANEL_HOVER 列表项 hover 底
+$qt-panel-select: #ffe0b2; // PANEL_SELECT 列表项选中底
+
+// 文字
+$qt-text: #603e1e; // TEXT 主文字暖深棕
+$qt-title: #7a4c24; // TITLE 分区标题
+
+// 描边
+$qt-border: #c3945f; // BORDER 按钮/下拉描边
+$qt-border-soft: rgba(160, 120, 70, 0.27); // BORDER_SOFT 输入框/列表描边
+$qt-divider: rgba(122, 76, 36, 0.2); // DIVIDER 分隔线
+
+// 强调
+$qt-accent: #cd8c41; // ACCENT 主色（复选框/主按钮）
+$qt-accent-hover: #d9964f; // ACCENT 提亮档（PALETTE 无独立 token，由 ACCENT 派生）
+$qt-accent-deep: #a5692d; // ACCENT_DEEP 强调描边/按下
+$qt-link: #be6e28; // LINK 链接/高亮文字
+
+// 状态
+$qt-success: #5aaa5a; // STATUS_ON
+$qt-warning: #e6a03c; // STATUS_WAIT
+$qt-error: #c83c3c; // ICON_DANGER 错误/危险
+
+// 滚动条
+$qt-scrollbar: rgba(205, 170, 125, 0.55); // SCROLLBAR handle
+$qt-scrollbar-hover: rgba(205, 170, 125, 0.85);

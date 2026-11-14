@@ -68,7 +68,7 @@ const maskStyleRef = computed((): CSSProperties => ({ zIndex: props.zIndex, ...p
       height: 32px;
       width: 32px;
       font-size: 32px;
-      color: #1677ff;
+      color: $qt-accent;
       line-height: 1;
     }
 
@@ -79,7 +79,7 @@ const maskStyleRef = computed((): CSSProperties => ({ zIndex: props.zIndex, ...p
       text-align: center;
       font-size: 14px;
       word-break: break-word;
-      color: #1677ff;
+      color: $qt-accent;
     }
   }
 }

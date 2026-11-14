@@ -103,7 +103,7 @@ watch(
   display: flex;
   align-items: flex-start;
   padding: 12px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid $qt-border-soft;
   border-radius: 4px;
 
   &:not(:last-child) {
@@ -119,7 +119,7 @@ watch(
   }
 
   &--invalid {
-    border-color: #ff4d4f;
+    border-color: $qt-error;
   }
 }
 

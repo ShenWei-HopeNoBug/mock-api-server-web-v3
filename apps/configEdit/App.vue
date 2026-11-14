@@ -1,6 +1,6 @@
 <template>
   <Spin :spinning="loadingRef" class="app" tip="Qt 桥接资源加载中...">
-    <a-config-provider :locale="zhCN">
+    <a-config-provider :locale="zhCN" :theme="qtWarmTheme">
       <router-view />
     </a-config-provider>
   </Spin>
@@ -12,6 +12,7 @@ import Spin from '@/components/Spin/index.vue';
 import QtBridge from '@/utils/bridge/QtBridge';
 import { message } from 'ant-design-vue';
 import { useQtBridgeStore } from '@apps/configEdit/store/useQtBridge';
+import { qtWarmTheme } from '@/styles/qtWarmTheme';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
 const qtBridgeStore = useQtBridgeStore();

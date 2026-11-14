@@ -530,13 +530,13 @@ defineExpose({
     align-items: center;
     justify-content: center;
     width: 100%;
-    color: #d9d9d9;
+    color: $qt-border;
     cursor: not-allowed;
     user-select: none;
     transition: color 0.2s;
 
     &--active {
-      color: #1890ff;
+      color: $qt-link;
       cursor: move;
     }
 
@@ -551,17 +551,17 @@ defineExpose({
     :deep(.ant-table-tbody) {
       .ant-table-row {
         &:hover {
-          background-color: #e6f7ff;
+          background-color: $qt-panel-hover;
         }
       }
 
       .sortable-ghost {
         opacity: 0.5;
-        background: #e6f7ff;
+        background: $qt-panel-select;
       }
 
       .sortable-chosen {
-        background: #e6f7ff;
+        background: $qt-panel-select;
       }
     }
   }

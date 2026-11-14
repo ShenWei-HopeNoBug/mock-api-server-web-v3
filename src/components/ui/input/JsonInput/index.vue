@@ -217,7 +217,7 @@ defineExpose({
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background-color: #1890ff;
+      background-color: $qt-accent;
       color: #fff;
       display: flex;
       align-items: center;
@@ -231,11 +231,11 @@ defineExpose({
       }
 
       &:hover {
-        background-color: #40a9ff;
+        background-color: $qt-accent-hover;
       }
 
       &:active {
-        background-color: #096dd9;
+        background-color: $qt-accent-deep;
       }
     }
   }
@@ -315,7 +315,7 @@ defineExpose({
   z-index: 1000;
   width: 100% !important;
   height: 100% !important;
-  background-color: #fff;
+  background-color: $qt-panel-bg;
   padding: 24px;
 
   display: flex;

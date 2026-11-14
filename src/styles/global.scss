@@ -1,10 +1,12 @@
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  background-color: #fff;
+  color-scheme: light; // Qt 主题为固定暖调浅色，锁定 light 防系统深色翻转 UA 控件
+  background-color: $qt-window-bg;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,12 +36,12 @@ body,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e2e2e2;
+  background: $qt-scrollbar;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c8c8c8;
+  background: $qt-scrollbar-hover;
 }
 
 ::-webkit-scrollbar-corner {

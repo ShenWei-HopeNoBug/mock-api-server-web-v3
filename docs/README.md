@@ -1,44 +1,29 @@
 # 文档地图
 
-> 本目录为项目方案文档存档，按功能域 / 版本分子目录归置。
-> 约定：每篇为唯一权威方案，偏离修正以增量章节追加、不改正文；
-> 跨方案的后续变更单开增量文档（`*-changes.md`）。
->
-> 文档结构沿用 `mock-api-server/docs` 约定；涉及本仓的前置方案（如 PySide6 迁移）见该仓 docs。
+> 本目录为项目文档总入口，按五类归置：plans（方案与实施记录）/ rules（协作规范）/ reference（参考说明）/ reports（评审记录）/ discussions（探索讨论）。
+> 文档结构沿用 `mock-api-server` 仓 docs 约定；涉及本仓的前置方案（如 PySide6 迁移、Qt Bridge 协议）见该仓 docs。
 
-## v0_1_5/
+## plans/
 
-当前版本工作目录，按功能域分设子目录。
+方案与实施文档存档，按版本 / 功能域归置，索引与归置约定见 [plans/README.md](plans/README.md)。
 
-### antdv/
+当前版本 `v0_1_5` 域：antdv（组件库升级）、qt-bridge（桥协议适配）、theme（webview 主题）。
 
-组件库大版本升级：ant-design-vue 3.2.20 → 4.x（cssinjs），依赖 `mock-api-server` 仓 PySide6 内核升级先行落地。
+## rules/
 
-| 文档                                                       | 范围               | 说明                                                                                        | 状态                 |
-| ---------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------- | -------------------- |
-| [antdv4-upgrade-plan](v0_1_5/antdv/antdv4-upgrade-plan.md) | 本仓 antd 全量适配 | 依赖三件套 + importStyle/open/presets 适配 + Modal.confirm 上下文化，构建/lint/dev 冒烟已过 | 已实施（回归验证中） |
+协作规范，按主题分子目录（`code/`、`git/`），文档统一全大写 + 下划线命名。
 
-### qt-bridge/
+- [rules/git/COMMIT_MESSAGE.md](rules/git/COMMIT_MESSAGE.md) —— git 提交规范（Conventional Commits）
+- [rules/code/CODE_RULES.md](rules/code/CODE_RULES.md) —— 代码规范（组件/样式/别名约定）
 
-Qt Bridge 协议演进的本仓侧适配：信封 `status_code` 收敛为成败唯一权威，载荷状态字段清零。上游方案见 `mock-api-server` 仓 `docs/v0_1_5/qt-bridge/`。
+## reference/
 
-| 文档                                                                     | 范围                                                         | 说明                    | 状态                 |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------- | -------------------- |
-| [qt-bridge-web-adapt-plan](v0_1_5/qt-bridge/qt-bridge-web-adapt-plan.md) | `dataManager.d.ts` 类型瘦身 + `VariantEditorDialog` 守卫删除 | 随后端 Phase 1 同批落地 | 已实施（待联调验收） |
+契约说明、机制细节等查阅性文档。目录已建，归置约定见 [reference/README.md](reference/README.md)。
 
-### theme/
+## reports/
 
-webview 主题适配：`mock-api-server` 仓 `config/theme.py` `PALETTE` 暖调主题向 antd 侧映射。
+评审结论与问题台账。目录已建，归置约定见 [reports/README.md](reports/README.md)。
 
-| 文档                                                     | 范围                                                                 | 说明                                            | 状态   |
-| -------------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------- | ------ |
-| [qt-warm-theme-plan](v0_1_5/theme/qt-warm-theme-plan.md) | `src/styles/` + configEdit/dataManager App.vue + 视图/共享组件手码色 | antd token 映射 PALETTE + `$qt-*` scss 变量双源 | 已实施 |
+## discussions/
 
-## 新文档归置约定
-
-- 新功能方案按功能域入对应子目录；新功能域先在本文件登记再建目录。
-- 文件名带功能前缀（如 `antdv-*.md`），与目录同名属预期，便于全文检索识别。
-- 跨方案变更单开 `*-changes.md` 增量文档，不改正文。
-- plan 文档除实施方案本身外，须含「实施记录」「方案修正」栏目，记录实际落地情况与偏离修正（增量章节追加，不改正文）。
-- 文档方案的落地执行不自动 git commit，由人确认后提交。
-- 版本存档目录（`v0_x_x/`）为历史冻结内容，不再变更；现行方案以功能域目录为准。
+探索性讨论与方向推演记录。目录已建，归置约定见 [discussions/README.md](discussions/README.md)。

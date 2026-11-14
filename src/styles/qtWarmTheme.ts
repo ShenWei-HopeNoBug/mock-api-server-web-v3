@@ -33,8 +33,9 @@ export const qtWarmTheme: ThemeConfig = {
     colorSplit: 'rgba(122, 76, 36, 0.2)', // DIVIDER
 
     // 列表项底色（select 下拉/table 行/menu）
-    controlItemBgHover: '#fff5e1', // PANEL_HOVER
-    controlItemBgActive: '#ffe0b2', // PANEL_SELECT
+    // hover 取 PANEL_BG 与 PANEL_SELECT 之间的派生中档——PANEL_HOVER #fff5e1 与容器底仅差 3 亮度单位，实测不可见
+    controlItemBgHover: '#ffe9c8',
+    controlItemBgActive: '#ffe0b2', // PANEL_SELECT（深于 hover 一档，保持状态层级）
 
     borderRadius: 4, // 对齐 Qt 控件圆角
   },

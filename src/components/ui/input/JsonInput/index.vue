@@ -264,6 +264,10 @@ defineExpose({
         overflow: hidden;
 
         .jsoneditor-menu {
+          // 主题蓝 #3883fa → PALETTE 强调橙；按钮图标为白色 sprite，橙底可读性不变
+          background-color: $qt-accent;
+          border-bottom-color: $qt-accent-deep;
+
           .jsoneditor-frame {
             display: flex;
             align-items: center;
@@ -285,6 +289,8 @@ defineExpose({
           flex-direction: column;
           overflow: hidden;
           border-radius: 4px;
+          // 外框蓝 thin solid → 暖软边（贴 Qt 输入框描边语义）
+          border-color: $qt-border-soft;
 
           .jsoneditor-outer {
             flex: 1;
@@ -330,6 +336,25 @@ defineExpose({
       height: 100%;
       min-height: 100%;
     }
+  }
+}
+</style>
+
+<!-- jsoneditor 模态（pico modal）挂 document.body，:deep 不可达，非 scoped 块全局覆写；类名均为 jsoneditor 私有，不误伤其他弹窗 -->
+<style lang="scss">
+.jsoneditor-modal {
+  .pico-modal-header {
+    background: $qt-accent; // 模态头蓝 → 强调橙
+  }
+
+  a {
+    color: $qt-link; // 链接蓝 → 主题链接色
+  }
+
+  .selectr-selected .selectr-tag,
+  .jsoneditor-button-desc {
+    background-color: $qt-accent;
+    border-color: $qt-accent;
   }
 }
 </style>

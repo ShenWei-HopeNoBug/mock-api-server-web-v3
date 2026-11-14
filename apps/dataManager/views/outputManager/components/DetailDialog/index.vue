@@ -39,7 +39,7 @@
                     :key="`variant-${variant.id}-${vIndex}`"
                     class="variant-item"
                   >
-                    <div class="variant-index">{{ `#${vIndex + 1}` }}</div>
+                    <div class="variant-index">{{ `#${Number(vIndex) + 1}` }}</div>
                     <InfoDescription
                       :columns="getVariantColumns(variant)"
                       :info-item-style="variantItemStyle"

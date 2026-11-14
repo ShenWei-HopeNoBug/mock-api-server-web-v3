@@ -37,20 +37,17 @@ export const qtWarmTheme: ThemeConfig = {
     controlItemBgHover: '#ffe9c8',
     controlItemBgActive: '#ffe0b2', // PANEL_SELECT（深于 hover 一档，保持状态层级）
 
+    // alter 填充（表格表头 tableHeaderBg、斑马纹等）：ACCENT 低透明叠 PANEL_BG ≈ #ffe0b2 观感的暖调
+    colorFillAlter: 'rgba(205, 140, 65, 0.18)',
+
     borderRadius: 4, // 对齐 Qt 控件圆角
   },
   components: {
+    // antd-vue 4.x 组件级 ComponentToken 为空接口，仅支持按组件覆写 alias token
+    // Button 默认钮底/边/字已由 colorBgContainer/colorBorder/colorText 命中，此处仅补 BTN_BG 更白的差异
     Button: {
-      defaultBg: '#fffcf6', // BTN_BG
-      defaultBorderColor: '#c3945f',
-      defaultColor: '#603e1e',
+      colorBgContainer: '#fffcf6', // BTN_BG
     },
-    Table: {
-      headerBg: '#ffe0b2', // PANEL_SELECT
-      headerColor: '#7a4c24', // TITLE
-    },
-    Modal: {
-      titleColor: '#7a4c24', // TITLE
-    },
+    // Table 表头暖调由 colorFillAlter 覆盖；Modal 头底/标题色已由 colorBgElevated/colorTextHeading 命中
   },
 };

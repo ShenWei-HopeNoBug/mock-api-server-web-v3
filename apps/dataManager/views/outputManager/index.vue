@@ -3,12 +3,12 @@
     <contextHolder />
     <a-card class="header">
       <div class="collapse-row">
+        <a-button class="btn" type="primary" @click="onAdd">新增 Mock 接口</a-button>
         <a-button class="btn filter-toggle" @click="searchCollapsed = !searchCollapsed">
           <FilterOutlined />
           筛选{{ activeFilterCount > 0 ? ` (${activeFilterCount})` : '' }}
           <DownOutlined class="toggle-icon" :class="{ 'toggle-icon--up': !searchCollapsed }" />
         </a-button>
-        <a-button class="btn" type="primary" @click="onAdd">新增 Mock 接口</a-button>
       </div>
       <div v-show="!searchCollapsed" class="search-area">
         <div class="search-options">
@@ -622,7 +622,7 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
     .search-options {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 8px;
+      margin-bottom: 14px;
     }
 
     .search-bar {

@@ -8,6 +8,7 @@
     :keyboard="false"
     :centered="true"
     :destroy-on-close="true"
+    wrap-class-name="__modal-wrap-no-scroll__"
     @cancel="close"
   >
     <div class="container" :class="{ 'is-sort-mode': isSortMode }">

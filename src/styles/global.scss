@@ -47,3 +47,10 @@ body,
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+// Qt WebEngine 呈现层缺陷缓解（mock-api-server 修正11）：砍掉 wrap 自身的全视口
+// 滚动层，减少可滚动 fixed 层数量以降低「单 surface 拼接两帧」混帧触发率；
+// 各弹窗内容均限高 100vh 内并走内部滚动器，wrap 滚动本就冗余。仅作缓解非根治
+.ant-modal-wrap.__modal-wrap-no-scroll__ {
+  overflow: hidden;
+}

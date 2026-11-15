@@ -8,6 +8,7 @@
     :keyboard="false"
     centered
     destroy-on-close
+    wrap-class-name="__modal-wrap-no-scroll__"
     @cancel="close"
   >
     <div v-if="visible" v-dom-resize="onFormResize" class="form-content">

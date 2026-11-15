@@ -8,6 +8,7 @@
     :keyboard="false"
     centered
     destroy-on-close
+    wrap-class-name="__modal-wrap-no-scroll__"
     root-class-name="output-manager-user-api-editor-dialog"
     @cancel="close"
   >

@@ -6,6 +6,7 @@
     :footer="null"
     centered
     destroy-on-close
+    wrap-class-name="__modal-wrap-no-scroll__"
     root-class-name="output-manager-detail-dialog"
     @cancel="close"
   >

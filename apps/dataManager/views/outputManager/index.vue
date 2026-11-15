@@ -11,6 +11,9 @@
         <a-button class="btn" type="primary" @click="onAdd">新增 Mock 接口</a-button>
       </div>
       <div v-show="!searchCollapsed" class="search-area">
+        <div class="search-options">
+          <a-checkbox v-model:checked="autoCollapseAfterSearch">查询后自动收起</a-checkbox>
+        </div>
         <div class="search-bar">
           <SearchForm
             :columns="searchFormColumns"
@@ -184,6 +187,8 @@ const curRow = ref<OutputManagerType.RowRecord>({});
 const searchForm = ref<OutputManagerType.SearchForm>({});
 /** 搜索区折叠态：默认收起（9 字段占高过大），v-show 保留表单状态 */
 const searchCollapsed = ref<boolean>(true);
+/** 查询/重置后是否自动收起筛选浮层：勾选态仅内存级，弹窗重开还原默认 */
+const autoCollapseAfterSearch = ref<boolean>(true);
 /** 已生效筛选项数（提交态），>0 时 toggle 按钮带计数提示 */
 const activeFilterCount = computed((): number => {
   return Object.values(searchForm.value).filter(v => v != null && v !== '').length;
@@ -309,7 +314,10 @@ const onPageChange = (page: number, pageSize: number): void => {
  */
 const onSearchSubmit = (form: OutputManagerType.SearchForm = {}): void => {
   searchForm.value = cloneDeep(form);
-  searchCollapsed.value = true; // 提交即收起悬浮层看结果
+  // SearchForm 的「重置」与「查询」共用 submit 出口，此处一处门控同时覆盖
+  if (autoCollapseAfterSearch.value) {
+    searchCollapsed.value = true; // 提交即收起悬浮层看结果
+  }
   fetchData(true);
 };
 
@@ -608,6 +616,13 @@ const onCopy = (record: OutputManagerType.RowRecord = {}): void => {
       border-radius: 8px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
       padding: 14px 20px;
+    }
+
+    // 浮层顶部薄选项行：与 tool-bar 按钮列同侧右对齐
+    .search-options {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
     }
 
     .search-bar {

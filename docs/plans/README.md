@@ -36,9 +36,10 @@ webview 主题适配：`mock-api-server` 仓 `config/theme.py` `PALETTE` 暖调�
 
 dataManager 子应用功能演进。
 
-| 文档 | 范围 | 说明 | 状态 |
-|---|---|---|---|
-| [search-collapse-plan](v0_1_5/data-manager/search-collapse-plan.md) | `outputManager/index.vue` header | 9 字段搜索区 v-show 折叠，默认收起，生效数徽标 | 已实施 |
+| 文档                                                                      | 范围                                  | 说明                                                       | 状态   |
+| ------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------------------------------- | ------ |
+| [search-collapse-plan](v0_1_5/data-manager/search-collapse-plan.md)       | `outputManager/index.vue` header      | 9 字段搜索区 v-show 折叠，默认收起，生效数徽标             | 已实施 |
+| [search-collapse-changes](v0_1_5/data-manager/search-collapse-changes.md) | `outputManager/index.vue` search-area | 浮层新增「查询后自动收起」勾选项，默认勾选，内存态不持久化 | 已实施 |
 
 ## 新文档归置约定
 

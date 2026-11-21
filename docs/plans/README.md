@@ -4,6 +4,18 @@
 > 约定：每篇为唯一权威方案，偏离修正以增量章节追加、不改正文；
 > 跨方案的后续变更单开增量文档（`*-changes.md`）。
 
+## v0_1_6/
+
+新版本迭代目录，按功能域分设子目录。
+
+### test-group/
+
+测试组管理页：dataManager 布局化 + 组管理视图。上游总体方案见 `mock-api-server` 仓 `docs/plans/v0_1_6/test-group/`。
+
+| 文档 | 范围 | 说明 | 状态 |
+|---|---|---|---|
+| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md) | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口 | 待实施 |
+
 ## v0_1_5/
 
 当前版本工作目录，按功能域分设子目录。

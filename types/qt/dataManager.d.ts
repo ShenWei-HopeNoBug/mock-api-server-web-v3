@@ -21,8 +21,9 @@ export declare namespace DataManagerType {
 
   /**
    * api 数据类型
+   * TEST_GROUP 仅出现在测试组条目数据上，列表筛选枚举不含此值
    * */
-  type ApiType = 'USER' | 'MITMPROXY';
+  type ApiType = 'USER' | 'MITMPROXY' | 'MCP' | 'TEST_GROUP';
 
   /**
    * api 请求方法
@@ -33,10 +34,7 @@ export declare namespace DataManagerType {
    * 请求 content-type 枚举值
    * */
   type RequestContentType =
-    | 'NONE'
-    | 'APPLICATION_X_WWW_FORM_URLENCODED'
-    | 'APPLICATION_JSON'
-    | 'MULTIPART_FORM_DATA';
+    'NONE' | 'APPLICATION_X_WWW_FORM_URLENCODED' | 'APPLICATION_JSON' | 'MULTIPART_FORM_DATA';
 
   /**
    * api 数据
@@ -55,6 +53,8 @@ export declare namespace DataManagerType {
     operator?: string;
     created_at?: string;
     updated_at?: string;
+    /** 所属测试组 ID，仅 type='TEST_GROUP' 的组条目有值 */
+    group_id?: string;
   }
 
   /**
@@ -249,5 +249,95 @@ export declare namespace DataManagerType {
    * */
   interface ApiDataDetail extends ApiData {
     response_variants?: ApiResponseVariant[];
+  }
+
+  /**
+   * 测试组记录
+   * enabled 全局至多一个组为 true（单组启用，原子顶替）
+   * */
+  interface TestGroup {
+    id?: string;
+    name?: string;
+    enabled?: boolean;
+    operator?: string;
+    created_at?: string;
+    updated_at?: string;
+  }
+
+  /**
+   * 测试组列表行（含组内条目计数）
+   * */
+  interface TestGroupSummary extends TestGroup {
+    item_count?: number;
+  }
+
+  /**
+   * 测试组详情（组字段 + 组内接口条目列表）
+   * 协议：/test_group/detail 返回数据
+   * */
+  interface TestGroupDetail extends TestGroup {
+    items?: ApiData[];
+  }
+
+  /**
+   * 获取测试组列表结果
+   * 协议：/test_group/list
+   * */
+  interface TestGroupListResult {
+    list?: TestGroupSummary[];
+  }
+
+  /**
+   * 获取测试组详情传参
+   * 协议：/test_group/detail
+   * */
+  interface GetTestGroupDetailParams {
+    id?: string;
+  }
+
+  /**
+   * 新建测试组传参
+   * 协议：/test_group/create
+   * */
+  interface CreateTestGroupParams {
+    name?: string;
+  }
+
+  /**
+   * 更新测试组传参
+   * 协议：/test_group/update
+   * enabled 不可经此接口修改（由 enable/disable 原子管理）
+   * */
+  interface UpdateTestGroupParams {
+    id?: string;
+    name?: string;
+  }
+
+  /**
+   * 删除测试组传参（级联删除组内条目与变体）
+   * 协议：/test_group/delete
+   * */
+  interface DeleteTestGroupParams {
+    id?: string;
+  }
+
+  /**
+   * 启用测试组传参（单组启用，原子顶替其余组）
+   * 协议：/test_group/enable
+   * */
+  interface EnableTestGroupParams {
+    id?: string;
+  }
+
+  /**
+   * 拷入接口到测试组传参
+   * 协议：/test_group/copy_into
+   * enabled 按入口语义传值：outputManager 推入 false / 组详情拉取 true
+   * */
+  interface CopyIntoTestGroupParams {
+    api_id?: string;
+    group_id?: string;
+    copy_variants?: boolean;
+    enabled?: boolean;
   }
 }

@@ -78,6 +78,8 @@
 
                 <a-button type="link" @click="onEditVariants(record)">响应变体</a-button>
 
+                <a-button type="link" @click="onCopyIntoGroup(record)">拷入测试组</a-button>
+
                 <a-popconfirm
                   :title="record.enabled ? '确认禁用？' : '确认启用？'"
                   @confirm="onToggleEnabled(record)"
@@ -123,6 +125,11 @@
     />
     <VariantEditorDialog ref="variantEditorDialogRef" @close="onVariantEditorClose" />
     <DetailDialog ref="detailDialogRef" @close="onDetailDialogClose" />
+    <GroupPickerDialog
+      ref="groupPickerDialogRef"
+      :loading="copyIntoLoading"
+      @submit="onCopyIntoGroupSubmit"
+    />
   </div>
 </template>
 
@@ -138,6 +145,7 @@ import CopyIcon from '@/components/CopyIcon/index.vue';
 import DetailDialog from './components/DetailDialog/index.vue';
 import UserApiEditorDialog from './components/UserApiEditorDialog/index.vue';
 import VariantEditorDialog from './components/VariantEditorDialog/index.vue';
+import GroupPickerDialog from '@apps/dataManager/views/testGroupManager/components/GroupPickerDialog/index.vue';
 import {
   defaultTableHeight,
   tableHeightOffset,
@@ -166,6 +174,7 @@ const {
   deleteMockData,
   batchDeleteMockData,
   copyMockData,
+  copyIntoTestGroup,
 } = useOutputManagerApi({
   onReady: () => {
     nextTick(() => {
@@ -180,6 +189,8 @@ const detailDialogRef = ref<InstanceType<typeof DetailDialog> | null>(null);
 const userApiEditorDialogRef = ref<InstanceType<typeof UserApiEditorDialog> | null>(null);
 /** 响应变体编辑弹窗实例 */
 const variantEditorDialogRef = ref<InstanceType<typeof VariantEditorDialog> | null>(null);
+/** 拷入测试组弹窗实例 */
+const groupPickerDialogRef = ref<InstanceType<typeof GroupPickerDialog> | null>(null);
 /** 当前操作行数据 */
 const curRow = ref<OutputManagerType.RowRecord>({});
 
@@ -211,6 +222,7 @@ const loadingMap = reactive<Record<string, boolean>>({
   delete_mock_data: false,
   batch_delete_mock_data: false,
   copy_mock_data: false,
+  copy_into_test_group: false,
 });
 
 /** 各请求的最新 token，用于竞态过滤 */
@@ -228,6 +240,9 @@ const editLoading = computed((): boolean => {
 
 /** 批量删除 loading */
 const batchDeleteLoading = computed((): boolean => loadingMap.batch_delete_mock_data);
+
+/** 拷入测试组 loading */
+const copyIntoLoading = computed((): boolean => loadingMap.copy_into_test_group);
 
 /**
  * 分页拉取接口数据。
@@ -498,6 +513,46 @@ const onToggleEnabled = (record: OutputManagerType.RowRecord = {}): void => {
     message.success(nextEnabled ? '启用成功' : '禁用成功');
     fetchData(false);
   });
+};
+
+/**
+ * 拷入测试组按钮点击：打开目标组选择弹窗。
+ * @param record 行数据
+ */
+const onCopyIntoGroup = (record: OutputManagerType.RowRecord = {}): void => {
+  curRow.value = cloneDeep(record);
+  groupPickerDialogRef.value?.show?.();
+};
+
+/**
+ * 拷入测试组提交：推入语义，条目默认禁用（请到组详情启用）。
+ * @param payload 弹窗提交载荷
+ */
+const onCopyIntoGroupSubmit = (
+  payload: { group_id?: string; copy_variants?: boolean } = {},
+): void => {
+  const { group_id = '', copy_variants = true } = payload;
+  const { id = '' } = curRow.value;
+  if (!id || !group_id) {
+    message.error('拷入测试组失败！');
+    return;
+  }
+  const token = generateUUID();
+  requestTokenMap.copy_into_test_group = token;
+  loadingMap.copy_into_test_group = true;
+  copyIntoTestGroup({ api_id: id, group_id, copy_variants, enabled: false })
+    .then(() => {
+      if (requestTokenMap.copy_into_test_group !== token) {
+        return;
+      }
+      message.success('已拷入测试组（默认禁用，请到组详情启用）');
+      groupPickerDialogRef.value?.close?.();
+    })
+    .finally(() => {
+      if (requestTokenMap.copy_into_test_group === token) {
+        loadingMap.copy_into_test_group = false;
+      }
+    });
 };
 
 /** 批量删除按钮点击 */

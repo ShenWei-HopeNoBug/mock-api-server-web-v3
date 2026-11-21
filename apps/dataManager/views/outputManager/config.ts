@@ -180,7 +180,7 @@ const tableColumns: OutputManagerType.TableColumn[] = [
   {
     title: '操作',
     key: 'operation',
-    width: 300,
+    width: 380,
     fixed: 'right',
   },
 ];

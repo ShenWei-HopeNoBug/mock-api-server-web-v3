@@ -109,10 +109,10 @@ npm run dev            # 目检：页签切换、组 CRUD、拷入、启停
 
 | 日期 | 步骤 | 结果 | 备注 |
 |---|---|---|---|
-| - | - | - | - |
+| 2026-04 | ③ BasicLayout 页签容器 + staticRoute 容器化 + testGroupManager（组列表/组详情）+ 拷入双入口 + `dataManager.d.ts` 协议类型 | 改动文件 eslint 0 error（warning 均存量同款）；prettier 全过；`npm run build` 通过 | 未提交，待确认 |
 
 ## 13. 方案修正
 
 | 日期 | 修正内容 | 原因 |
 |---|---|---|
-| - | - | - |
+| 2026-04 | `ApiType` 联合类型补 `MCP | TEST_GROUP`（原为 `'USER' \| 'MITMPROXY'`） | MCP 为存量漏标；TEST_GROUP 需标识组条目 `ApiData.type`/`group_id`；筛选枚举仍只暴露 base 三型 |

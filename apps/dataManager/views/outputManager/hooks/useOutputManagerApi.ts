@@ -153,6 +153,15 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
       params,
     );
 
+  /** 拷入接口到测试组（enabled 由调用方按入口语义传值） */
+  const copyIntoTestGroup = (
+    params: DataManagerType.CopyIntoTestGroupParams,
+  ): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.CopyIntoTestGroupParams>(
+      '/test_group/copy_into',
+      params,
+    );
+
   return {
     isReady,
     getMockDataPage,
@@ -168,5 +177,6 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     reorderVariants,
     copyVariant,
     setVariantExclusiveEnabled,
+    copyIntoTestGroup,
   };
 };

@@ -51,7 +51,7 @@ import JsonInput from '@/components/ui/input/JsonInput/index.vue';
 import type { VariantFormDialogType } from './type';
 import { getDefaultVariantValues, processBeforeSubmit, formProps } from './config';
 import { useFormColumns } from './useFormColumns';
-import { useOutputManagerApi } from '@apps/dataManager/views/outputManager/hooks/useOutputManagerApi';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
 interface Props {
   apiDataId?: string;
@@ -66,7 +66,7 @@ const emits = defineEmits<{
 }>();
 
 const { formColumns } = useFormColumns();
-const { addVariant, updateVariant } = useOutputManagerApi();
+const { addVariant, updateVariant } = useDataManagerApi();
 
 const visible = ref<boolean>(false);
 const isEditRef = ref<boolean>(false);

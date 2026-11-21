@@ -4,18 +4,18 @@ import type { DataManagerType } from '#/qt/dataManager';
 
 const NOT_READY_MSG: string = 'requestManager 未初始化';
 
-/**
- * outputManager 视图的 API hook。
- *
- * 封装 5 个 Qt 协议请求，提供完整的 params/response 类型约束。
- * 内部通过 useDataManagerRequest 管理 requestManager 生命周期。
- */
-interface UseOutputManagerApiOptions {
+interface UseDataManagerApiOptions {
   /** requestManager 初始化成功后的回调（通常用于拉取首屏数据） */
   onReady?: () => void;
 }
 
-export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) => {
+/**
+ * dataManager 子应用统一 API hook。
+ *
+ * 承载 /mock_data/* + /variant/* + /test_group/* 协议方法全集（Qt 侧契约为准）。
+ * 每调用点独立 useDataManagerRequest 生命周期：bridge/manager 随调用组件销毁而销毁。
+ */
+export const useDataManagerApi = (options: UseDataManagerApiOptions = {}) => {
   const { onReady } = options;
   const { requestManager, isReady } = useDataManagerRequest({
     timeout: 10000,
@@ -36,6 +36,8 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     return manager.fetch<T, P>(action, params);
   };
 
+  // ---------- /mock_data/* ----------
+
   /** 获取 Mock 接口分页数据 */
   const getMockDataPage = (
     params: DataManagerType.GetMockDataPageParams = {},
@@ -45,7 +47,7 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
       params,
     );
 
-  /** 编辑 Mock 接口数据 */
+  /** 编辑 Mock 接口数据（组条目复用；type/group_id 后端不可变更） */
   const editMockData = (
     params: DataManagerType.EditMockDataParams = {},
   ): Promise<DataManagerType.OperationResult> =>
@@ -98,6 +100,8 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
       '/mock_data/detail',
       params,
     );
+
+  // ---------- /variant/* ----------
 
   /** 新增响应变体 */
   const addVariant = (
@@ -153,6 +157,61 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
       params,
     );
 
+  // ---------- /test_group/* ----------
+
+  /** 获取测试组列表（含 item_count） */
+  const getTestGroupList = (): Promise<DataManagerType.TestGroupListResult> =>
+    guardedFetch<DataManagerType.TestGroupListResult, Record<string, any>>('/test_group/list', {});
+
+  /** 获取测试组详情（组字段 + 组内条目） */
+  const getTestGroupDetail = (
+    params: DataManagerType.GetTestGroupDetailParams,
+  ): Promise<DataManagerType.TestGroupDetail> =>
+    guardedFetch<DataManagerType.TestGroupDetail, DataManagerType.GetTestGroupDetailParams>(
+      '/test_group/detail',
+      params,
+    );
+
+  /** 新建测试组 */
+  const createTestGroup = (
+    params: DataManagerType.CreateTestGroupParams = {},
+  ): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.CreateTestGroupParams>(
+      '/test_group/create',
+      params,
+    );
+
+  /** 更新测试组（字段级合并，不改 enabled） */
+  const updateTestGroup = (
+    params: DataManagerType.UpdateTestGroupParams,
+  ): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.UpdateTestGroupParams>(
+      '/test_group/update',
+      params,
+    );
+
+  /** 删除测试组（级联组内条目与变体） */
+  const deleteTestGroup = (
+    params: DataManagerType.DeleteTestGroupParams,
+  ): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.DeleteTestGroupParams>(
+      '/test_group/delete',
+      params,
+    );
+
+  /** 启用测试组（原子顶替其余组；启动即冻结，重启 mock 服务生效） */
+  const enableTestGroup = (
+    params: DataManagerType.EnableTestGroupParams,
+  ): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, DataManagerType.EnableTestGroupParams>(
+      '/test_group/enable',
+      params,
+    );
+
+  /** 停用全部测试组 */
+  const disableTestGroup = (): Promise<DataManagerType.OperationResult> =>
+    guardedFetch<DataManagerType.OperationResult, Record<string, any>>('/test_group/disable', {});
+
   /** 拷入接口到测试组（enabled 由调用方按入口语义传值） */
   const copyIntoTestGroup = (
     params: DataManagerType.CopyIntoTestGroupParams,
@@ -177,6 +236,13 @@ export const useOutputManagerApi = (options: UseOutputManagerApiOptions = {}) =>
     reorderVariants,
     copyVariant,
     setVariantExclusiveEnabled,
+    getTestGroupList,
+    getTestGroupDetail,
+    createTestGroup,
+    updateTestGroup,
+    deleteTestGroup,
+    enableTestGroup,
+    disableTestGroup,
     copyIntoTestGroup,
   };
 };

@@ -47,8 +47,8 @@ import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import Spin from '@/components/Spin/index.vue';
 import type { DataManagerType } from '#/qt/dataManager';
-import type { TestGroupManagerType } from '../../type';
-import { useTestGroupApi } from '../../hooks/useTestGroupApi';
+import type { GroupPickerDialogType } from './type';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
 interface Props {
   loading?: boolean;
@@ -59,13 +59,13 @@ withDefaults(defineProps<Props>(), {
 });
 
 const emits = defineEmits<{
-  (e: 'submit', payload: TestGroupManagerType.GroupPickerSubmitPayload): void;
+  (e: 'submit', payload: GroupPickerDialogType.GroupPickerSubmitPayload): void;
   (e: 'close'): void;
 }>();
 
 const router = useRouter();
 
-const { getTestGroupList } = useTestGroupApi();
+const { getTestGroupList } = useDataManagerApi();
 
 const visible = ref<boolean>(false);
 const listLoading = ref<boolean>(false);

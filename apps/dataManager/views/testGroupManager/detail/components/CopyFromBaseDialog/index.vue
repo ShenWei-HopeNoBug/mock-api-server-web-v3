@@ -80,7 +80,7 @@ import type { TableRowSelection } from 'ant-design-vue/es/table/interface';
 import { API_TYPE_ENUM, METHOD_ENUM } from '@apps/dataManager/enum';
 import type { DataManagerType } from '#/qt/dataManager';
 import type { TestGroupManagerType } from '../../../type';
-import { useTestGroupApi } from '../../../hooks/useTestGroupApi';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
 interface Props {
   loading?: boolean;
@@ -95,7 +95,7 @@ const emits = defineEmits<{
   (e: 'close'): void;
 }>();
 
-const { getMockDataPage } = useTestGroupApi();
+const { getMockDataPage } = useDataManagerApi();
 
 const pickerTableColumns: TestGroupManagerType.TableColumn[] = [
   { title: '请求Url', dataIndex: 'url', key: 'url' },

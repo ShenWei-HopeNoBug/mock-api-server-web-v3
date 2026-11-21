@@ -60,7 +60,7 @@ import { cloneDeep } from 'lodash-es';
 import { message } from 'ant-design-vue';
 import BaseForm from '@/components/form/BaseForm/index.vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
-import type { OutputManagerType } from '../../type';
+import type { DataManagerType } from '#/qt/dataManager';
 import type { UserApiEditorDialogType } from './type';
 import { getDefaultFormValues, processBeforeSubmit, formProps } from './config';
 import { useFormColumns } from './useFormColumns';
@@ -85,7 +85,7 @@ const responseRef = ref<InstanceType<typeof JsonInput> | null>(null);
 const visible = ref<boolean>(false);
 const previewHeight = ref<string>('300px');
 const showOptions = ref<UserApiEditorDialogType.ShowOptions>({ isEdit: false });
-const initFormValues = ref<OutputManagerType.RowRecord>({});
+const initFormValues = ref<DataManagerType.ApiData>({});
 
 const { recordType, isMitmproxy, formColumns } = useFormColumns();
 
@@ -161,7 +161,7 @@ const triggerSubmit = (): void => {
 };
 
 // 转发提交事件给父组件
-const onSubmit = (form: OutputManagerType.RowRecord = {}): void => {
+const onSubmit = (form: DataManagerType.ApiData = {}): void => {
   emits('submit', {
     form,
     isEdit: isEdit.value,

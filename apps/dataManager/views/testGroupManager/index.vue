@@ -69,7 +69,7 @@ import Spin from '@/components/Spin/index.vue';
 import GroupFormDialog from './components/GroupFormDialog/index.vue';
 import { defaultTableHeight, tableHeightOffset, tableMinHeight, groupTableColumns } from './config';
 import type { TestGroupManagerType } from './type';
-import { useTestGroupApi } from './hooks/useTestGroupApi';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
 const router = useRouter();
 
@@ -80,7 +80,7 @@ const {
   deleteTestGroup,
   enableTestGroup,
   disableTestGroup,
-} = useTestGroupApi({
+} = useDataManagerApi({
   onReady: () => {
     nextTick(() => {
       fetchList();

@@ -143,9 +143,9 @@ import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
 import CopyIcon from '@/components/CopyIcon/index.vue';
 import DetailDialog from './components/DetailDialog/index.vue';
-import UserApiEditorDialog from './components/UserApiEditorDialog/index.vue';
-import VariantEditorDialog from './components/VariantEditorDialog/index.vue';
-import GroupPickerDialog from '@apps/dataManager/views/testGroupManager/components/GroupPickerDialog/index.vue';
+import UserApiEditorDialog from '@apps/dataManager/components/UserApiEditorDialog/index.vue';
+import VariantEditorDialog from '@apps/dataManager/components/VariantEditorDialog/index.vue';
+import GroupPickerDialog from '@apps/dataManager/components/GroupPickerDialog/index.vue';
 import {
   defaultTableHeight,
   tableHeightOffset,
@@ -159,7 +159,7 @@ import {
 } from './config';
 import type { OutputManagerType } from './type';
 import useSearchFormResize from '@/hooks/useSearchFormResize';
-import { useOutputManagerApi } from './hooks/useOutputManagerApi';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
 const { searchFormItemColRef } = useSearchFormResize();
 
@@ -175,7 +175,7 @@ const {
   batchDeleteMockData,
   copyMockData,
   copyIntoTestGroup,
-} = useOutputManagerApi({
+} = useDataManagerApi({
   onReady: () => {
     nextTick(() => {
       onSearchSubmit(initSearchForm);

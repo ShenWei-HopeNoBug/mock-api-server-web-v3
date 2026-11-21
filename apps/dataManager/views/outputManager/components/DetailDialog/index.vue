@@ -81,7 +81,7 @@ import CopyIcon from '@/components/CopyIcon/index.vue';
 import type { DetailDialogType } from './type';
 import type { InfoDescriptionType } from '@/components/InfoDescription/type';
 import type { DataManagerType } from '#/qt/dataManager';
-import { useOutputManagerApi } from '../../hooks/useOutputManagerApi';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 import { generateUUID, isArrayValid } from '@/utils';
 
 const infoItemStyle: CSSProperties = {
@@ -92,7 +92,7 @@ const variantItemStyle: CSSProperties = {
   marginBottom: '8px',
 };
 
-const { getMockDataDetail } = useOutputManagerApi();
+const { getMockDataDetail } = useDataManagerApi();
 
 const emits = defineEmits<{
   (e: 'close'): void;

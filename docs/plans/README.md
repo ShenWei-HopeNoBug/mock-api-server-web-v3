@@ -12,9 +12,17 @@
 
 测试组管理页：dataManager 布局化 + 组管理视图。上游总体方案见 `mock-api-server` 仓 `docs/plans/v0_1_6/test-group/`。
 
-| 文档 | 范围 | 说明 | 状态 |
-|---|---|---|---|
-| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md) | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口 | 待实施 |
+| 文档                                                            | 范围                                             | 说明                                                        | 状态   |
+| --------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------ |
+| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md) | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口 | 已实施 |
+
+### dm-shared-hoist/
+
+dataManager 跨视图共享模块上移：弹窗 + API hook 归拢应用顶层，消解双向跨视图引用。
+
+| 文档                                                                   | 范围               | 说明                                                    | 状态   |
+| ---------------------------------------------------------------------- | ------------------ | ------------------------------------------------------- | ------ |
+| [dm-shared-hoist-plan](v0_1_6/dm-shared-hoist/dm-shared-hoist-plan.md) | `apps/dataManager` | 4 共享弹窗上移 `components/` + `useDataManagerApi` 合并 | 已实施 |
 
 ## v0_1_5/
 

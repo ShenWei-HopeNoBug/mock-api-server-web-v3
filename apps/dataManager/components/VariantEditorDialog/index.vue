@@ -114,10 +114,10 @@
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import Sortable from 'sortablejs';
-import VariantFormDialog from '@apps/dataManager/views/outputManager/components/VariantFormDialog/index.vue';
+import VariantFormDialog from '@apps/dataManager/components/VariantFormDialog/index.vue';
 import type { VariantEditorDialogType } from './type';
-import { variantTableColumns } from '@apps/dataManager/views/outputManager/components/VariantFormDialog/config';
-import { useOutputManagerApi } from '@apps/dataManager/views/outputManager/hooks/useOutputManagerApi';
+import { variantTableColumns } from '@apps/dataManager/components/VariantFormDialog/config';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 import { generateUUID } from '@/utils';
 import { cloneDeep } from 'lodash-es';
 
@@ -134,7 +134,7 @@ const {
   reorderVariants,
   copyVariant,
   setVariantExclusiveEnabled,
-} = useOutputManagerApi();
+} = useDataManagerApi();
 
 const visible = ref<boolean>(false); // 弹窗显隐
 const tableLoading = ref<boolean>(false); // 表格加载态

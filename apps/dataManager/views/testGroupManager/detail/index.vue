@@ -104,20 +104,20 @@ import { ArrowLeftOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue
 import { cloneDeep } from 'lodash-es';
 import Spin from '@/components/Spin/index.vue';
 import CopyIcon from '@/components/CopyIcon/index.vue';
-import UserApiEditorDialog from '@apps/dataManager/views/outputManager/components/UserApiEditorDialog/index.vue';
-import VariantEditorDialog from '@apps/dataManager/views/outputManager/components/VariantEditorDialog/index.vue';
+import UserApiEditorDialog from '@apps/dataManager/components/UserApiEditorDialog/index.vue';
+import VariantEditorDialog from '@apps/dataManager/components/VariantEditorDialog/index.vue';
 import CopyFromBaseDialog from './components/CopyFromBaseDialog/index.vue';
 import { defaultTableHeight, tableHeightOffset, tableMinHeight, itemTableColumns } from '../config';
 import type { TestGroupManagerType } from '../type';
 import type { DataManagerType } from '#/qt/dataManager';
-import { useTestGroupApi } from '../hooks/useTestGroupApi';
+import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
 const route = useRoute();
 const router = useRouter();
 
 const groupId = String(route.params.id || '');
 
-const { getTestGroupDetail, editMockData, deleteMockData, copyIntoTestGroup } = useTestGroupApi({
+const { getTestGroupDetail, editMockData, deleteMockData, copyIntoTestGroup } = useDataManagerApi({
   onReady: () => {
     nextTick(() => {
       fetchDetail();

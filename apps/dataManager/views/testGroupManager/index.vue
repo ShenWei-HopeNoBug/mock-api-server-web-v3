@@ -56,7 +56,16 @@
       </Spin>
     </a-card>
 
-    <GroupFormDialog ref="groupFormDialogRef" :loading="formLoading" @submit="onFormSubmit" />
+    <ModalForm
+      ref="groupFormDialogRef"
+      :title="groupFormTitle"
+      :columns="groupFormColumns"
+      :init-form-values="groupFormInit"
+      :loading="formLoading"
+      :width="480"
+      centered
+      @submit="onFormSubmit"
+    />
   </div>
 </template>
 
@@ -64,10 +73,12 @@
 import { computed, nextTick, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+import { cloneDeep } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import Spin from '@/components/Spin/index.vue';
-import GroupFormDialog from './components/GroupFormDialog/index.vue';
+import ModalForm from '@/components/form/ModalForm/index.vue';
 import { defaultTableHeight, tableHeightOffset, tableMinHeight, groupTableColumns } from './config';
+import type { Form as FormType } from '@/components/form/types';
 import type { TestGroupManagerType } from './type';
 import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
 
@@ -89,7 +100,26 @@ const {
 });
 
 /** 组表单弹窗实例 */
-const groupFormDialogRef = ref<InstanceType<typeof GroupFormDialog> | null>(null);
+const groupFormDialogRef = ref<InstanceType<typeof ModalForm> | null>(null);
+
+/** 弹窗入口模式：false=新建 / true=重命名 */
+const isEdit = ref<boolean>(false);
+/** 编辑态整行数据（新建为空对象） */
+const curRow = ref<TestGroupManagerType.GroupRecord>({});
+/** 弹窗标题 */
+const groupFormTitle = computed<string>(() => (isEdit.value ? '重命名测试组' : '新建测试组'));
+/** 弹窗表单初值 */
+const groupFormInit = ref<TestGroupManagerType.GroupForm>({});
+/** 弹窗表单列 */
+const groupFormColumns: FormType.FormItemOptions[] = [
+  {
+    required: true,
+    label: '组名称',
+    key: 'name',
+    inputType: 'input',
+    inputProps: { maxlength: 100, allowClear: true, placeholder: '请输入测试组名称' },
+  },
+];
 
 /** 组列表数据 */
 const tableData = ref<TestGroupManagerType.GroupRecord[]>([]);
@@ -136,6 +166,9 @@ const onResize = (entry: ResizeObserverEntry): void => {
 
 /** 新建按钮点击 */
 const onAdd = (): void => {
+  isEdit.value = false;
+  curRow.value = {};
+  groupFormInit.value = {};
   groupFormDialogRef.value?.show?.();
 };
 
@@ -144,20 +177,24 @@ const onAdd = (): void => {
  * @param record 行数据
  */
 const onRename = (record: TestGroupManagerType.GroupRecord = {}): void => {
-  groupFormDialogRef.value?.show?.({ id: record.id, name: record.name });
+  isEdit.value = true;
+  curRow.value = cloneDeep(record);
+  groupFormInit.value = { name: record.name };
+  groupFormDialogRef.value?.show?.();
 };
 
 /**
  * 组表单提交（新建/重命名共用出口）。
- * @param payload 表单数据（带 id 为重命名）
+ * @param form 表单数据
  */
-const onFormSubmit = (payload: { id?: string; name: string }): void => {
-  const { id, name } = payload;
+const onFormSubmit = (form: TestGroupManagerType.GroupForm = {}): void => {
+  const { id = '' } = curRow.value;
+  const { name } = form;
   formLoading.value = true;
-  const request = id ? updateTestGroup({ id, name }) : createTestGroup({ name });
+  const request = isEdit.value ? updateTestGroup({ id, name }) : createTestGroup({ name });
   request
     .then(() => {
-      message.success(id ? '重命名成功' : '新建测试组成功');
+      message.success(isEdit.value ? '重命名成功' : '新建测试组成功');
       groupFormDialogRef.value?.close?.();
       fetchList();
     })

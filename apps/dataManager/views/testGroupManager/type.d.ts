@@ -16,7 +16,7 @@ export declare namespace TestGroupManagerType {
     formatter?: (options: CommonType.TableFormatterOptions) => string;
   }
 
-  /** 新建/重命名组表单值 */
+  /** 新建/重命名组表单值（ModalForm initFormValues / submit form） */
   interface GroupForm {
     name?: string;
   }

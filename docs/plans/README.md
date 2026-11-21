@@ -12,9 +12,10 @@
 
 测试组管理页：dataManager 布局化 + 组管理视图。上游总体方案见 `mock-api-server` 仓 `docs/plans/v0_1_6/test-group/`。
 
-| 文档                                                            | 范围                                             | 说明                                                        | 状态   |
-| --------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------ |
-| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md) | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口 | 已实施 |
+| 文档                                                                              | 范围                                             | 说明                                                        | 状态   |
+| --------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------ |
+| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md)                   | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口 | 已实施 |
+| [group-form-modalform-changes](v0_1_6/test-group/group-form-modalform-changes.md) | `apps/dataManager`                               | GroupFormDialog 删除，组表单改用通用 ModalForm              | 已实施 |
 
 ### dm-shared-hoist/
 

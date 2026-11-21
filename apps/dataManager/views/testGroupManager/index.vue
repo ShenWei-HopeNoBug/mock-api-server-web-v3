@@ -3,12 +3,14 @@
     <a-card class="header">
       <div class="header-row">
         <a-button class="btn" type="primary" @click="onAdd">新建测试组</a-button>
+        <a-tooltip placement="bottomLeft">
+          <template #title>
+            <div>启用新组会顶替当前启用组</div>
+            <div>启用/停用与组内数据变更，均需重启 mock 服务后生效</div>
+          </template>
+          <QuestionCircleOutlined class="tip-icon" />
+        </a-tooltip>
       </div>
-      <a-alert type="info" show-icon class="notice">
-        <template #message>
-          启用/停用立即生效（启用新组会顶替当前启用组）；组内接口数据的变更需重启 mock 服务后生效
-        </template>
-      </a-alert>
     </a-card>
     <a-card v-dom-resize="onResize" class="content">
       <Spin>
@@ -61,6 +63,7 @@
 <script lang="ts" setup name="testGroupManager">
 import { computed, nextTick, ref } from 'vue';
 import { message } from 'ant-design-vue';
+import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import { useRouter } from 'vue-router';
 import Spin from '@/components/Spin/index.vue';
 import GroupFormDialog from './components/GroupFormDialog/index.vue';
@@ -177,7 +180,9 @@ const onToggleEnabled = (record: TestGroupManagerType.GroupRecord = {}): void =>
   const request = nextEnabled ? enableTestGroup({ id }) : disableTestGroup();
   request
     .then(() => {
-      message.success(nextEnabled ? '测试组已启用' : '测试组已停用');
+      message.success(
+        nextEnabled ? '已启用，重启 mock 服务后生效' : '已停用，重启 mock 服务后生效',
+      );
       fetchList();
     })
     .finally(() => {
@@ -233,11 +238,14 @@ const onManage = (record: TestGroupManagerType.GroupRecord = {}): void => {
     .header-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
+      justify-content: flex-start;
 
-    .notice {
-      margin-top: 14px;
+      .tip-icon {
+        margin-left: 10px;
+        color: $qt-text;
+        opacity: 0.55;
+        cursor: help;
+      }
     }
   }
 

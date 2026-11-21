@@ -10,15 +10,18 @@
           <span class="group-name">{{ groupInfo.name || '未命名组' }}</span>
           <a-tag v-if="groupInfo.enabled" color="green">启用中</a-tag>
           <span class="item-count">{{ tableData.length }} 条接口</span>
+          <a-tooltip placement="bottomLeft">
+            <template #title>
+              <div>
+                组条目仅当 Url / Method / Content-Type / Params 与 base 接口完全一致时才遮蔽该接口
+              </div>
+              <div>组内接口数据的增删改需重启 mock 服务后生效</div>
+            </template>
+            <QuestionCircleOutlined class="tip-icon" />
+          </a-tooltip>
         </div>
         <a-button class="btn" type="primary" @click="onCopyFromBase">从已有接口拷入</a-button>
       </div>
-      <a-alert type="info" show-icon class="notice">
-        <template #message>
-          编辑 Url / Method / Content-Type / Params 等匹配 key
-          字段将产生新增条目而非覆盖；组内接口数据的变更需重启 mock 服务后生效
-        </template>
-      </a-alert>
     </a-card>
     <a-card v-dom-resize="onResize" class="content">
       <Spin>
@@ -97,7 +100,8 @@
 import { computed, nextTick, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ArrowLeftOutlined } from '@ant-design/icons-vue';
+import { ArrowLeftOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue';
+import { cloneDeep } from 'lodash-es';
 import Spin from '@/components/Spin/index.vue';
 import CopyIcon from '@/components/CopyIcon/index.vue';
 import UserApiEditorDialog from '@apps/dataManager/views/outputManager/components/UserApiEditorDialog/index.vue';
@@ -132,6 +136,8 @@ const copyFromBaseDialogRef = ref<InstanceType<typeof CopyFromBaseDialog> | null
 const groupInfo = ref<DataManagerType.TestGroupDetail>({});
 /** 组内条目列表 */
 const tableData = ref<TestGroupManagerType.ItemRecord[]>([]);
+/** 当前编辑行数据（弹窗提交的 form 不含 id 等非表单项字段，id 须从这里取） */
+const curRow = ref<TestGroupManagerType.ItemRecord>({});
 /** 表格可视高度（单位 px） */
 const tableHeight = ref<number>(defaultTableHeight);
 /** 详情加载态 */
@@ -186,6 +192,7 @@ const onBack = (): void => {
  * @param record 行数据
  */
 const onEdit = (record: TestGroupManagerType.ItemRecord = {}): void => {
+  curRow.value = cloneDeep(record);
   userApiEditorDialogRef.value?.show?.({
     isEdit: true,
     formData: { ...record },
@@ -199,7 +206,7 @@ const onEdit = (record: TestGroupManagerType.ItemRecord = {}): void => {
  */
 const onUserApiEditorSubmit = (payload: TestGroupManagerType.ItemEditSubmitPayload = {}): void => {
   const { form = {} } = payload;
-  const { id = '' } = form;
+  const { id = '' } = curRow.value;
   if (!id) {
     message.error('编辑接口数据失败！');
     return;
@@ -218,6 +225,7 @@ const onUserApiEditorSubmit = (payload: TestGroupManagerType.ItemEditSubmitPaylo
 
 /** 编辑弹窗关闭回调 */
 const onUserApiEditorDialogClose = (): void => {
+  curRow.value = {};
   editLoading.value = false;
 };
 
@@ -351,11 +359,14 @@ const onCopyFromBaseSubmit = (payload: { ids?: string[]; copy_variants?: boolean
           opacity: 0.65;
           font-size: 12px;
         }
-      }
-    }
 
-    .notice {
-      margin-top: 14px;
+        .tip-icon {
+          margin-left: 8px;
+          color: $qt-text;
+          opacity: 0.55;
+          cursor: help;
+        }
+      }
     }
   }
 

@@ -33,7 +33,7 @@
           size="small"
           :row-selection="rowSelection"
           :pagination="paginationProps"
-          :scroll="{ x: 1670, y: tableHeight }"
+          :scroll="{ x: 1770, y: tableHeight }"
           @change="onTableChange"
         >
           <template #bodyCell="{ text, column, record }">
@@ -52,6 +52,9 @@
               </template>
               <template v-else>-</template>
             </template>
+            <template v-else-if="column.key === 'operation'">
+              <a-button type="link" @click="onDetail(record)">查看详情</a-button>
+            </template>
           </template>
         </a-table>
       </div>
@@ -61,12 +64,17 @@
         <span class="selected-count">
           已选 {{ selectedRowKeys.length }} 条
           <a-tooltip placement="top">
-            <template #title>组内已存在相同 key 的条目时按「后者覆盖前者」处理</template>
+            <template #title>
+              <div>「同 key」= Url / Method / Content-Type / Params 完全一致</div>
+              <div>拷入条目与组内已有条目同 key 时，以新拷入的遮蔽原条目</div>
+            </template>
             <QuestionCircleOutlined class="tip-icon" />
           </a-tooltip>
         </span>
       </div>
     </div>
+
+    <DetailDialog ref="detailDialogRef" />
   </a-modal>
 </template>
 
@@ -78,6 +86,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import type { TableRowSelection } from 'ant-design-vue/es/table/interface';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import CopyIcon from '@/components/CopyIcon/index.vue';
+import DetailDialog from '@apps/dataManager/components/DetailDialog/index.vue';
 import { API_TYPE_ENUM, METHOD_ENUM } from '@apps/dataManager/enum';
 import type { Form as FormType } from '@/components/form/types';
 import type { DataManagerType } from '#/qt/dataManager';
@@ -116,6 +125,7 @@ const pickerTableColumns: TestGroupManagerType.TableColumn[] = [
   { title: '操作人', dataIndex: 'operator', key: 'operator', width: 100 },
   { title: '创建时间', dataIndex: 'created_at', key: 'created_at', width: 180 },
   { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at', width: 180 },
+  { title: '操作', key: 'operation', width: 100, fixed: 'right' },
 ];
 
 /** 搜索表单项配置：3 个字段，form-item-col=8 恰好一行 3 列 */
@@ -124,6 +134,9 @@ const searchFormColumns: FormType.FormItemOptions[] = [
   { label: '请求类型', key: 'method', inputType: 'select', options: METHOD_ENUM },
   { label: '数据来源', key: 'type', inputType: 'select', options: API_TYPE_ENUM },
 ];
+
+/** 详情弹窗实例 */
+const detailDialogRef = ref<InstanceType<typeof DetailDialog> | null>(null);
 
 const visible = ref<boolean>(false);
 const listLoading = ref<boolean>(false);
@@ -215,6 +228,11 @@ const onTableChange = (pag: { current?: number; pageSize?: number }): void => {
   getDataSource(pag.current || 1, pag.pageSize || pageSize.value);
 };
 
+/** 查看详情按钮点击：复用共享详情弹窗 */
+const onDetail = (record: DataManagerType.ApiData = {}): void => {
+  detailDialogRef.value?.show?.(record.id);
+};
+
 const onOk = (): void => {
   if (selectedRowKeys.value.length === 0) {
     message.error('请选择要拷入的接口');
@@ -266,13 +284,13 @@ defineExpose({ show, close });
   .footer-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     margin-top: 8px;
     flex-shrink: 0;
 
     .selected-count {
       display: inline-flex;
       align-items: center;
+      margin-left: 16px;
       color: $qt-text;
       opacity: 0.65;
       font-size: 12px;

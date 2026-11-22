@@ -63,9 +63,13 @@
 | 2026-11-22 | 覆盖语义提示改 `a-tooltip` 图标悬浮（见方案修正 ①）                               | 改动文件 eslint 0 error；prettier 通过                                  | 未提交 |
 | 2026-11-22 | `rowSelection` 加 `preserveSelectedRowKeys` 支持跨页勾选（见方案修正 ②）          | 改动文件 eslint 0 error；prettier 通过                                  | 未提交 |
 | 2026-11-22 | `.footer-bar` `margin-top` 14→8 + 分页条 `margin` 16→8 + `onResize` offset 110→80 | 改动文件 eslint 0 error；prettier 通过                                  | 未提交 |
+| 2026-11-22 | 覆盖语义 tooltip 文案改写（见方案修正 ③）                                         | 改动文件 eslint 0 error；prettier 通过                                  | 未提交 |
+| 2026-11-22 | 「已选 N 条」由 footer 右端移至「连带复制响应变体」右侧（`margin-left:16px`）     | 改动文件 eslint 0 error；prettier 通过                                  | 未提交 |
 
 ## 方案修正
 
 ① **覆盖提示改 tooltip**（2026-11-22）：定高 `.container` 下 `.tip` 条件行在勾选出现时挤压 `.content` 引发高度突变；删除 `.tip` 行，提示改挂 `.footer-bar`「已选 N 条」右侧 `QuestionCircleOutlined` + `a-tooltip` 常显悬浮（参照 `testGroupManager/index.vue` 同款处理），占位高度不再变化。
 
 ② **跨页勾选累计**（2026-11-22）：antd 默认未 preserve 时，其它页已选 key 会在新页下一次勾选/全选时被按当前页 `dataSource` 过滤丢弃（翻页瞬间显示「已选 N」不变、再勾选即丢，时机有迷惑性）。`rowSelection` 加 `preserveSelectedRowKeys: true` 保留跨页 key，`已选 N 条` 与 submit `ids` 均为累计口径；`onChange` 仅用 keys，不受 records 缓存缺失影响。
+
+③ **覆盖语义文案改写**（2026-11-22）：原文「组内已存在相同 key 的条目时按「后者覆盖前者」处理」未解释「同 key」判定，语义不明。改写为两行：「同 key」= Url / Method / Content-Type / Params 完全一致；拷入条目与组内已有条目同 key 时，以新拷入的遮蔽原条目 —— 术语与 detail 页 header tooltip（遮蔽匹配口径）及 py 侧建图语义（`created_at` 序后者覆盖前者）对齐。

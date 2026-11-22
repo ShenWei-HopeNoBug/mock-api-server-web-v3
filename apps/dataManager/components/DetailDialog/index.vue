@@ -47,13 +47,41 @@
                       align="left"
                     >
                       <template #value="vScoped">
-                        <div v-if="vScoped.rowKey === 'response'" class="json-area">
-                          <JsonInput
-                            :value="vScoped.value"
-                            :readonly="true"
-                            :code-editor-style="vScoped.options?.extra?.codeEditorStyle"
-                            default-copy-content="{}"
-                          />
+                        <div
+                          v-if="vScoped.rowKey === 'response'"
+                          class="json-area json-area--collapse"
+                        >
+                          <div
+                            class="json-toggle"
+                            @click="toggleJsonExpand(`variant-${variant.id}-${vIndex}`)"
+                          >
+                            <RightOutlined
+                              class="toggle-icon"
+                              :class="{
+                                'toggle-icon--down': isJsonExpanded(
+                                  `variant-${variant.id}-${vIndex}`,
+                                ),
+                              }"
+                            />
+                            <span>
+                              {{
+                                isJsonExpanded(`variant-${variant.id}-${vIndex}`)
+                                  ? '收起'
+                                  : '展开查看'
+                              }}
+                            </span>
+                          </div>
+                          <div
+                            v-if="isJsonExpanded(`variant-${variant.id}-${vIndex}`)"
+                            class="json-content"
+                          >
+                            <JsonInput
+                              :value="vScoped.value"
+                              :readonly="true"
+                              :code-editor-style="vScoped.options?.extra?.codeEditorStyle"
+                              default-copy-content="{}"
+                            />
+                          </div>
                         </div>
                       </template>
                     </InfoDescription>
@@ -74,6 +102,7 @@
 <script lang="ts" setup name="DetailDialog">
 import type { CSSProperties } from 'vue';
 import { computed, ref } from 'vue';
+import { RightOutlined } from '@ant-design/icons-vue';
 import JsonInput from '@/components/ui/input/JsonInput/index.vue';
 import InfoDescription from '@/components/InfoDescription/index.vue';
 import Spin from '@/components/Spin/index.vue';
@@ -102,6 +131,8 @@ const visible = ref<boolean>(false);
 const loading = ref<boolean>(false);
 const detailData = ref<DetailDialogType.DataSource>({});
 const currentRequestToken = ref<string>(generateUUID());
+/** 变体响应 JsonInput 展开态（默认收起，收起时编辑器不渲染） */
+const expandedJsonKeys = ref<Record<string, boolean>>({});
 
 const infoColumns = computed((): InfoDescriptionType.InfoOptions[] => {
   const {
@@ -253,7 +284,7 @@ const getVariantColumns = (
       ellipsis: false,
       extra: {
         codeEditorStyle: {
-          height: '300px',
+          height: '550px',
         },
       },
     },
@@ -274,9 +305,18 @@ const getVariantColumns = (
   ];
 };
 
+/** 变体响应 JsonInput 是否已展开 */
+const isJsonExpanded = (key: string): boolean => Boolean(expandedJsonKeys.value[key]);
+
+/** 变体响应 JsonInput 展开/收起切换 */
+const toggleJsonExpand = (key: string): void => {
+  expandedJsonKeys.value[key] = !expandedJsonKeys.value[key];
+};
+
 const resetStates = () => {
   detailData.value = {};
   currentRequestToken.value = generateUUID();
+  expandedJsonKeys.value = {};
   loading.value = false;
 };
 
@@ -356,6 +396,35 @@ defineExpose({
       padding: 14px;
       border-radius: 4px;
       border: 1px solid $qt-border-soft;
+    }
+
+    // 变体响应折叠容器：header 整行感应 + 内容区独立留白
+    .json-area--collapse {
+      padding: 0;
+      overflow: hidden; // header 底色与内容区收敛到圆角边界内
+
+      .json-toggle {
+        display: flex;
+        align-items: center;
+        padding: 8px 14px;
+        background: $qt-option-hover;
+        cursor: pointer;
+        user-select: none;
+
+        .toggle-icon {
+          font-size: 10px;
+          margin-right: 6px;
+          transition: transform 0.2s;
+        }
+
+        .toggle-icon--down {
+          transform: rotate(90deg);
+        }
+      }
+
+      .json-content {
+        padding: 14px;
+      }
     }
 
     .variant-list {

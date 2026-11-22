@@ -33,7 +33,7 @@
           size="small"
           :row-selection="rowSelection"
           :pagination="paginationProps"
-          :scroll="{ x: 900, y: tableHeight }"
+          :scroll="{ x: 1670, y: tableHeight }"
           @change="onTableChange"
         >
           <template #bodyCell="{ text, column, record }">
@@ -46,7 +46,11 @@
               </a-tag>
             </template>
             <template v-else-if="column.key === 'url'">
-              {{ text || '-' }}
+              <template v-if="text">
+                <span class="url-text">{{ text }}</span>
+                <CopyIcon :text="text" :tooltip="true" />
+              </template>
+              <template v-else>-</template>
             </template>
           </template>
         </a-table>
@@ -54,10 +58,13 @@
 
       <div class="footer-bar">
         <a-checkbox v-model:checked="copyVariants">连带复制响应变体</a-checkbox>
-        <span class="selected-count">已选 {{ selectedRowKeys.length }} 条</span>
-      </div>
-      <div v-if="selectedRowKeys.length > 0" class="tip">
-        组内已存在相同 key 的条目时按「后者覆盖前者」处理
+        <span class="selected-count">
+          已选 {{ selectedRowKeys.length }} 条
+          <a-tooltip placement="top">
+            <template #title>组内已存在相同 key 的条目时按「后者覆盖前者」处理</template>
+            <QuestionCircleOutlined class="tip-icon" />
+          </a-tooltip>
+        </span>
       </div>
     </div>
   </a-modal>
@@ -67,8 +74,10 @@
 import { computed, ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
 import { message } from 'ant-design-vue';
+import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import type { TableRowSelection } from 'ant-design-vue/es/table/interface';
 import SearchForm from '@/components/form/SearchForm/index.vue';
+import CopyIcon from '@/components/CopyIcon/index.vue';
 import { API_TYPE_ENUM, METHOD_ENUM } from '@apps/dataManager/enum';
 import type { Form as FormType } from '@/components/form/types';
 import type { DataManagerType } from '#/qt/dataManager';
@@ -90,8 +99,10 @@ const emits = defineEmits<{
 
 const { getMockDataPage } = useDataManagerApi();
 
+/** 表格列：与 outputManager tableColumns 展示列同步（剔除其序号/操作列），改列需两边手动同步 */
 const pickerTableColumns: TestGroupManagerType.TableColumn[] = [
-  { title: '请求Url', dataIndex: 'url', key: 'url' },
+  { title: '数据来源', dataIndex: 'type', key: 'type', width: 120 },
+  { title: '请求Url', dataIndex: 'url', key: 'url', width: 260 },
   { title: '请求类型', dataIndex: 'method', key: 'method', width: 100 },
   {
     title: 'Content-Type',
@@ -99,8 +110,12 @@ const pickerTableColumns: TestGroupManagerType.TableColumn[] = [
     key: 'request_content_type',
     width: 220,
   },
-  { title: '请求参数', dataIndex: 'params', key: 'params', width: 200 },
+  { title: '请求参数', dataIndex: 'params', key: 'params', width: 240 },
+  { title: '响应延时(ms)', dataIndex: 'timeout', key: 'timeout', width: 120 },
   { title: '启用状态', dataIndex: 'enabled', key: 'enabled', width: 100 },
+  { title: '操作人', dataIndex: 'operator', key: 'operator', width: 100 },
+  { title: '创建时间', dataIndex: 'created_at', key: 'created_at', width: 180 },
+  { title: '更新时间', dataIndex: 'updated_at', key: 'updated_at', width: 180 },
 ];
 
 /** 搜索表单项配置：3 个字段，form-item-col=8 恰好一行 3 列 */
@@ -126,6 +141,8 @@ const copyVariants = ref<boolean>(true);
 
 const rowSelection = computed<TableRowSelection>(() => ({
   selectedRowKeys: selectedRowKeys.value,
+  // 跨页勾选累计：未 preserve 时其它页 key 会在下次勾选时被 antd 按当前页数据过滤丢弃
+  preserveSelectedRowKeys: true,
   onChange: (keys: (string | number)[]) => {
     selectedRowKeys.value = keys.map(String);
   },
@@ -147,7 +164,7 @@ const onResize = (entry: ResizeObserverEntry): void => {
   }
 
   const { height } = entry.target.getBoundingClientRect();
-  const offset = 110;
+  const offset = 80;
   const minHeight = 100;
   tableHeight.value = Math.max(minHeight, height - offset);
 };
@@ -226,6 +243,11 @@ defineExpose({ show, close });
     width: 100%;
     flex: 1;
     overflow: hidden;
+
+    // 内置分页条默认 margin 16px 过大，收紧与下方勾选行的视觉间距
+    :deep(.ant-table-pagination.ant-pagination) {
+      margin: 8px 0;
+    }
   }
 
   .params {
@@ -233,28 +255,33 @@ defineExpose({ show, close });
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
+  }
+
+  .url-text {
+    margin-right: 6px;
+    word-break: break-all;
   }
 
   .footer-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 14px;
+    margin-top: 8px;
     flex-shrink: 0;
 
     .selected-count {
+      display: inline-flex;
+      align-items: center;
       color: $qt-text;
       opacity: 0.65;
       font-size: 12px;
-    }
-  }
 
-  .tip {
-    margin-top: 8px;
-    color: $qt-warning;
-    font-size: 12px;
-    flex-shrink: 0;
+      .tip-icon {
+        margin-left: 6px;
+        cursor: help;
+      }
+    }
   }
 }
 </style>

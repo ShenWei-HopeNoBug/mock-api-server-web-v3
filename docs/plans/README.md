@@ -19,6 +19,7 @@
 | [copy-from-base-dialog-changes](v0_1_6/test-group/copy-from-base-dialog-changes.md)               | `apps/dataManager`                               | CopyFromBaseDialog 搜索区 SearchForm 化 + 弹窗限高/放宽     | 已实施 |
 | [copy-dialog-table-columns-changes](v0_1_6/test-group/copy-dialog-table-columns-changes.md)       | `apps/dataManager`                               | CopyFromBaseDialog 表格列与列宽同步 outputManager           | 已实施 |
 | [copy-dialog-operation-column-changes](v0_1_6/test-group/copy-dialog-operation-column-changes.md) | `apps/dataManager`                               | 拷入弹窗加「查看详情」操作列；DetailDialog 上移共享层       | 已实施 |
+| [test-group-page-query-web-plan](v0_1_6/test-group/test-group-page-query-web-plan.md)           | `apps/dataManager` / `types/qt/dataManager.d.ts` | 组列表服务端分页 + 筛选浮层 + 页头启用组指示               | 待实施 |
 
 ### dm-shared-hoist/
 

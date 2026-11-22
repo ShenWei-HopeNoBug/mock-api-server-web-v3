@@ -3,13 +3,6 @@
     <a-card class="header">
       <div class="header-row">
         <a-button class="btn" type="primary" @click="onAdd">新建测试组</a-button>
-        <a-tooltip placement="bottomLeft">
-          <template #title>
-            <div>启用新组会顶替当前启用组</div>
-            <div>启用/停用与组内数据变更，均需重启 mock 服务后生效</div>
-          </template>
-          <QuestionCircleOutlined class="tip-icon" />
-        </a-tooltip>
       </div>
     </a-card>
     <a-card v-dom-resize="onResize" class="content">
@@ -50,6 +43,21 @@
                   <a-button danger type="link">删除</a-button>
                 </a-popconfirm>
               </div>
+            </template>
+          </template>
+
+          <template #headerCell="{ column }">
+            <template v-if="column.key === 'enabled'">
+              <span class="enabled-title">
+                {{ column.title }}
+                <a-tooltip placement="bottomLeft">
+                  <template #title>
+                    <div>启用新组会顶替当前启用组</div>
+                    <div>启用/停用与组内数据变更，均需重启 mock 服务后生效</div>
+                  </template>
+                  <QuestionCircleOutlined class="tip-icon" />
+                </a-tooltip>
+              </span>
             </template>
           </template>
         </a-table>
@@ -276,13 +284,6 @@ const onManage = (record: TestGroupManagerType.GroupRecord = {}): void => {
       display: flex;
       align-items: center;
       justify-content: flex-start;
-
-      .tip-icon {
-        margin-left: 10px;
-        color: $qt-text;
-        opacity: 0.55;
-        cursor: help;
-      }
     }
   }
 
@@ -300,6 +301,18 @@ const onManage = (record: TestGroupManagerType.GroupRecord = {}): void => {
     .group-name {
       font-weight: 500;
       word-break: break-all;
+    }
+
+    .enabled-title {
+      display: inline-flex;
+      align-items: center;
+
+      .tip-icon {
+        margin-left: 6px;
+        color: $qt-text;
+        opacity: 0.55;
+        cursor: help;
+      }
     }
 
     .operation {

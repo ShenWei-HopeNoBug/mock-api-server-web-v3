@@ -4,4 +4,10 @@ export declare namespace GroupPickerDialogType {
     group_id?: string;
     copy_variants?: boolean;
   }
+
+  /** 组选择搜索表单值（与 TestGroupManagerType.SearchForm 同构，独立定义不反向依赖视图类型） */
+  interface SearchForm {
+    name?: string;
+    enabled?: boolean;
+  }
 }

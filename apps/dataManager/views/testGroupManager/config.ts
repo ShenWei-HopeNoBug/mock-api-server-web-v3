@@ -1,3 +1,5 @@
+import type { Form as FormType } from '@/components/form/types';
+import { ENABLED_ENUM } from '@apps/dataManager/enum';
 import type { TestGroupManagerType } from './type';
 
 /** 表格默认可视高度（px） */
@@ -6,6 +8,36 @@ const defaultTableHeight = 550;
 const tableHeightOffset = 140;
 /** 表格最小高度（px） */
 const tableMinHeight = 200;
+
+/** 分页初始配置 */
+const initPagination = {
+  currentPage: 1,
+  pageSize: 10,
+  pageSizes: ['10', '20', '50', '100'],
+};
+
+/** 搜索表单初始值 */
+const initSearchForm: TestGroupManagerType.SearchForm = {};
+
+/** 搜索表单项配置 */
+const searchFormColumns: FormType.FormItemOptions[] = [
+  {
+    label: '组名称',
+    key: 'name',
+    inputType: 'input',
+  },
+  {
+    label: '启用状态',
+    key: 'enabled',
+    inputType: 'select',
+    options: ENABLED_ENUM,
+  },
+];
+
+/** 搜索表单布局配置 */
+const searchFormFormProps: Record<string, any> = {
+  labelCol: { style: { width: '80px' } },
+};
 
 /** 组列表表格列配置 */
 const groupTableColumns: TestGroupManagerType.TableColumn[] = [
@@ -113,6 +145,10 @@ export {
   defaultTableHeight,
   tableHeightOffset,
   tableMinHeight,
+  initPagination,
+  initSearchForm,
+  searchFormColumns,
+  searchFormFormProps,
   groupTableColumns,
   itemTableColumns,
 };

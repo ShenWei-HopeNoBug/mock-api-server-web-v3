@@ -163,6 +163,22 @@ export const useDataManagerApi = (options: UseDataManagerApiOptions = {}) => {
   const getTestGroupList = (): Promise<DataManagerType.TestGroupListResult> =>
     guardedFetch<DataManagerType.TestGroupListResult, Record<string, any>>('/test_group/list', {});
 
+  /** 获取测试组分页数据（name 模糊 / enabled 精确） */
+  const getTestGroupPage = (
+    params: DataManagerType.GetTestGroupPageParams = {},
+  ): Promise<DataManagerType.TestGroupPageResult> =>
+    guardedFetch<DataManagerType.TestGroupPageResult, DataManagerType.GetTestGroupPageParams>(
+      '/test_group/page',
+      params,
+    );
+
+  /** 获取当前启用测试组摘要（无启用组返回 null） */
+  const getEnabledTestGroup = (): Promise<DataManagerType.TestGroupSummary | null> =>
+    guardedFetch<DataManagerType.TestGroupSummary | null, Record<string, any>>(
+      '/test_group/enabled',
+      {},
+    );
+
   /** 获取测试组详情（组字段 + 组内条目） */
   const getTestGroupDetail = (
     params: DataManagerType.GetTestGroupDetailParams,
@@ -237,6 +253,8 @@ export const useDataManagerApi = (options: UseDataManagerApiOptions = {}) => {
     copyVariant,
     setVariantExclusiveEnabled,
     getTestGroupList,
+    getTestGroupPage,
+    getEnabledTestGroup,
     getTestGroupDetail,
     createTestGroup,
     updateTestGroup,

@@ -21,6 +21,12 @@ export declare namespace TestGroupManagerType {
     name?: string;
   }
 
+  /** 组列表搜索表单值 */
+  interface SearchForm {
+    name?: string;
+    enabled?: boolean;
+  }
+
   /** 组详情条目编辑提交载荷 */
   interface ItemEditSubmitPayload {
     form?: ItemRecord;

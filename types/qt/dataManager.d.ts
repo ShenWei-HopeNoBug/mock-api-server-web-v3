@@ -288,6 +288,29 @@ export declare namespace DataManagerType {
   }
 
   /**
+   * 获取测试组分页传参
+   * 协议：/test_group/page
+   * name 组名称模糊查询；enabled 启用状态精确查询（仅 bool 生效）
+   * */
+  interface GetTestGroupPageParams {
+    page_num?: number;
+    page_size?: number;
+    name?: string;
+    enabled?: boolean;
+  }
+
+  /**
+   * 获取测试组分页结果
+   * 协议：/test_group/page
+   * */
+  interface TestGroupPageResult {
+    list?: TestGroupSummary[];
+    total?: number;
+    page_num?: number;
+    page_size?: number;
+  }
+
+  /**
    * 获取测试组详情传参
    * 协议：/test_group/detail
    * */

@@ -7,10 +7,7 @@
           <div class="enabled-info">
             <template v-if="enabledGroup">
               <span class="enabled-label">当前启用：</span>
-              <a v-if="enabledGroup.name" class="enabled-name" @click="onLocateEnabled">
-                {{ enabledGroup.name }}
-              </a>
-              <span v-else class="enabled-name">未命名组</span>
+              <span class="enabled-name">{{ enabledGroup.name || '未命名组' }}</span>
               <span class="enabled-count">（{{ enabledGroup.item_count || 0 }} 条）</span>
             </template>
             <span v-else class="enabled-label enabled-label--none">当前启用：无</span>
@@ -341,11 +338,6 @@ const onSearchSubmit = (form: TestGroupManagerType.SearchForm = {}): void => {
   fetchData(true);
 };
 
-/** 点击启用组名：以组名为条件过滤定位该组 */
-const onLocateEnabled = (): void => {
-  onSearchSubmit({ name: enabledGroup.value?.name });
-};
-
 /**
  * 容器尺寸变化回调，用于重算表格高度。
  * @param entry ResizeObserverEntry
@@ -505,7 +497,8 @@ const onManage = (record: TestGroupManagerType.GroupRecord = {}): void => {
         }
 
         .enabled-name {
-          font-weight: 500;
+          color: $qt-link;
+          font-weight: 600;
         }
 
         .enabled-count {

@@ -54,3 +54,15 @@ body,
 .ant-modal-wrap.__modal-wrap-no-scroll__ {
   overflow: hidden;
 }
+
+// 启用/禁用状态行底（STATUS_ON/STATUS_OFF 低透明派生）：类名由 a-table :row-class-name
+// 经 getEnabledRowClass 输出。打 td 级以覆盖 fixed 列遮罩底；.ant-table 前缀 + :not()
+// 凑足 specificity 压 td.ant-table-cell-row-hover 与 fix 列底；
+// 排除 ant-table-row-selected：picker 弹窗 radio/checkbox 选中行交还 antd 选中色
+.ant-table .ant-table-tbody > tr.qt-row--enabled:not(.ant-table-row-selected) > td {
+  background: $qt-row-enabled-bg;
+}
+
+.ant-table .ant-table-tbody > tr.qt-row--disabled:not(.ant-table-row-selected) > td {
+  background: $qt-row-disabled-bg;
+}

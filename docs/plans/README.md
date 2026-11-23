@@ -12,16 +12,16 @@
 
 测试组管理页：dataManager 布局化 + 组管理视图。上游总体方案见 `mock-api-server` 仓 `docs/plans/v0_1_6/test-group/`。
 
-| 文档                                                                                              | 范围                                             | 说明                                                        | 状态   |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------ |
-| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md)                                   | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口 | 已实施 |
-| [group-form-modalform-changes](v0_1_6/test-group/group-form-modalform-changes.md)                 | `apps/dataManager`                               | GroupFormDialog 删除，组表单改用通用 ModalForm              | 已实施 |
-| [copy-from-base-dialog-changes](v0_1_6/test-group/copy-from-base-dialog-changes.md)               | `apps/dataManager`                               | CopyFromBaseDialog 搜索区 SearchForm 化 + 弹窗限高/放宽     | 已实施 |
-| [copy-dialog-table-columns-changes](v0_1_6/test-group/copy-dialog-table-columns-changes.md)       | `apps/dataManager`                               | CopyFromBaseDialog 表格列与列宽同步 outputManager           | 已实施 |
-| [copy-dialog-operation-column-changes](v0_1_6/test-group/copy-dialog-operation-column-changes.md) | `apps/dataManager`                               | 拷入弹窗加「查看详情」操作列；DetailDialog 上移共享层       | 已实施 |
-| [test-group-page-query-web-plan](v0_1_6/test-group/test-group-page-query-web-plan.md)           | `apps/dataManager` / `types/qt/dataManager.d.ts` | 组列表服务端分页 + 筛选浮层 + 页头启用组指示               | 已实施 |
-| [group-picker-dialog-changes](v0_1_6/test-group/group-picker-dialog-changes.md)               | `apps/dataManager/components/GroupPickerDialog`  | 拷入组选择弹窗表单化：SearchForm + 表格单选 + `/test_group/page` 分页 | 已实施 |
-| [detail-dialog-json-collapse-changes](v0_1_6/test-group/detail-dialog-json-collapse-changes.md) | `apps/dataManager/components/DetailDialog`      | 变体响应 JsonInput 折叠容器：默认收起、收起不渲染           | 已实施 |
+| 文档                                                                                              | 范围                                             | 说明                                                                  | 状态   |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------- | ------ |
+| [test-group-web-plan](v0_1_6/test-group/test-group-web-plan.md)                                   | `apps/dataManager` / `types/qt/dataManager.d.ts` | BasicLayout 页签容器 + testGroupManager 视图 + 拷入组双入口           | 已实施 |
+| [group-form-modalform-changes](v0_1_6/test-group/group-form-modalform-changes.md)                 | `apps/dataManager`                               | GroupFormDialog 删除，组表单改用通用 ModalForm                        | 已实施 |
+| [copy-from-base-dialog-changes](v0_1_6/test-group/copy-from-base-dialog-changes.md)               | `apps/dataManager`                               | CopyFromBaseDialog 搜索区 SearchForm 化 + 弹窗限高/放宽               | 已实施 |
+| [copy-dialog-table-columns-changes](v0_1_6/test-group/copy-dialog-table-columns-changes.md)       | `apps/dataManager`                               | CopyFromBaseDialog 表格列与列宽同步 outputManager                     | 已实施 |
+| [copy-dialog-operation-column-changes](v0_1_6/test-group/copy-dialog-operation-column-changes.md) | `apps/dataManager`                               | 拷入弹窗加「查看详情」操作列；DetailDialog 上移共享层                 | 已实施 |
+| [test-group-page-query-web-plan](v0_1_6/test-group/test-group-page-query-web-plan.md)             | `apps/dataManager` / `types/qt/dataManager.d.ts` | 组列表服务端分页 + 筛选浮层 + 页头启用组指示                          | 已实施 |
+| [group-picker-dialog-changes](v0_1_6/test-group/group-picker-dialog-changes.md)                   | `apps/dataManager/components/GroupPickerDialog`  | 拷入组选择弹窗表单化：SearchForm + 表格单选 + `/test_group/page` 分页 | 已实施 |
+| [detail-dialog-json-collapse-changes](v0_1_6/test-group/detail-dialog-json-collapse-changes.md)   | `apps/dataManager/components/DetailDialog`       | 变体响应 JsonInput 折叠容器：默认收起、收起不渲染                     | 已实施 |
 
 ### dm-shared-hoist/
 
@@ -30,6 +30,14 @@ dataManager 跨视图共享模块上移：弹窗 + API hook 归拢应用顶层�
 | 文档                                                                   | 范围               | 说明                                                    | 状态   |
 | ---------------------------------------------------------------------- | ------------------ | ------------------------------------------------------- | ------ |
 | [dm-shared-hoist-plan](v0_1_6/dm-shared-hoist/dm-shared-hoist-plan.md) | `apps/dataManager` | 4 共享弹窗上移 `components/` + `useDataManagerApi` 合并 | 已实施 |
+
+### data-manager/
+
+dataManager 子应用功能演进。
+
+| 文档                                                                    | 范围                                         | 说明                                                            | 状态   |
+| ----------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------- | ------ |
+| [enabled-row-state-plan](v0_1_6/data-manager/enabled-row-state-plan.md) | `apps/dataManager` 启用态表格 + `src/styles` | 启用/禁用行底色：`rowClassName` + 全局 `$qt-*` 低透明状态色规则 | 已实施 |
 
 ## v0_1_5/
 

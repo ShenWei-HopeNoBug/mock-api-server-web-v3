@@ -41,6 +41,7 @@
           :pagination="false"
           :loading="tableLoading"
           row-key="id"
+          :row-class-name="getEnabledRowClass"
           :scroll="{ x: 1200, y: tableHeight }"
         >
           <template #bodyCell="{ text, column, record, index }">
@@ -138,7 +139,7 @@ import { computed, nextTick, reactive, ref } from 'vue';
 import { cloneDeep, isPlainObject } from 'lodash-es';
 import { message, Modal } from 'ant-design-vue';
 import { DownOutlined, FilterOutlined } from '@ant-design/icons-vue';
-import { generateUUID } from '@/utils';
+import { generateUUID, getEnabledRowClass } from '@/utils';
 import SearchForm from '@/components/form/SearchForm/index.vue';
 import Spin from '@/components/Spin/index.vue';
 import CopyIcon from '@/components/CopyIcon/index.vue';

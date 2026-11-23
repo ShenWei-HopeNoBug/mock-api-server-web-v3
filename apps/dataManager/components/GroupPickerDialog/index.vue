@@ -31,6 +31,7 @@
           :loading="listLoading"
           row-key="id"
           size="small"
+          :row-class-name="getEnabledRowClass"
           :row-selection="rowSelection"
           :pagination="paginationProps"
           :scroll="{ y: tableHeight }"
@@ -78,6 +79,7 @@ import { message } from 'ant-design-vue';
 import type { TableRowSelection } from 'ant-design-vue/es/table/interface';
 import { useRouter } from 'vue-router';
 import SearchForm from '@/components/form/SearchForm/index.vue';
+import { getEnabledRowClass } from '@/utils';
 import { ENABLED_ENUM } from '@apps/dataManager/enum';
 import type { Form as FormType } from '@/components/form/types';
 import type { DataManagerType } from '#/qt/dataManager';

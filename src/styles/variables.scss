@@ -28,6 +28,8 @@ $qt-link: #be6e28; // LINK 链接/高亮文字
 $qt-success: #5aaa5a; // STATUS_ON
 $qt-warning: #e6a03c; // STATUS_WAIT
 $qt-error: #c83c3c; // ICON_DANGER 错误/危险
+$qt-row-enabled-bg: #eff0d4; // STATUS_ON 10% 叠 PANEL_BG 实色（=mix(#5aaa5a,#fff8e1,10%)，启用态行底；fixed 列遮罩必须不透明，rgba 会透出下层滚动文字）
+$qt-row-disabled-bg: #f5eeda; // STATUS_OFF 10% 叠 PANEL_BG 实色（=mix(#969696,#fff8e1,10%)，禁用态行底，同上）
 
 // 滚动条
 $qt-scrollbar: rgba(205, 170, 125, 0.55); // SCROLLBAR handle

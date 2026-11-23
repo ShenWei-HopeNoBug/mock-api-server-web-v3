@@ -12,8 +12,10 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "lint:check": "eslint .",
+    "lint:changed": "node scripts/checkChanged.mjs lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "format:changed": "node scripts/checkChanged.mjs format"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

@@ -37,6 +37,7 @@
           :data-source="variantList"
           :pagination="false"
           :loading="tableLoading"
+          :row-class-name="getEnabledRowClass"
           :scroll="{ x: 1000, y: tableHeight }"
         >
           <template #bodyCell="{ column, record }">
@@ -118,7 +119,7 @@ import VariantFormDialog from '@apps/dataManager/components/VariantFormDialog/in
 import type { VariantEditorDialogType } from './type';
 import { variantTableColumns } from '@apps/dataManager/components/VariantFormDialog/config';
 import { useDataManagerApi } from '@apps/dataManager/hooks/useDataManagerApi';
-import { generateUUID } from '@/utils';
+import { generateUUID, getEnabledRowClass } from '@/utils';
 import { cloneDeep } from 'lodash-es';
 
 /** 弹窗关闭事件 */

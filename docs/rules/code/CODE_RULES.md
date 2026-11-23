@@ -22,5 +22,6 @@
 
 ## 门禁
 
-- 提交前 `npm run lint:check` 0 error（warning 存量不新增）、`npm run format:check` 通过；
+- 开发期自动检查默认只查改动文件：`npm run lint:changed` / `npm run format:changed`（范围 = staged + unstaged + untracked），warning 存量不新增；无特殊要求不跑全仓检查；
+- 提交前或有明确要求时再跑全量：`npm run lint:check` 0 error、`npm run format:check` 通过；
 - `npm run build` 产物目录 `web-v3/` 为生成物，不入库不手改；构建产物拷入 Qt `appServer/static` 属发布动作。

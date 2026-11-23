@@ -14,6 +14,8 @@ npm run build            # 生产构建（产物 → web-v3/）
 npm run build:test       # test 模式构建
 npm run lint:check       # eslint 检查（要求 0 error）
 npm run format:check     # prettier 检查
+npm run lint:changed     # eslint 仅查工作区改动文件（日常默认）
+npm run format:changed   # prettier --check 同上范围
 npm run lint             # eslint --fix
 npm run format           # prettier --write
 ```

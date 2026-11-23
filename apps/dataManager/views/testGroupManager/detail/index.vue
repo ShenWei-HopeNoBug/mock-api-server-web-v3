@@ -31,6 +31,7 @@
           :pagination="false"
           :loading="tableLoading"
           row-key="id"
+          :row-class-name="getEnabledRowClass"
           :scroll="{ x: 1200, y: tableHeight }"
         >
           <template #bodyCell="{ text, column, record, index }">
@@ -104,6 +105,7 @@ import { ArrowLeftOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue
 import { cloneDeep } from 'lodash-es';
 import Spin from '@/components/Spin/index.vue';
 import CopyIcon from '@/components/CopyIcon/index.vue';
+import { getEnabledRowClass } from '@/utils';
 import UserApiEditorDialog from '@apps/dataManager/components/UserApiEditorDialog/index.vue';
 import VariantEditorDialog from '@apps/dataManager/components/VariantEditorDialog/index.vue';
 import CopyFromBaseDialog from './components/CopyFromBaseDialog/index.vue';

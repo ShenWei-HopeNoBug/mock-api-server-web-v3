@@ -104,6 +104,10 @@ export const createLabelMapFromValueEnum = (
   return map;
 };
 
+/** 启用状态行类名：配合 global.scss 的 qt-row--* 行底规则，供 a-table :row-class-name 使用 */
+export const getEnabledRowClass = (record: { enabled?: boolean } = {}): string =>
+  record.enabled ? 'qt-row--enabled' : 'qt-row--disabled';
+
 /**
  * @description 根据已知键名从 map 表中取值，应用在表格数据的枚举值渲染
  * */
